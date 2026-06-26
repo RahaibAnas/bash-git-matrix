@@ -1,15 +1,14 @@
-```markdown
-# 🐧 Bash Workspace Hub
+# 🐧 Bash & Git Workspace Hub
 
-A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, automation, and core shell programming concepts.
+A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, automation, shell scripting, and Git version control systems.
 
-This repository bundles **three distinct, fully responsive frontend environments** built with a highly cohesive, GitHub-inspired dark aesthetic. They serve as responsive terminal-style reference modules to instantly query, analyze, and learn complete Bash behaviors.
+This repository bundles **four distinct, fully responsive frontend environments** built with a highly cohesive, GitHub-inspired dark aesthetic. They serve as rich, client-side application modules to instantly query, analyze, and master shell paradigms and source control workflows.
 
 ---
 
 ## 🗺️ Workspace Ecosystem
 
-The toolkit is cleanly divided into three distinct reference architectures that seamlessly interconnect via a high-level global layout top navigation matrix:
+The toolkit is cleanly divided into four distinct reference architectures that seamlessly interconnect via a sticky high-level global layout top navigation matrix:
 
 ### 1. 📁 Core Commands Reference (`Bash Commands Reference.html`)
 * **Focus:** Fundamental OS manipulation, file system utilities, network commands, permission tables, and user control systems.
@@ -23,6 +22,10 @@ The toolkit is cleanly divided into three distinct reference architectures that 
 * **Focus:** Enterprise pipeline deployment, background process control (`nohup`, `screen`, `tmux`), log auditing setups, environment preservation, error handling parameters, and highly customizable cron expression metrics.
 * **Key Features:** Visual expression charts, conditional execution tables, and modular automated job patterns.
 
+### 4. 🔀 Git & GitHub Master Hub (`git and github.html`)
+* **Focus:** Distributed version control engineering, commit staging architectures, advanced branch merging/rebasing pipelines, remote configuration patterns, stash management, and GitHub collaboration strategies.
+* **Key Features:** Visual staging lifecycle walkthroughs, instant snippet copy states, and dynamic status query parameters.
+
 ---
 
 ## ✨ System Architecture & Visual Design
@@ -30,3 +33,11 @@ The toolkit is cleanly divided into three distinct reference architectures that 
 * **🎨 Theme Paradigm:** Tailored dark mode dashboard layouts using unified professional custom palette properties (`#0d1117`, `#161b22`, `#30363d`, and vivid responsive color accents `#58a6ff`).
 * **⚡ Ultra-Low Latency Interactions:** Powered purely by modern raw client-side Vanilla ES6 JavaScript, resulting in instantaneous, hardware-accelerated text filtering and modal transitions without external framework overloads.
 * **🌐 Interconnected Layout Matrix:** Each interface embeds an active global navigational top bar that provides immediate cross-file routing while tracking the client's current operational scope.
+* **📱 Clean Media Adaptability:** Explicitly uses responsive CSS design boundaries that automatically refactor complex table schemas, filters, and modal overlays into single-column layouts for mobile viewports and tablet screens.
+
+---
+
+## 🛠️ Global Interconnectivity Framework
+
+To maintain full local fluid navigation across all dashboards, every workspace module mounts a unified, sticky navigation component matching the internal configuration paths:
+
