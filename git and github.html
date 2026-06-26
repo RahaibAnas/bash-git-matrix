@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bash Workspace Hub</title>
+    <link rel="shortcut icon" href="OIP.webp" type="image/x-icon">
+
+    <style>
+        /* ===== INTER-CONNECTIVITY TOP NAV BAR ===== */
+        .global-nav-wrapper {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            /* Keeps it above headers */
+        }
+
+        .global-nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .global-nav-logo {
+            color: #58a6ff;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .global-nav-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .global-nav-item {
+            padding: 6px 14px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .global-nav-item:hover {
+            border-color: #58a6ff;
+            color: #c9d1d9;
+            background: #1f6feb11;
+        }
+
+        .global-nav-item.current-hub {
+            background: #1f6feb;
+            color: #ffffff;
+            border-color: #1f6feb;
+            box-shadow: 0 0 12px rgba(31, 111, 235, 0.3);
+        }
+
+        /* ===== CSS RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #161b22 0%, #1a2332 100%);
+            border-bottom: 1px solid #30363d;
+            padding: 40px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            color: #58a6ff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header h1 .git-icon {
+            width: 42px;
+            height: 42px;
+            background: #f05032;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 16px;
+            color: white;
+        }
+
+        .header p {
+            color: #8b949e;
+            font-size: 1rem;
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto 0;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            background: #0d1117;
+            color: #c9d1d9;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-container input:focus {
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+        }
+
+        .search-container .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b949e;
+            font-size: 1.1rem;
+        }
+
+        /* ===== CATEGORY FILTERS ===== */
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .filter-btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: 1px solid #30363d;
+            background: #161b22;
+            color: #8b949e;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #1f6feb;
+            color: #ffffff;
+            border-color: #1f6feb;
+        }
+
+        /* ===== COMMANDS GRID ===== */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ===== COMMAND CARD ===== */
+        .command-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .command-card:hover {
+            border-color: #58a6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(88, 166, 255, 0.1);
+        }
+
+        .command-card.active {
+            border-color: #58a6ff;
+            box-shadow: 0 4px 20px rgba(88, 166, 255, 0.15);
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header .cmd-name {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #7ee787;
+        }
+
+        .card-header .category-badge {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-setup {
+            background: #1a3a2a;
+            color: #3fb950;
+        }
+
+        .badge-basic {
+            background: #1a2a3a;
+            color: #58a6ff;
+        }
+
+        .badge-branch {
+            background: #3a2a1a;
+            color: #d29922;
+        }
+
+        .badge-remote {
+            background: #3a1a2a;
+            color: #f778ba;
+        }
+
+        .badge-history {
+            background: #2a1a3a;
+            color: #bc8cff;
+        }
+
+        .badge-undo {
+            background: #3a1a1a;
+            color: #f85149;
+        }
+
+        .badge-stash {
+            background: #1a3a3a;
+            color: #39d0d8;
+        }
+
+        .badge-tag {
+            background: #2a3a1a;
+            color: #9be54a;
+        }
+
+        .badge-config {
+            background: #3a3a1a;
+            color: #e3b341;
+        }
+
+        .badge-github {
+            background: #1a1a3a;
+            color: #79c0ff;
+        }
+
+        .badge-advanced {
+            background: #2a1a1a;
+            color: #ff7b72;
+        }
+
+        .card-header .toggle-icon {
+            font-size: 1.2rem;
+            color: #8b949e;
+            transition: transform 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .command-card.active .toggle-icon {
+            transform: rotate(180deg);
+            color: #58a6ff;
+        }
+
+        .card-description {
+            padding: 0 20px;
+            color: #8b949e;
+            font-size: 0.88rem;
+            padding-bottom: 15px;
+        }
+
+        /* ===== EXPANDED CONTENT ===== */
+        .card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: #0d1117;
+            border-top: 1px solid transparent;
+        }
+
+        .command-card.active .card-details {
+            max-height: 2000px;
+            border-top-color: #30363d;
+        }
+
+        .usage-section {
+            padding: 20px;
+        }
+
+        .usage-section h4 {
+            color: #58a6ff;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .usage-item {
+            margin-bottom: 16px;
+            padding: 14px;
+            background: #161b22;
+            border-radius: 8px;
+            border-left: 3px solid #30363d;
+            transition: border-color 0.3s;
+        }
+
+        .usage-item:hover {
+            border-left-color: #58a6ff;
+        }
+
+        .usage-item .usage-cmd {
+            font-family: 'Courier New', Courier, monospace;
+            color: #7ee787;
+            font-size: 0.9rem;
+            background: #0d1117;
+            padding: 8px 12px;
+            border-radius: 5px;
+            display: block;
+            margin-bottom: 8px;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .usage-item .usage-cmd .copy-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .usage-item .usage-cmd:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .usage-item .usage-cmd .copy-btn:hover {
+            background: #30363d;
+            color: #c9d1d9;
+        }
+
+        .usage-item .usage-desc {
+            color: #8b949e;
+            font-size: 0.83rem;
+            padding-left: 2px;
+        }
+
+        .usage-item .usage-desc strong {
+            color: #c9d1d9;
+        }
+
+        /* ===== MODAL / OVERLAY ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: #161b22;
+            padding: 25px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .modal-header .cmd-title {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            color: #7ee787;
+            font-weight: 700;
+        }
+
+        .modal-header .close-btn {
+            background: none;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 5px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-header .close-btn:hover {
+            background: #21262d;
+            color: #f85149;
+            border-color: #f85149;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-body .desc {
+            color: #8b949e;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .modal-body .usage-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-body .usage-group h4 {
+            color: #d29922;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        /* ===== SCROLL TO TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #1f6feb;
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            background: #58a6ff;
+            transform: translateY(-3px);
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            text-align: center;
+            padding: 10px;
+            color: #484f58;
+            font-size: 0.8rem;
+        }
+
+        .stats-bar span {
+            color: #58a6ff;
+            font-weight: 600;
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #484f58;
+        }
+
+        .no-results .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .no-results p {
+            font-size: 1.1rem;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            border-top: 1px solid #21262d;
+            color: #484f58;
+            font-size: 0.85rem;
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: #58a6ff;
+            text-decoration: none;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+
+        /* ===== TOOLTIP ===== */
+        .tooltip {
+            position: fixed;
+            background: #1f6feb;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+
+            .modal-content {
+                max-height: 90vh;
+            }
+
+            .modal-header .cmd-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 25px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+                flex-direction: column;
+            }
+
+            .filters {
+                padding: 15px;
+            }
+
+            .filter-btn {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="global-nav-wrapper">
+        <div class="global-nav-container">
+            <div class="global-nav-logo">🐧 <span>Bash Workspace Hub</span></div>
+            <div class="global-nav-links">
+                <a href="Bash Commands Reference.html" class="global-nav-item ">📁 Core Commands</a>
+                <a href="Bash Scripting Reference.html" class="global-nav-item">📜 Bash Scripting</a>
+                <a href="Bash Automation & Cron Jobs.html" class="global-nav-item ">⏰ Automation & Cron</a>
+                <a href="git and github.html" class="global-nav-item current-hub">🚀 Git & github</a>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <h1>
+            <span class="git-icon">G</span>
+            Git & GitHub Commands Reference
+        </h1>
+        <p>Click any command to explore all its usages and options</p>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search commands... (e.g., commit, branch, merge)">
+        </div>
+    </header>
+
+    <!-- ===== CATEGORY FILTERS ===== -->
+    <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">All Commands</button>
+        <button class="filter-btn" data-filter="setup">Setup</button>
+        <button class="filter-btn" data-filter="basic">Basic</button>
+        <button class="filter-btn" data-filter="branch">Branching</button>
+        <button class="filter-btn" data-filter="remote">Remote</button>
+        <button class="filter-btn" data-filter="history">History</button>
+        <button class="filter-btn" data-filter="undo">Undo</button>
+        <button class="filter-btn" data-filter="stash">Stash</button>
+        <button class="filter-btn" data-filter="tag">Tags</button>
+        <button class="filter-btn" data-filter="advanced">Advanced</button>
+        <button class="filter-btn" data-filter="github">GitHub</button>
+        <button class="filter-btn" data-filter="config">Config</button>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="stats-bar">
+        Showing <span id="commandCount">0</span> commands
+    </div>
+
+    <!-- ===== COMMANDS GRID ===== -->
+    <div class="commands-grid" id="commandsGrid">
+        <!-- Cards will be dynamically generated -->
+    </div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-header">
+                <span class="cmd-title" id="modalTitle"></span>
+                <button class="close-btn" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- ===== TOOLTIP ===== -->
+    <div class="tooltip" id="tooltip">Copied!</div>
+
+    <!-- ===== SCROLL TO TOP ===== -->
+    <button class="scroll-top" id="scrollTop">↑</button>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <p>Built with ❤️ for developers | Git & GitHub Commands & Concepts Reference</p>
+    </footer>
+
+    <!-- ===== JAVASCRIPT ===== -->
+    <script>
+        // ===== ALL GIT COMMANDS DATA =====
+        const gitCommands = [
+            // ===== SETUP =====
+            {
+                name: "git init",
+                category: "setup",
+                description: "Initialize a new Git repository in the current directory.",
+                usages: [
+                    { cmd: "git init", desc: "Create a new Git repository in the current folder" },
+                    { cmd: "git init <directory>", desc: "Create a new Git repository in the specified directory" },
+                    { cmd: "git init --bare", desc: "Create a bare repository (no working directory, used for remote repos)" },
+                    { cmd: "git init --bare --shared", desc: "Create a shared bare repository for team collaboration" },
+                    { cmd: "git init -b main", desc: "Initialize with 'main' as the default branch name" },
+                    { cmd: "git init --template=<template-dir>", desc: "Initialize using a custom template directory" }
+                ]
+            },
+            {
+                name: "git clone",
+                category: "setup",
+                description: "Clone a repository into a new directory.",
+                usages: [
+                    { cmd: "git clone <url>", desc: "Clone a repository from a URL" },
+                    { cmd: "git clone <url> <directory>", desc: "Clone into a specific directory name" },
+                    { cmd: "git clone --depth 1 <url>", desc: "Shallow clone — only the latest commit (faster)" },
+                    { cmd: "git clone --branch <branch> <url>", desc: "Clone a specific branch only" },
+                    { cmd: "git clone --single-branch <url>", desc: "Clone only one branch (default branch)" },
+                    { cmd: "git clone --recurse-submodules <url>", desc: "Clone and initialize all submodules" },
+                    { cmd: "git clone --mirror <url>", desc: "Create a mirror clone (bare + all refs)" },
+                    { cmd: "git clone --shallow-since=2023-01-01 <url>", desc: "Shallow clone since a specific date" },
+                    { cmd: "git clone git@github.com:user/repo.git", desc: "Clone using SSH" },
+                    { cmd: "git clone https://github.com/user/repo.git", desc: "Clone using HTTPS" }
+                ]
+            },
+            // ===== BASIC =====
+            {
+                name: "git add",
+                category: "basic",
+                description: "Add file contents to the staging area (index).",
+                usages: [
+                    { cmd: "git add <file>", desc: "Stage a specific file" },
+                    { cmd: "git add .", desc: "Stage all changes in current directory and subdirectories" },
+                    { cmd: "git add -A", desc: "Stage all changes (new, modified, deleted) in entire repo" },
+                    { cmd: "git add --all", desc: "Same as -A — stage everything" },
+                    { cmd: "git add *.js", desc: "Stage all JavaScript files (using wildcard)" },
+                    { cmd: "git add -p", desc: "Interactively stage parts (hunks) of files" },
+                    { cmd: "git add -p <file>", desc: "Interactively stage parts of a specific file" },
+                    { cmd: "git add -u", desc: "Stage only modified and deleted files (not new ones)" },
+                    { cmd: "git add -n <file>", desc: "Dry run — show what would be added without actually adding" },
+                    { cmd: "git add --force <file>", desc: "Force add an ignored file" },
+                    { cmd: "git add -i", desc: "Open interactive staging mode" }
+                ]
+            },
+            {
+                name: "git commit",
+                category: "basic",
+                description: "Record changes to the repository with a message.",
+                usages: [
+                    { cmd: 'git commit -m "message"', desc: "Commit staged changes with a message" },
+                    { cmd: 'git commit -am "message"', desc: "Stage all tracked files and commit in one step" },
+                    { cmd: "git commit --amend", desc: "Modify the most recent commit (opens editor)" },
+                    { cmd: 'git commit --amend -m "new message"', desc: "Change the last commit message" },
+                    { cmd: "git commit --amend --no-edit", desc: "Amend last commit without changing the message" },
+                    { cmd: "git commit --allow-empty -m \"msg\"", desc: "Create an empty commit (useful for CI triggers)" },
+                    { cmd: "git commit -v", desc: "Show diff in the commit message editor" },
+                    { cmd: "git commit --dry-run", desc: "Show what would be committed without committing" },
+                    { cmd: "git commit --signoff", desc: "Add a Signed-off-by line to the commit" },
+                    { cmd: "git commit -S", desc: "GPG sign the commit" },
+                    { cmd: 'git commit --date="2024-01-01" -m "msg"', desc: "Commit with a custom date" }
+                ]
+            },
+            {
+                name: "git status",
+                category: "basic",
+                description: "Show the working tree status.",
+                usages: [
+                    { cmd: "git status", desc: "Show full status of working directory and staging area" },
+                    { cmd: "git status -s", desc: "Short format status output" },
+                    { cmd: "git status --short", desc: "Same as -s — compact output" },
+                    { cmd: "git status -b", desc: "Show branch info in short format" },
+                    { cmd: "git status --ignored", desc: "Show ignored files as well" },
+                    { cmd: "git status -uno", desc: "Don't show untracked files" },
+                    { cmd: "git status --porcelain", desc: "Machine-readable output (for scripts)" }
+                ]
+            },
+            {
+                name: "git diff",
+                category: "basic",
+                description: "Show changes between commits, working tree, and staging area.",
+                usages: [
+                    { cmd: "git diff", desc: "Show unstaged changes in working directory" },
+                    { cmd: "git diff --staged", desc: "Show changes staged for the next commit" },
+                    { cmd: "git diff --cached", desc: "Same as --staged" },
+                    { cmd: "git diff HEAD", desc: "Show all changes since last commit (staged + unstaged)" },
+                    { cmd: "git diff <branch1> <branch2>", desc: "Compare two branches" },
+                    { cmd: "git diff <commit1> <commit2>", desc: "Compare two commits" },
+                    { cmd: "git diff <file>", desc: "Show changes for a specific file" },
+                    { cmd: "git diff --stat", desc: "Show summary of changes (files changed, insertions, deletions)" },
+                    { cmd: "git diff --name-only", desc: "Show only names of changed files" },
+                    { cmd: "git diff --name-status", desc: "Show file names with their status (M, A, D)" },
+                    { cmd: "git diff --color-words", desc: "Show word-level diff with colors" },
+                    { cmd: "git diff --word-diff", desc: "Show inline word differences" }
+                ]
+            },
+            {
+                name: "git rm",
+                category: "basic",
+                description: "Remove files from working tree and staging area.",
+                usages: [
+                    { cmd: "git rm <file>", desc: "Remove file from working directory and stage the removal" },
+                    { cmd: "git rm --cached <file>", desc: "Remove file from staging area but keep it in working directory" },
+                    { cmd: "git rm -r <directory>", desc: "Recursively remove a directory" },
+                    { cmd: "git rm -f <file>", desc: "Force removal of a modified file" },
+                    { cmd: "git rm --cached -r .", desc: "Untrack all files (useful after updating .gitignore)" },
+                    { cmd: "git rm *.log", desc: "Remove all .log files" }
+                ]
+            },
+            {
+                name: "git mv",
+                category: "basic",
+                description: "Move or rename a file, directory, or symlink.",
+                usages: [
+                    { cmd: "git mv <old-name> <new-name>", desc: "Rename a file" },
+                    { cmd: "git mv <file> <directory>/", desc: "Move a file to a different directory" },
+                    { cmd: "git mv -f <old> <new>", desc: "Force rename even if target exists" }
+                ]
+            },
+            // ===== BRANCHING =====
+            {
+                name: "git branch",
+                category: "branch",
+                description: "List, create, or delete branches.",
+                usages: [
+                    { cmd: "git branch", desc: "List all local branches" },
+                    { cmd: "git branch -a", desc: "List all branches (local + remote)" },
+                    { cmd: "git branch -r", desc: "List remote branches only" },
+                    { cmd: "git branch <name>", desc: "Create a new branch" },
+                    { cmd: "git branch -d <name>", desc: "Delete a merged branch" },
+                    { cmd: "git branch -D <name>", desc: "Force delete a branch (even if not merged)" },
+                    { cmd: "git branch -m <old> <new>", desc: "Rename a branch" },
+                    { cmd: "git branch -m <new-name>", desc: "Rename current branch" },
+                    { cmd: "git branch -v", desc: "List branches with last commit info" },
+                    { cmd: "git branch -vv", desc: "List branches with tracking info" },
+                    { cmd: "git branch --merged", desc: "List branches merged into current branch" },
+                    { cmd: "git branch --no-merged", desc: "List branches not yet merged" },
+                    { cmd: "git branch --contains <commit>", desc: "List branches containing a specific commit" },
+                    { cmd: "git branch -u origin/<branch>", desc: "Set upstream tracking branch" },
+                    { cmd: "git branch --set-upstream-to=origin/<branch>", desc: "Set tracking branch (verbose)" }
+                ]
+            },
+            {
+                name: "git checkout",
+                category: "branch",
+                description: "Switch branches or restore working tree files.",
+                usages: [
+                    { cmd: "git checkout <branch>", desc: "Switch to an existing branch" },
+                    { cmd: "git checkout -b <branch>", desc: "Create and switch to a new branch" },
+                    { cmd: "git checkout -b <branch> origin/<branch>", desc: "Create local branch from remote branch" },
+                    { cmd: "git checkout -- <file>", desc: "Discard changes in a file (restore from last commit)" },
+                    { cmd: "git checkout .", desc: "Discard all changes in working directory" },
+                    { cmd: "git checkout <commit>", desc: "Detach HEAD to a specific commit" },
+                    { cmd: "git checkout <commit> -- <file>", desc: "Restore a file from a specific commit" },
+                    { cmd: "git checkout -", desc: "Switch to the previously checked out branch" },
+                    { cmd: "git checkout --orphan <branch>", desc: "Create a branch with no commit history" },
+                    { cmd: "git checkout --track origin/<branch>", desc: "Create tracking branch from remote" }
+                ]
+            },
+            {
+                name: "git switch",
+                category: "branch",
+                description: "Switch branches (modern alternative to checkout for branches).",
+                usages: [
+                    { cmd: "git switch <branch>", desc: "Switch to an existing branch" },
+                    { cmd: "git switch -c <branch>", desc: "Create and switch to a new branch" },
+                    { cmd: "git switch -c <branch> origin/<branch>", desc: "Create branch from remote and switch" },
+                    { cmd: "git switch -", desc: "Switch to previous branch" },
+                    { cmd: "git switch --detach <commit>", desc: "Switch to a commit in detached HEAD state" },
+                    { cmd: "git switch --discard-changes <branch>", desc: "Switch branch and discard local changes" }
+                ]
+            },
+            {
+                name: "git merge",
+                category: "branch",
+                description: "Join two or more development histories together.",
+                usages: [
+                    { cmd: "git merge <branch>", desc: "Merge specified branch into current branch" },
+                    { cmd: "git merge --no-ff <branch>", desc: "Merge with a merge commit (no fast-forward)" },
+                    { cmd: "git merge --ff-only <branch>", desc: "Only merge if fast-forward is possible" },
+                    { cmd: "git merge --squash <branch>", desc: "Squash all commits into one before merging" },
+                    { cmd: "git merge --abort", desc: "Abort a merge in progress (during conflicts)" },
+                    { cmd: "git merge --continue", desc: "Continue merge after resolving conflicts" },
+                    { cmd: 'git merge -m "message" <branch>', desc: "Merge with a custom merge commit message" },
+                    { cmd: "git merge --no-commit <branch>", desc: "Merge but don't auto-commit" },
+                    { cmd: "git merge --strategy=ours <branch>", desc: "Merge but keep our version for conflicts" }
+                ]
+            },
+            {
+                name: "git rebase",
+                category: "branch",
+                description: "Reapply commits on top of another base tip.",
+                usages: [
+                    { cmd: "git rebase <branch>", desc: "Rebase current branch onto specified branch" },
+                    { cmd: "git rebase -i HEAD~<n>", desc: "Interactive rebase — edit last n commits" },
+                    { cmd: "git rebase -i <commit>", desc: "Interactive rebase from a specific commit" },
+                    { cmd: "git rebase --onto <new> <old> <branch>", desc: "Rebase a range of commits onto a new base" },
+                    { cmd: "git rebase --abort", desc: "Abort a rebase in progress" },
+                    { cmd: "git rebase --continue", desc: "Continue rebase after resolving conflicts" },
+                    { cmd: "git rebase --skip", desc: "Skip the current commit during rebase" },
+                    { cmd: "git rebase main", desc: "Rebase current branch onto main" },
+                    { cmd: "git rebase -i --root", desc: "Interactive rebase all commits from the beginning" },
+                    { cmd: "git rebase --autosquash -i HEAD~5", desc: "Auto-arrange fixup/squash commits" }
+                ]
+            },
+            // ===== REMOTE =====
+            {
+                name: "git remote",
+                category: "remote",
+                description: "Manage set of tracked repositories (remotes).",
+                usages: [
+                    { cmd: "git remote", desc: "List remote names" },
+                    { cmd: "git remote -v", desc: "List remotes with their URLs (fetch & push)" },
+                    { cmd: "git remote add <name> <url>", desc: "Add a new remote" },
+                    { cmd: "git remote add origin <url>", desc: "Add the default 'origin' remote" },
+                    { cmd: "git remote remove <name>", desc: "Remove a remote" },
+                    { cmd: "git remote rename <old> <new>", desc: "Rename a remote" },
+                    { cmd: "git remote set-url origin <new-url>", desc: "Change URL of existing remote" },
+                    { cmd: "git remote show origin", desc: "Show detailed info about a remote" },
+                    { cmd: "git remote prune origin", desc: "Remove stale remote-tracking branches" },
+                    { cmd: "git remote get-url origin", desc: "Get the URL of a remote" }
+                ]
+            },
+            {
+                name: "git push",
+                category: "remote",
+                description: "Upload local commits to a remote repository.",
+                usages: [
+                    { cmd: "git push", desc: "Push current branch to its upstream" },
+                    { cmd: "git push origin <branch>", desc: "Push a branch to origin" },
+                    { cmd: "git push -u origin <branch>", desc: "Push and set upstream tracking" },
+                    { cmd: "git push --set-upstream origin <branch>", desc: "Same as -u — set upstream" },
+                    { cmd: "git push origin --delete <branch>", desc: "Delete a remote branch" },
+                    { cmd: "git push -d origin <branch>", desc: "Short form of deleting remote branch" },
+                    { cmd: "git push --all", desc: "Push all branches to remote" },
+                    { cmd: "git push --tags", desc: "Push all tags to remote" },
+                    { cmd: "git push --force", desc: "Force push (overwrite remote history) ⚠️" },
+                    { cmd: "git push --force-with-lease", desc: "Safer force push — fails if remote has new commits" },
+                    { cmd: "git push origin <tag-name>", desc: "Push a specific tag" },
+                    { cmd: "git push origin HEAD", desc: "Push current branch (whatever it's named)" }
+                ]
+            },
+            {
+                name: "git pull",
+                category: "remote",
+                description: "Fetch from remote and integrate with local branch.",
+                usages: [
+                    { cmd: "git pull", desc: "Pull changes from upstream (fetch + merge)" },
+                    { cmd: "git pull origin <branch>", desc: "Pull a specific branch from origin" },
+                    { cmd: "git pull --rebase", desc: "Pull with rebase instead of merge" },
+                    { cmd: "git pull --rebase origin main", desc: "Rebase current branch onto remote main" },
+                    { cmd: "git pull --ff-only", desc: "Only pull if fast-forward is possible" },
+                    { cmd: "git pull --no-commit", desc: "Pull but don't auto-commit the merge" },
+                    { cmd: "git pull --all", desc: "Fetch all remotes and merge" },
+                    { cmd: "git pull --autostash", desc: "Automatically stash and unstash changes during pull" }
+                ]
+            },
+            {
+                name: "git fetch",
+                category: "remote",
+                description: "Download objects and refs from another repository without merging.",
+                usages: [
+                    { cmd: "git fetch", desc: "Fetch from default remote (origin)" },
+                    { cmd: "git fetch origin", desc: "Fetch all branches from origin" },
+                    { cmd: "git fetch origin <branch>", desc: "Fetch a specific branch" },
+                    { cmd: "git fetch --all", desc: "Fetch from all remotes" },
+                    { cmd: "git fetch --prune", desc: "Fetch and remove stale remote-tracking branches" },
+                    { cmd: "git fetch --tags", desc: "Fetch all tags from remote" },
+                    { cmd: "git fetch --depth 1", desc: "Shallow fetch — only latest commit" },
+                    { cmd: "git fetch origin pull/<id>/head:<branch>", desc: "Fetch a GitHub pull request locally" }
+                ]
+            },
+            // ===== HISTORY =====
+            {
+                name: "git log",
+                category: "history",
+                description: "Show commit logs and history.",
+                usages: [
+                    { cmd: "git log", desc: "Show full commit history" },
+                    { cmd: "git log --oneline", desc: "Compact one-line format" },
+                    { cmd: "git log --oneline --graph", desc: "Show branch graph in terminal" },
+                    { cmd: "git log --oneline --graph --all", desc: "Graph of all branches" },
+                    { cmd: "git log --oneline -n 10", desc: "Show last 10 commits" },
+                    { cmd: "git log -p", desc: "Show commits with diffs (patches)" },
+                    { cmd: "git log --stat", desc: "Show file change statistics per commit" },
+                    { cmd: "git log --author=\"name\"", desc: "Filter commits by author" },
+                    { cmd: "git log --since=\"2024-01-01\"", desc: "Commits since a specific date" },
+                    { cmd: "git log --until=\"2024-12-31\"", desc: "Commits until a specific date" },
+                    { cmd: "git log --grep=\"keyword\"", desc: "Search commit messages for a keyword" },
+                    { cmd: "git log -- <file>", desc: "Show commit history for a specific file" },
+                    { cmd: "git log --follow <file>", desc: "Follow file history across renames" },
+                    { cmd: 'git log --pretty=format:"%h %s %an"', desc: "Custom format output" },
+                    { cmd: "git log --all --decorate", desc: "Show all branches with decorations" },
+                    { cmd: "git log branch1..branch2", desc: "Commits in branch2 that aren't in branch1" },
+                    { cmd: "git log --merges", desc: "Show only merge commits" },
+                    { cmd: "git log --no-merges", desc: "Exclude merge commits" }
+                ]
+            },
+            {
+                name: "git show",
+                category: "history",
+                description: "Show information about Git objects (commits, tags, etc.).",
+                usages: [
+                    { cmd: "git show", desc: "Show the latest commit details and diff" },
+                    { cmd: "git show <commit>", desc: "Show details of a specific commit" },
+                    { cmd: "git show <commit>:<file>", desc: "Show a file's content at a specific commit" },
+                    { cmd: "git show --stat", desc: "Show commit with file change stats" },
+                    { cmd: "git show <tag>", desc: "Show tag information and commit it points to" },
+                    { cmd: "git show HEAD~2", desc: "Show the commit 2 steps before HEAD" },
+                    { cmd: "git show --name-only <commit>", desc: "Show only file names in a commit" }
+                ]
+            },
+            {
+                name: "git blame",
+                category: "history",
+                description: "Show who last modified each line of a file.",
+                usages: [
+                    { cmd: "git blame <file>", desc: "Show line-by-line annotations of a file" },
+                    { cmd: "git blame -L 10,20 <file>", desc: "Blame only lines 10 through 20" },
+                    { cmd: "git blame -w <file>", desc: "Ignore whitespace changes" },
+                    { cmd: "git blame -e <file>", desc: "Show author email instead of name" },
+                    { cmd: "git blame --since=2weeks <file>", desc: "Only show changes from last 2 weeks" },
+                    { cmd: "git blame -C <file>", desc: "Detect lines moved from other files" }
+                ]
+            },
+            {
+                name: "git shortlog",
+                category: "history",
+                description: "Summarize git log output by author.",
+                usages: [
+                    { cmd: "git shortlog", desc: "Group commits by author" },
+                    { cmd: "git shortlog -s", desc: "Show only commit count per author" },
+                    { cmd: "git shortlog -s -n", desc: "Show commit count sorted by number" },
+                    { cmd: "git shortlog -sne", desc: "Show count, sorted, with email" }
+                ]
+            },
+            {
+                name: "git reflog",
+                category: "history",
+                description: "Show reference logs — history of HEAD movements.",
+                usages: [
+                    { cmd: "git reflog", desc: "Show the reflog (all HEAD changes)" },
+                    { cmd: "git reflog show <branch>", desc: "Show reflog for a specific branch" },
+                    { cmd: "git reflog expire --expire=now --all", desc: "Expire all reflog entries" },
+                    { cmd: "git reflog delete HEAD@{2}", desc: "Delete a specific reflog entry" }
+                ]
+            },
+            // ===== UNDO =====
+            {
+                name: "git reset",
+                category: "undo",
+                description: "Reset current HEAD to a specified state.",
+                usages: [
+                    { cmd: "git reset <file>", desc: "Unstage a file (keep changes in working directory)" },
+                    { cmd: "git reset", desc: "Unstage all files" },
+                    { cmd: "git reset --soft HEAD~1", desc: "Undo last commit, keep changes staged" },
+                    { cmd: "git reset --mixed HEAD~1", desc: "Undo last commit, unstage changes (default)" },
+                    { cmd: "git reset --hard HEAD~1", desc: "Undo last commit and discard all changes ⚠️" },
+                    { cmd: "git reset --hard HEAD", desc: "Discard all uncommitted changes ⚠️" },
+                    { cmd: "git reset --hard origin/main", desc: "Reset to match remote main exactly ⚠️" },
+                    { cmd: "git reset --hard <commit>", desc: "Reset to a specific commit (destructive) ⚠️" },
+                    { cmd: "git reset HEAD~3", desc: "Undo last 3 commits (keep changes)" },
+                    { cmd: "git reset --soft HEAD^", desc: "Same as HEAD~1 — undo last commit, keep staged" }
+                ]
+            },
+            {
+                name: "git revert",
+                category: "undo",
+                description: "Create a new commit that undoes a previous commit (safe undo).",
+                usages: [
+                    { cmd: "git revert <commit>", desc: "Create a new commit that undoes the specified commit" },
+                    { cmd: "git revert HEAD", desc: "Revert the most recent commit" },
+                    { cmd: "git revert --no-commit <commit>", desc: "Revert but don't auto-commit" },
+                    { cmd: "git revert -n <commit>", desc: "Same as --no-commit" },
+                    { cmd: "git revert HEAD~3..HEAD", desc: "Revert the last 3 commits" },
+                    { cmd: "git revert --abort", desc: "Abort a revert in progress" },
+                    { cmd: "git revert --continue", desc: "Continue revert after resolving conflicts" },
+                    { cmd: "git revert -m 1 <merge-commit>", desc: "Revert a merge commit (keep parent 1)" }
+                ]
+            },
+            {
+                name: "git restore",
+                category: "undo",
+                description: "Restore working tree files (modern alternative to checkout for files).",
+                usages: [
+                    { cmd: "git restore <file>", desc: "Discard changes in working directory for a file" },
+                    { cmd: "git restore .", desc: "Discard all changes in working directory" },
+                    { cmd: "git restore --staged <file>", desc: "Unstage a file (keep changes in working dir)" },
+                    { cmd: "git restore --staged .", desc: "Unstage all files" },
+                    { cmd: "git restore --source=HEAD~2 <file>", desc: "Restore file from 2 commits ago" },
+                    { cmd: "git restore --source=<commit> <file>", desc: "Restore file from a specific commit" },
+                    { cmd: "git restore --staged --worktree <file>", desc: "Unstage AND discard changes" }
+                ]
+            },
+            {
+                name: "git clean",
+                category: "undo",
+                description: "Remove untracked files from the working tree.",
+                usages: [
+                    { cmd: "git clean -n", desc: "Dry run — show what would be removed" },
+                    { cmd: "git clean -f", desc: "Force remove untracked files" },
+                    { cmd: "git clean -fd", desc: "Remove untracked files and directories" },
+                    { cmd: "git clean -fX", desc: "Remove only ignored files" },
+                    { cmd: "git clean -fx", desc: "Remove all untracked files (including ignored)" },
+                    { cmd: "git clean -i", desc: "Interactive clean mode" }
+                ]
+            },
+            // ===== STASH =====
+            {
+                name: "git stash",
+                category: "stash",
+                description: "Temporarily save uncommitted changes for later use.",
+                usages: [
+                    { cmd: "git stash", desc: "Stash current changes (tracked files)" },
+                    { cmd: 'git stash save "message"', desc: "Stash with a descriptive message" },
+                    { cmd: "git stash push -m \"message\"", desc: "Modern way to stash with a message" },
+                    { cmd: "git stash -u", desc: "Stash including untracked files" },
+                    { cmd: "git stash --include-untracked", desc: "Same as -u" },
+                    { cmd: "git stash -a", desc: "Stash everything including ignored files" },
+                    { cmd: "git stash list", desc: "List all stashed changes" },
+                    { cmd: "git stash pop", desc: "Apply most recent stash and remove it from list" },
+                    { cmd: "git stash apply", desc: "Apply most recent stash but keep it in list" },
+                    { cmd: "git stash apply stash@{2}", desc: "Apply a specific stash by index" },
+                    { cmd: "git stash drop", desc: "Remove most recent stash" },
+                    { cmd: "git stash drop stash@{1}", desc: "Remove a specific stash" },
+                    { cmd: "git stash clear", desc: "Remove all stashes ⚠️" },
+                    { cmd: "git stash show", desc: "Show summary of stashed changes" },
+                    { cmd: "git stash show -p", desc: "Show full diff of stashed changes" },
+                    { cmd: "git stash branch <branch>", desc: "Create a new branch from a stash" },
+                    { cmd: "git stash push <file>", desc: "Stash a specific file only" }
+                ]
+            },
+            // ===== TAGS =====
+            {
+                name: "git tag",
+                category: "tag",
+                description: "Create, list, delete, or verify tags.",
+                usages: [
+                    { cmd: "git tag", desc: "List all tags" },
+                    { cmd: "git tag -l \"v1.*\"", desc: "List tags matching a pattern" },
+                    { cmd: "git tag <name>", desc: "Create a lightweight tag" },
+                    { cmd: "git tag -a <name> -m \"message\"", desc: "Create an annotated tag with message" },
+                    { cmd: "git tag -a v1.0 -m \"Version 1.0\"", desc: "Create annotated tag for version 1.0" },
+                    { cmd: "git tag -a <name> <commit>", desc: "Tag a specific commit" },
+                    { cmd: "git tag -d <name>", desc: "Delete a local tag" },
+                    { cmd: "git push origin <tag-name>", desc: "Push a tag to remote" },
+                    { cmd: "git push origin --tags", desc: "Push all tags to remote" },
+                    { cmd: "git push origin --delete <tag>", desc: "Delete a remote tag" },
+                    { cmd: "git tag -v <name>", desc: "Verify a GPG-signed tag" },
+                    { cmd: "git show <tag>", desc: "Show tag details" },
+                    { cmd: "git describe --tags", desc: "Describe current commit relative to tags" }
+                ]
+            },
+            // ===== CONFIG =====
+            {
+                name: "git config",
+                category: "config",
+                description: "Get and set Git configuration variables.",
+                usages: [
+                    { cmd: "git config --global user.name \"Your Name\"", desc: "Set your name globally" },
+                    { cmd: "git config --global user.email \"you@email.com\"", desc: "Set your email globally" },
+                    { cmd: "git config --list", desc: "List all configuration settings" },
+                    { cmd: "git config --global --list", desc: "List global config settings" },
+                    { cmd: "git config user.name", desc: "Show current user.name value" },
+                    { cmd: "git config --global core.editor \"code --wait\"", desc: "Set VS Code as default editor" },
+                    { cmd: "git config --global core.editor \"vim\"", desc: "Set Vim as default editor" },
+                    { cmd: "git config --global init.defaultBranch main", desc: "Set 'main' as default branch name" },
+                    { cmd: "git config --global alias.st status", desc: "Create alias: git st = git status" },
+                    { cmd: "git config --global alias.co checkout", desc: "Create alias: git co = git checkout" },
+                    { cmd: "git config --global alias.br branch", desc: "Create alias: git br = git branch" },
+                    { cmd: "git config --global alias.ci commit", desc: "Create alias: git ci = git commit" },
+                    { cmd: "git config --global alias.lg \"log --oneline --graph --all\"", desc: "Create a pretty log alias" },
+                    { cmd: "git config --global credential.helper cache", desc: "Cache credentials temporarily" },
+                    { cmd: "git config --global credential.helper store", desc: "Store credentials permanently (plaintext)" },
+                    { cmd: "git config --global pull.rebase true", desc: "Set rebase as default pull strategy" },
+                    { cmd: "git config --global merge.conflictstyle diff3", desc: "Use diff3 conflict style" },
+                    { cmd: "git config --global core.autocrlf true", desc: "Auto convert line endings (Windows)" },
+                    { cmd: "git config --global core.autocrlf input", desc: "Convert CRLF to LF on commit (Mac/Linux)" },
+                    { cmd: "git config --unset <key>", desc: "Remove a config setting" }
+                ]
+            },
+            {
+                name: ".gitignore",
+                category: "config",
+                description: "Specify files and patterns to be ignored by Git.",
+                usages: [
+                    { cmd: "node_modules/", desc: "Ignore node_modules directory" },
+                    { cmd: "*.log", desc: "Ignore all .log files" },
+                    { cmd: ".env", desc: "Ignore .env file" },
+                    { cmd: "dist/", desc: "Ignore build/dist folder" },
+                    { cmd: "*.pyc", desc: "Ignore Python compiled files" },
+                    { cmd: "build/", desc: "Ignore build directory" },
+                    { cmd: "__pycache__/", desc: "Ignore Python cache" },
+                    { cmd: ".DS_Store", desc: "Ignore macOS metadata file" },
+                    { cmd: "Thumbs.db", desc: "Ignore Windows thumbnail cache" },
+                    { cmd: "!important.log", desc: "Exception — don't ignore this file (negate pattern)" },
+                    { cmd: "*.env*", desc: "Ignore all env-related files" },
+                    { cmd: "**/*.bak", desc: "Ignore .bak files in any subdirectory" },
+                    { cmd: "git check-ignore -v <file>", desc: "Check which .gitignore rule ignores a file" },
+                    { cmd: "git rm --cached <file>", desc: "Stop tracking a file that's already been committed" }
+                ]
+            },
+            // ===== ADVANCED =====
+            {
+                name: "git cherry-pick",
+                category: "advanced",
+                description: "Apply specific commits from one branch to another.",
+                usages: [
+                    { cmd: "git cherry-pick <commit>", desc: "Apply a specific commit to current branch" },
+                    { cmd: "git cherry-pick <commit1> <commit2>", desc: "Cherry-pick multiple commits" },
+                    { cmd: "git cherry-pick <start>..<end>", desc: "Cherry-pick a range of commits" },
+                    { cmd: "git cherry-pick --no-commit <commit>", desc: "Apply changes without committing" },
+                    { cmd: "git cherry-pick -n <commit>", desc: "Same as --no-commit" },
+                    { cmd: "git cherry-pick --abort", desc: "Abort cherry-pick in progress" },
+                    { cmd: "git cherry-pick --continue", desc: "Continue after resolving conflicts" },
+                    { cmd: "git cherry-pick -x <commit>", desc: "Append source commit info to message" }
+                ]
+            },
+            {
+                name: "git bisect",
+                category: "advanced",
+                description: "Use binary search to find the commit that introduced a bug.",
+                usages: [
+                    { cmd: "git bisect start", desc: "Start the bisect process" },
+                    { cmd: "git bisect bad", desc: "Mark current commit as bad (has the bug)" },
+                    { cmd: "git bisect good <commit>", desc: "Mark a known good commit" },
+                    { cmd: "git bisect good", desc: "Mark current commit as good" },
+                    { cmd: "git bisect reset", desc: "End bisect and return to original branch" },
+                    { cmd: "git bisect log", desc: "Show bisect log" },
+                    { cmd: "git bisect run <script>", desc: "Automatically bisect using a test script" },
+                    { cmd: "git bisect skip", desc: "Skip current commit (can't test it)" }
+                ]
+            },
+            {
+                name: "git submodule",
+                category: "advanced",
+                description: "Manage repositories within repositories.",
+                usages: [
+                    { cmd: "git submodule add <url>", desc: "Add a new submodule" },
+                    { cmd: "git submodule add <url> <path>", desc: "Add submodule at a specific path" },
+                    { cmd: "git submodule init", desc: "Initialize submodules" },
+                    { cmd: "git submodule update", desc: "Fetch and checkout submodule commits" },
+                    { cmd: "git submodule update --init", desc: "Init and update in one step" },
+                    { cmd: "git submodule update --init --recursive", desc: "Init and update all nested submodules" },
+                    { cmd: "git submodule status", desc: "Show status of submodules" },
+                    { cmd: "git submodule foreach git pull", desc: "Pull latest changes in all submodules" },
+                    { cmd: "git submodule deinit <path>", desc: "Unregister a submodule" }
+                ]
+            },
+            {
+                name: "git worktree",
+                category: "advanced",
+                description: "Manage multiple working trees attached to the same repository.",
+                usages: [
+                    { cmd: "git worktree add <path> <branch>", desc: "Create a new worktree for a branch" },
+                    { cmd: "git worktree add ../hotfix hotfix", desc: "Create worktree in a sibling directory" },
+                    { cmd: "git worktree list", desc: "List all linked worktrees" },
+                    { cmd: "git worktree remove <path>", desc: "Remove a worktree" },
+                    { cmd: "git worktree prune", desc: "Clean up stale worktree info" }
+                ]
+            },
+            {
+                name: "git archive",
+                category: "advanced",
+                description: "Create an archive of files from a named tree.",
+                usages: [
+                    { cmd: "git archive --format=zip HEAD > project.zip", desc: "Create a ZIP archive of current HEAD" },
+                    { cmd: "git archive --format=tar HEAD > project.tar", desc: "Create a TAR archive" },
+                    { cmd: "git archive --format=zip --output=v1.0.zip v1.0", desc: "Archive a specific tag" },
+                    { cmd: "git archive HEAD --prefix=project/ > project.tar", desc: "Archive with a prefix directory" }
+                ]
+            },
+            {
+                name: "git grep",
+                category: "advanced",
+                description: "Search for patterns in tracked files.",
+                usages: [
+                    { cmd: "git grep \"search term\"", desc: "Search for a string in tracked files" },
+                    { cmd: "git grep -n \"term\"", desc: "Search with line numbers" },
+                    { cmd: "git grep -c \"term\"", desc: "Count matches per file" },
+                    { cmd: "git grep \"term\" <commit>", desc: "Search in a specific commit" },
+                    { cmd: "git grep -i \"term\"", desc: "Case-insensitive search" },
+                    { cmd: "git grep --heading \"term\"", desc: "Group results by file" }
+                ]
+            },
+            // ===== GITHUB SPECIFIC =====
+            {
+                name: "GitHub: Fork & PR",
+                category: "github",
+                description: "Fork repositories and create Pull Requests on GitHub.",
+                usages: [
+                    { cmd: "# Fork via GitHub UI", desc: "Click 'Fork' button on the repository page" },
+                    { cmd: "git clone <your-fork-url>", desc: "Clone your forked repository" },
+                    { cmd: "git remote add upstream <original-url>", desc: "Add original repo as 'upstream' remote" },
+                    { cmd: "git fetch upstream", desc: "Fetch changes from original repository" },
+                    { cmd: "git merge upstream/main", desc: "Merge upstream changes into your branch" },
+                    { cmd: "git rebase upstream/main", desc: "Rebase your work onto upstream changes" },
+                    { cmd: "git push origin <feature-branch>", desc: "Push feature branch to your fork" },
+                    { cmd: "# Create PR via GitHub UI", desc: "Click 'New Pull Request' on GitHub" },
+                    { cmd: "gh pr create --title \"Title\" --body \"Desc\"", desc: "Create PR using GitHub CLI" },
+                    { cmd: "gh pr list", desc: "List open pull requests (GitHub CLI)" },
+                    { cmd: "gh pr merge <number>", desc: "Merge a pull request (GitHub CLI)" },
+                    { cmd: "gh pr checkout <number>", desc: "Check out a PR locally (GitHub CLI)" }
+                ]
+            },
+            {
+                name: "GitHub: SSH Setup",
+                category: "github",
+                description: "Set up SSH keys for GitHub authentication.",
+                usages: [
+                    { cmd: "ssh-keygen -t ed25519 -C \"your@email.com\"", desc: "Generate a new SSH key" },
+                    { cmd: "ssh-keygen -t rsa -b 4096 -C \"your@email.com\"", desc: "Generate RSA SSH key (legacy)" },
+                    { cmd: "eval \"$(ssh-agent -s)\"", desc: "Start the SSH agent" },
+                    { cmd: "ssh-add ~/.ssh/id_ed25519", desc: "Add SSH key to the agent" },
+                    { cmd: "cat ~/.ssh/id_ed25519.pub", desc: "Display public key (copy to GitHub)" },
+                    { cmd: "# Add key in GitHub → Settings → SSH Keys", desc: "Paste your public key on GitHub" },
+                    { cmd: "ssh -T git@github.com", desc: "Test SSH connection to GitHub" },
+                    { cmd: "git remote set-url origin git@github.com:user/repo.git", desc: "Switch remote URL to SSH" }
+                ]
+            },
+            {
+                name: "GitHub: Actions",
+                category: "github",
+                description: "GitHub Actions CI/CD workflow concepts and files.",
+                usages: [
+                    { cmd: "mkdir -p .github/workflows", desc: "Create the workflows directory" },
+                    { cmd: "# Create .github/workflows/ci.yml", desc: "Create a workflow YAML file" },
+                    { cmd: "on: [push, pull_request]", desc: "Trigger workflow on push or PR" },
+                    { cmd: "on:\n  push:\n    branches: [main]", desc: "Trigger only on push to main" },
+                    { cmd: "runs-on: ubuntu-latest", desc: "Specify the runner OS" },
+                    { cmd: "uses: actions/checkout@v4", desc: "Use the checkout action" },
+                    { cmd: "uses: actions/setup-node@v4", desc: "Use the Node.js setup action" },
+                    { cmd: "gh run list", desc: "List workflow runs (GitHub CLI)" },
+                    { cmd: "gh run view <run-id>", desc: "View a specific workflow run" },
+                    { cmd: "gh workflow run <workflow>", desc: "Manually trigger a workflow" }
+                ]
+            },
+            {
+                name: "GitHub: gh CLI",
+                category: "github",
+                description: "GitHub CLI (gh) common commands for interacting with GitHub.",
+                usages: [
+                    { cmd: "gh auth login", desc: "Authenticate with GitHub" },
+                    { cmd: "gh auth status", desc: "Check authentication status" },
+                    { cmd: "gh repo create <name>", desc: "Create a new repository" },
+                    { cmd: "gh repo create <name> --public", desc: "Create a public repository" },
+                    { cmd: "gh repo create <name> --private", desc: "Create a private repository" },
+                    { cmd: "gh repo clone <owner/repo>", desc: "Clone a repository" },
+                    { cmd: "gh repo fork <owner/repo>", desc: "Fork a repository" },
+                    { cmd: "gh repo view", desc: "View repository details" },
+                    { cmd: "gh issue create --title \"Bug\" --body \"Details\"", desc: "Create an issue" },
+                    { cmd: "gh issue list", desc: "List repository issues" },
+                    { cmd: "gh issue close <number>", desc: "Close an issue" },
+                    { cmd: "gh pr create", desc: "Create a pull request interactively" },
+                    { cmd: "gh pr list", desc: "List pull requests" },
+                    { cmd: "gh pr review <number> --approve", desc: "Approve a pull request" },
+                    { cmd: "gh release create <tag>", desc: "Create a new release" },
+                    { cmd: "gh gist create <file>", desc: "Create a gist from a file" },
+                    { cmd: "gh api repos/<owner>/<repo>", desc: "Make a GitHub API request" }
+                ]
+            },
+            {
+                name: "GitHub: Pages",
+                category: "github",
+                description: "Deploy static websites using GitHub Pages.",
+                usages: [
+                    { cmd: "# Settings → Pages → Source", desc: "Enable GitHub Pages in repo settings" },
+                    { cmd: "# Select branch: main, folder: / or /docs", desc: "Choose source branch and folder" },
+                    { cmd: "git checkout -b gh-pages", desc: "Create a gh-pages branch for deployment" },
+                    { cmd: "# Push to gh-pages branch", desc: "GitHub auto-deploys from gh-pages" },
+                    { cmd: "# URL: https://<user>.github.io/<repo>", desc: "Access your deployed site" },
+                    { cmd: "# Add custom domain in Settings → Pages", desc: "Configure a custom domain" }
+                ]
+            }
+        ];
+
+        // ===== DOM ELEMENTS =====
+        const commandsGrid = document.getElementById('commandsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const filters = document.getElementById('filters');
+        const commandCount = document.getElementById('commandCount');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const closeModal = document.getElementById('closeModal');
+        const scrollTopBtn = document.getElementById('scrollTop');
+        const tooltip = document.getElementById('tooltip');
+
+        let activeFilter = 'all';
+
+        // ===== RENDER COMMAND CARDS =====
+        function renderCommands(filter = 'all', search = '') {
+            let filtered = gitCommands;
+
+            if (filter !== 'all') {
+                filtered = filtered.filter(cmd => cmd.category === filter);
+            }
+
+            if (search) {
+                const term = search.toLowerCase();
+                filtered = filtered.filter(cmd =>
+                    cmd.name.toLowerCase().includes(term) ||
+                    cmd.description.toLowerCase().includes(term) ||
+                    cmd.usages.some(u =>
+                        u.cmd.toLowerCase().includes(term) ||
+                        u.desc.toLowerCase().includes(term)
+                    )
+                );
+            }
+
+            commandCount.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                commandsGrid.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">🔍</div>
+                        <p>No commands found matching your search.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            commandsGrid.innerHTML = filtered.map((cmd, index) => `
+                <div class="command-card" data-index="${gitCommands.indexOf(cmd)}" onclick="openModal(${gitCommands.indexOf(cmd)})">
+                    <div class="card-header">
+                        <span class="cmd-name">${escapeHtml(cmd.name)}</span>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span class="category-badge badge-${cmd.category}">${cmd.category}</span>
+                            <span class="toggle-icon">▶</span>
+                        </div>
+                    </div>
+                    <div class="card-description">${escapeHtml(cmd.description)}</div>
+                </div>
+            `).join('');
+        }
+
+        // ===== OPEN MODAL =====
+        function openModal(index) {
+            const cmd = gitCommands[index];
+            modalTitle.textContent = cmd.name;
+
+            let usagesHtml = `
+                <p class="desc">${escapeHtml(cmd.description)}</p>
+                <h4>📋 All Usages & Options</h4>
+            `;
+
+            cmd.usages.forEach(usage => {
+                usagesHtml += `
+                    <div class="usage-item">
+                        <code class="usage-cmd">
+                            ${escapeHtml(usage.cmd)}
+                            <button class="copy-btn" onclick="event.stopPropagation(); copyToClipboard('${escapeAttr(usage.cmd)}', this)">📋 Copy</button>
+                        </code>
+                        <div class="usage-desc">${escapeHtml(usage.desc)}</div>
+                    </div>
+                `;
+            });
+
+            modalBody.innerHTML = usagesHtml;
+            modalOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ===== CLOSE MODAL =====
+        function closeModalFn() {
+            modalOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        closeModal.addEventListener('click', closeModalFn);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModalFn();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModalFn();
+        });
+
+        // ===== COPY TO CLIPBOARD =====
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                btn.style.opacity = '1';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.opacity = '';
+                }, 1500);
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy';
+                }, 1500);
+            });
+        }
+
+        // ===== FILTERS =====
+        filters.addEventListener('click', (e) => {
+            if (e.target.classList.contains('filter-btn')) {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+                activeFilter = e.target.dataset.filter;
+                renderCommands(activeFilter, searchInput.value);
+            }
+        });
+
+        // ===== SEARCH =====
+        searchInput.addEventListener('input', (e) => {
+            renderCommands(activeFilter, e.target.value);
+        });
+
+        // ===== SCROLL TO TOP =====
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== HELPER FUNCTIONS =====
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function escapeAttr(str) {
+            return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+        }
+
+        // ===== KEYBOARD SHORTCUT =====
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+        });
+
+        // ===== INITIALIZE =====
+        renderCommands();
+    </script>
+</body>
+
+</html>
