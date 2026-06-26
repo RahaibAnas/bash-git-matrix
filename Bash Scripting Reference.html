@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bash Scripting Commands & Concepts Reference</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, #161b22 0%, #1a2332 50%, #0d1117 100%);
+            border-bottom: 1px solid #30363d;
+            padding: 30px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #58a6ff;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        header h1 span {
+            color: #f0883e;
+        }
+
+        header p {
+            color: #8b949e;
+            font-size: 0.95rem;
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-container {
+            max-width: 500px;
+            margin: 15px auto 0;
+            position: relative;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #c9d1d9;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-container input:focus {
+            border-color: #58a6ff;
+        }
+
+        .search-container .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b949e;
+            font-size: 1.1rem;
+        }
+
+        /* ===== CATEGORY TABS ===== */
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .category-tab {
+            padding: 8px 18px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            color: #8b949e;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .category-tab:hover,
+        .category-tab.active {
+            background: #1f6feb;
+            color: #fff;
+            border-color: #1f6feb;
+        }
+
+        /* ===== MAIN GRID ===== */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+            padding: 0 20px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ===== COMMAND CARD ===== */
+        .command-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .command-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #1f6feb;
+            transform: scaleY(0);
+            transition: transform 0.3s;
+        }
+
+        .command-card:hover {
+            border-color: #58a6ff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(31, 111, 235, 0.15);
+        }
+
+        .command-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .command-card .cmd-name {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.15rem;
+            color: #7ee787;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .command-card .cmd-brief {
+            font-size: 0.82rem;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+
+        .command-card .cmd-category {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 2px 10px;
+            background: #1f6feb22;
+            color: #58a6ff;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        /* ===== MODAL OVERLAY ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* ===== MODAL CONTENT ===== */
+        .modal {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 800px;
+            padding: 0;
+            animation: slideUp 0.3s ease;
+            margin-bottom: 40px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            border-bottom: 1px solid #30363d;
+            background: linear-gradient(135deg, #1a2332, #161b22);
+            border-radius: 14px 14px 0 0;
+        }
+
+        .modal-header h2 {
+            font-family: 'Courier New', Courier, monospace;
+            color: #7ee787;
+            font-size: 1.6rem;
+        }
+
+        .modal-header .close-btn {
+            width: 36px;
+            height: 36px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #8b949e;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-header .close-btn:hover {
+            background: #da3633;
+            color: #fff;
+            border-color: #da3633;
+        }
+
+        .modal-body {
+            padding: 25px 30px 30px;
+        }
+
+        .modal-body .description {
+            color: #c9d1d9;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #0d1117;
+            border-radius: 8px;
+            border-left: 3px solid #58a6ff;
+        }
+
+        /* ===== USAGE SECTION ===== */
+        .usage-section {
+            margin-bottom: 20px;
+        }
+
+        .usage-section h3 {
+            color: #f0883e;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .usage-section h3::before {
+            content: '▸';
+            color: #f0883e;
+        }
+
+        .usage-item {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .usage-item .usage-label {
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            color: #8b949e;
+            border-bottom: 1px solid #21262d;
+            background: #161b2288;
+        }
+
+        .usage-item pre {
+            padding: 15px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .usage-item code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+
+        /* ===== COPY BUTTON ===== */
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 12px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #8b949e;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #1f6feb;
+            color: #fff;
+        }
+
+        .copy-btn.copied {
+            background: #238636;
+            color: #fff;
+        }
+
+        /* ===== SYNTAX HIGHLIGHTING ===== */
+        .sh-comment { color: #8b949e; font-style: italic; }
+        .sh-keyword { color: #ff7b72; }
+        .sh-string { color: #a5d6ff; }
+        .sh-variable { color: #ffa657; }
+        .sh-command { color: #7ee787; }
+        .sh-flag { color: #d2a8ff; }
+        .sh-number { color: #79c0ff; }
+
+        /* ===== OPTIONS TABLE ===== */
+        .options-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .options-table th {
+            text-align: left;
+            padding: 10px 15px;
+            background: #21262d;
+            color: #58a6ff;
+            font-size: 0.85rem;
+            border: 1px solid #30363d;
+        }
+
+        .options-table td {
+            padding: 10px 15px;
+            border: 1px solid #30363d;
+            font-size: 0.85rem;
+        }
+
+        .options-table td:first-child {
+            font-family: 'Courier New', Courier, monospace;
+            color: #d2a8ff;
+            white-space: nowrap;
+        }
+
+        .options-table tr:hover {
+            background: #21262d44;
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background: #1f6feb;
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(31, 111, 235, 0.4);
+            transition: all 0.3s;
+            z-index: 50;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+        }
+
+        .back-to-top.visible {
+            display: flex;
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            text-align: center;
+            padding: 10px;
+            color: #484f58;
+            font-size: 0.8rem;
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #484f58;
+        }
+
+        .no-results .emoji {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.4rem;
+            }
+
+            .commands-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 8px;
+                padding: 0 12px 30px;
+            }
+
+            .command-card {
+                padding: 15px;
+            }
+
+            .modal {
+                border-radius: 10px;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-overlay {
+                padding: 20px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .commands-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>🐧 Bash <span>Scripting</span> Reference</h1>
+        <p>Click any command to explore its full usage, options & examples</p>
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search commands... (e.g., grep, awk, for)">
+        </div>
+    </header>
+
+    <!-- CATEGORY TABS -->
+    <div class="category-tabs" id="categoryTabs">
+        <span class="category-tab active" data-category="all">All Commands</span>
+        <span class="category-tab" data-category="file">File Operations</span>
+        <span class="category-tab" data-category="text">Text Processing</span>
+        <span class="category-tab" data-category="system">System & Process</span>
+        <span class="category-tab" data-category="network">Network</span>
+        <span class="category-tab" data-category="flow">Flow Control</span>
+        <span class="category-tab" data-category="variable">Variables & I/O</span>
+        <span class="category-tab" data-category="permission">Permissions</span>
+        <span class="category-tab" data-category="archive">Archive</span>
+        <span class="category-tab" data-category="misc">Miscellaneous</span>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar" id="statsBar"></div>
+
+    <!-- COMMANDS GRID -->
+    <div class="commands-grid" id="commandsGrid"></div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="close-btn" id="closeModal">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- BACK TO TOP -->
+    <button class="back-to-top" id="backToTop">↑</button>
+
+    <script>
+        // ===== COMMAND DATA =====
+        const commands = [
+            // ── FILE OPERATIONS ──
+            {
+                name: "ls",
+                brief: "List directory contents",
+                category: "file",
+                description: "List information about files and directories. By default, lists the current directory contents.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "List files in current directory", code: "ls" },
+                            { label: "List all files including hidden", code: "ls -a" },
+                            { label: "Long format listing with details", code: "ls -l" },
+                            { label: "Human-readable file sizes", code: "ls -lh" },
+                            { label: "List with all details and hidden files", code: "ls -la" },
+                            { label: "Sort by modification time", code: "ls -lt" },
+                            { label: "Reverse sort order", code: "ls -lr" },
+                            { label: "Recursive listing", code: "ls -R" },
+                            { label: "List only directories", code: "ls -d */" },
+                            { label: "List with inode numbers", code: "ls -i" }
+                        ]
+                    },
+                    {
+                        title: "Advanced Examples",
+                        items: [
+                            { label: "Sort by file size (largest first)", code: "ls -lS" },
+                            { label: "List one file per line", code: "ls -1" },
+                            { label: "List files matching a pattern", code: 'ls *.txt' },
+                            { label: "Colorized output", code: "ls --color=auto" },
+                            { label: "Show file type indicators", code: "ls -F" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-a", "Show all files including hidden (dotfiles)"],
+                    ["-l", "Long format with permissions, owner, size, date"],
+                    ["-h", "Human-readable sizes (K, M, G)"],
+                    ["-R", "List subdirectories recursively"],
+                    ["-S", "Sort by file size"],
+                    ["-t", "Sort by modification time"],
+                    ["-r", "Reverse the sort order"],
+                    ["-d", "List directories themselves, not contents"],
+                    ["-i", "Show inode number"],
+                    ["-1", "One entry per line"]
+                ]
+            },
+            {
+                name: "cd",
+                brief: "Change the current directory",
+                category: "file",
+                description: "Change the current working directory. Essential for navigating the file system in bash.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Go to home directory", code: "cd\ncd ~" },
+                            { label: "Go to a specific directory", code: "cd /var/log" },
+                            { label: "Go up one level", code: "cd .." },
+                            { label: "Go up two levels", code: "cd ../.." },
+                            { label: "Go to previous directory", code: "cd -" },
+                            { label: "Go to root directory", code: "cd /" },
+                            { label: "Go to another user's home", code: "cd ~username" }
+                        ]
+                    },
+                    {
+                        title: "In Scripts",
+                        items: [
+                            { label: "Change dir and run command", code: "cd /var/log && ls -la" },
+                            { label: "Using with subshell (doesn't affect parent)", code: "(cd /tmp && pwd)\npwd  # still in original dir" },
+                            { label: "Store and return to directory", code: 'pushd /var/log\n# do work...\npopd' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "cp",
+                brief: "Copy files and directories",
+                category: "file",
+                description: "Copy files and directories from source to destination.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Copy a file", code: "cp source.txt destination.txt" },
+                            { label: "Copy to a directory", code: "cp file.txt /path/to/dir/" },
+                            { label: "Copy multiple files to directory", code: "cp file1.txt file2.txt /dest/" },
+                            { label: "Copy directory recursively", code: "cp -r source_dir/ dest_dir/" },
+                            { label: "Interactive (prompt before overwrite)", code: "cp -i source.txt dest.txt" },
+                            { label: "Preserve attributes", code: "cp -p source.txt dest.txt" },
+                            { label: "Verbose output", code: "cp -v source.txt dest.txt" },
+                            { label: "Copy and don't overwrite existing", code: "cp -n source.txt dest.txt" }
+                        ]
+                    },
+                    {
+                        title: "Advanced Examples",
+                        items: [
+                            { label: "Copy with all attributes preserved", code: "cp -a source_dir/ dest_dir/" },
+                            { label: "Copy only if source is newer", code: "cp -u source.txt dest.txt" },
+                            { label: "Create backup of destination", code: "cp --backup=numbered file.txt dest/" },
+                            { label: "Copy all .log files", code: "cp *.log /backup/" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-r, -R", "Copy directories recursively"],
+                    ["-i", "Prompt before overwrite"],
+                    ["-v", "Verbose mode"],
+                    ["-p", "Preserve mode, ownership, timestamps"],
+                    ["-a", "Archive mode (preserve all attributes)"],
+                    ["-u", "Copy only when source is newer"],
+                    ["-n", "Do not overwrite existing files"],
+                    ["-f", "Force overwrite"]
+                ]
+            },
+            {
+                name: "mv",
+                brief: "Move or rename files",
+                category: "file",
+                description: "Move or rename files and directories.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Rename a file", code: "mv oldname.txt newname.txt" },
+                            { label: "Move file to directory", code: "mv file.txt /path/to/dir/" },
+                            { label: "Move multiple files", code: "mv file1.txt file2.txt /dest/" },
+                            { label: "Move and rename", code: "mv /old/path/file.txt /new/path/newname.txt" },
+                            { label: "Interactive mode", code: "mv -i source.txt dest.txt" },
+                            { label: "Don't overwrite existing", code: "mv -n source.txt dest.txt" },
+                            { label: "Verbose output", code: "mv -v *.txt /archive/" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-i", "Prompt before overwrite"],
+                    ["-n", "Do not overwrite existing"],
+                    ["-v", "Verbose output"],
+                    ["-f", "Force move without prompting"],
+                    ["-u", "Move only if source is newer"]
+                ]
+            },
+            {
+                name: "rm",
+                brief: "Remove files and directories",
+                category: "file",
+                description: "Remove (delete) files and directories. Use with caution — deletions are permanent!",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Remove a file", code: "rm file.txt" },
+                            { label: "Remove with confirmation", code: "rm -i file.txt" },
+                            { label: "Remove directory and contents", code: "rm -r directory/" },
+                            { label: "Force remove without confirmation", code: "rm -f file.txt" },
+                            { label: "Force remove directory", code: "rm -rf directory/" },
+                            { label: "Verbose deletion", code: "rm -v file.txt" },
+                            { label: "Remove multiple files", code: "rm file1.txt file2.txt file3.txt" },
+                            { label: "Remove all .tmp files", code: "rm *.tmp" }
+                        ]
+                    },
+                    {
+                        title: "⚠️ Safety Tips",
+                        items: [
+                            { label: "Always double-check before rm -rf", code: "# DANGEROUS - Never do this:\n# rm -rf /\n# rm -rf /*\n\n# SAFE - Always verify path first:\necho rm -rf $DIR  # Preview first\nrm -rf \"$DIR\"     # Then execute" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-r, -R", "Remove directories recursively"],
+                    ["-f", "Force removal without confirmation"],
+                    ["-i", "Prompt before each removal"],
+                    ["-v", "Verbose — show files being removed"],
+                    ["-d", "Remove empty directories"]
+                ]
+            },
+            {
+                name: "mkdir",
+                brief: "Create directories",
+                category: "file",
+                description: "Create new directories (folders).",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Create a directory", code: "mkdir my_directory" },
+                            { label: "Create nested directories", code: "mkdir -p parent/child/grandchild" },
+                            { label: "Create with specific permissions", code: "mkdir -m 755 my_directory" },
+                            { label: "Create multiple directories", code: "mkdir dir1 dir2 dir3" },
+                            { label: "Verbose output", code: "mkdir -v new_folder" },
+                            { label: "Create project structure", code: "mkdir -p project/{src,bin,docs,tests}" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-p", "Create parent directories as needed"],
+                    ["-m", "Set permissions (e.g., -m 755)"],
+                    ["-v", "Verbose output"]
+                ]
+            },
+            {
+                name: "find",
+                brief: "Search for files in directory tree",
+                category: "file",
+                description: "Search for files and directories in a directory hierarchy based on various criteria.",
+                usages: [
+                    {
+                        title: "Find by Name",
+                        items: [
+                            { label: "Find by exact name", code: 'find /path -name "file.txt"' },
+                            { label: "Case-insensitive search", code: 'find /path -iname "file.txt"' },
+                            { label: "Find by extension", code: 'find . -name "*.log"' },
+                            { label: "Find by pattern", code: 'find . -name "report_*"' }
+                        ]
+                    },
+                    {
+                        title: "Find by Type",
+                        items: [
+                            { label: "Find only files", code: 'find . -type f' },
+                            { label: "Find only directories", code: 'find . -type d' },
+                            { label: "Find symbolic links", code: 'find . -type l' }
+                        ]
+                    },
+                    {
+                        title: "Find by Size & Time",
+                        items: [
+                            { label: "Files larger than 100MB", code: 'find . -size +100M' },
+                            { label: "Files smaller than 1KB", code: 'find . -size -1k' },
+                            { label: "Modified in last 7 days", code: 'find . -mtime -7' },
+                            { label: "Modified more than 30 days ago", code: 'find . -mtime +30' },
+                            { label: "Accessed in last 24 hours", code: 'find . -atime -1' }
+                        ]
+                    },
+                    {
+                        title: "Find with Actions",
+                        items: [
+                            { label: "Delete found files", code: 'find . -name "*.tmp" -delete' },
+                            { label: "Execute command on results", code: 'find . -name "*.log" -exec rm {} \\;' },
+                            { label: "Execute with confirmation", code: 'find . -name "*.bak" -ok rm {} \\;' },
+                            { label: "Find and change permissions", code: 'find . -type f -exec chmod 644 {} \\;' },
+                            { label: "Find empty files", code: 'find . -type f -empty' },
+                            { label: "Find by permissions", code: 'find . -perm 777' },
+                            { label: "Find by owner", code: 'find . -user username' },
+                            { label: "Combine conditions (AND)", code: 'find . -name "*.txt" -size +1M' },
+                            { label: "Combine conditions (OR)", code: 'find . -name "*.jpg" -o -name "*.png"' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "touch",
+                brief: "Create files or update timestamps",
+                category: "file",
+                description: "Create empty files or update the access and modification timestamps of existing files.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Create an empty file", code: "touch newfile.txt" },
+                            { label: "Create multiple files", code: "touch file1.txt file2.txt file3.txt" },
+                            { label: "Update timestamp of existing file", code: "touch existing_file.txt" },
+                            { label: "Set specific timestamp", code: "touch -t 202312251030 file.txt" },
+                            { label: "Use reference file's timestamp", code: "touch -r reference.txt target.txt" },
+                            { label: "Don't create file if it doesn't exist", code: "touch -c nonexistent.txt" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "cat",
+                brief: "Concatenate and display files",
+                category: "file",
+                description: "Concatenate files and print their content to standard output.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Display file contents", code: "cat file.txt" },
+                            { label: "Display with line numbers", code: "cat -n file.txt" },
+                            { label: "Display non-blank line numbers", code: "cat -b file.txt" },
+                            { label: "Concatenate multiple files", code: "cat file1.txt file2.txt" },
+                            { label: "Create a file with content", code: 'cat > newfile.txt << EOF\nHello World\nThis is content\nEOF' },
+                            { label: "Append to a file", code: 'cat >> file.txt << EOF\nAppended content\nEOF' },
+                            { label: "Show special characters", code: "cat -A file.txt" },
+                            { label: "Squeeze blank lines", code: "cat -s file.txt" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-n", "Number all output lines"],
+                    ["-b", "Number non-blank lines only"],
+                    ["-s", "Squeeze multiple blank lines into one"],
+                    ["-A", "Show all (equivalent to -vET)"],
+                    ["-E", "Show $ at end of each line"],
+                    ["-T", "Show TAB characters as ^I"]
+                ]
+            },
+            // ── TEXT PROCESSING ──
+            {
+                name: "grep",
+                brief: "Search text using patterns",
+                category: "text",
+                description: "Search for patterns in files or input. Supports regular expressions. One of the most powerful text processing tools.",
+                usages: [
+                    {
+                        title: "Basic Search",
+                        items: [
+                            { label: "Search for a string in a file", code: 'grep "pattern" file.txt' },
+                            { label: "Case-insensitive search", code: 'grep -i "pattern" file.txt' },
+                            { label: "Search recursively in directories", code: 'grep -r "pattern" /path/' },
+                            { label: "Show line numbers", code: 'grep -n "pattern" file.txt' },
+                            { label: "Count matching lines", code: 'grep -c "pattern" file.txt' },
+                            { label: "Invert match (non-matching lines)", code: 'grep -v "pattern" file.txt' },
+                            { label: "Match whole words only", code: 'grep -w "word" file.txt' }
+                        ]
+                    },
+                    {
+                        title: "Regular Expressions",
+                        items: [
+                            { label: "Extended regex", code: 'grep -E "pattern1|pattern2" file.txt' },
+                            { label: "Match beginning of line", code: 'grep "^Start" file.txt' },
+                            { label: "Match end of line", code: 'grep "end$" file.txt' },
+                            { label: "Match any character", code: 'grep "h.t" file.txt  # hat, hit, hot' },
+                            { label: "Match digits", code: 'grep "[0-9]" file.txt' },
+                            { label: "Match IP addresses", code: 'grep -E "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}" file.txt' }
+                        ]
+                    },
+                    {
+                        title: "Advanced Usage",
+                        items: [
+                            { label: "Show context lines (before & after)", code: 'grep -C 3 "error" log.txt' },
+                            { label: "Show only matching part", code: 'grep -o "pattern" file.txt' },
+                            { label: "List files with matches", code: 'grep -l "pattern" *.txt' },
+                            { label: "List files without matches", code: 'grep -L "pattern" *.txt' },
+                            { label: "Multiple patterns", code: 'grep -e "pat1" -e "pat2" file.txt' },
+                            { label: "Read patterns from file", code: 'grep -f patterns.txt file.txt' },
+                            { label: "Pipe with grep", code: 'ps aux | grep "nginx"\ncat log.txt | grep -i "error" | grep -v "debug"' },
+                            { label: "Grep with color", code: 'grep --color=auto "pattern" file.txt' }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-i", "Case-insensitive matching"],
+                    ["-v", "Invert match"],
+                    ["-n", "Show line numbers"],
+                    ["-c", "Count matches"],
+                    ["-r", "Recursive search"],
+                    ["-l", "List filenames only"],
+                    ["-w", "Match whole words"],
+                    ["-E", "Extended regex (egrep)"],
+                    ["-o", "Show only matched part"],
+                    ["-A n", "Show n lines after match"],
+                    ["-B n", "Show n lines before match"],
+                    ["-C n", "Show n lines around match"]
+                ]
+            },
+            {
+                name: "awk",
+                brief: "Pattern scanning and processing",
+                category: "text",
+                description: "A powerful text processing language. Excels at columnar data, field extraction, and report generation.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Print specific column", code: "awk '{print $1}' file.txt" },
+                            { label: "Print multiple columns", code: "awk '{print $1, $3}' file.txt" },
+                            { label: "Custom field separator", code: "awk -F: '{print $1, $3}' /etc/passwd" },
+                            { label: "Print line number with content", code: "awk '{print NR, $0}' file.txt" },
+                            { label: "Print last column", code: "awk '{print $NF}' file.txt" }
+                        ]
+                    },
+                    {
+                        title: "Conditions & Patterns",
+                        items: [
+                            { label: "Print lines matching pattern", code: "awk '/error/ {print}' log.txt" },
+                            { label: "Print if column matches value", code: "awk '$3 > 100 {print $1, $3}' data.txt" },
+                            { label: "Print lines longer than 80 chars", code: "awk 'length > 80' file.txt" },
+                            { label: "Print specific line range", code: "awk 'NR>=5 && NR<=10' file.txt" },
+                            { label: "BEGIN and END blocks", code: "awk 'BEGIN {print \"Header\"} {print $0} END {print \"Total:\", NR}' file.txt" }
+                        ]
+                    },
+                    {
+                        title: "Advanced Examples",
+                        items: [
+                            { label: "Sum a column", code: "awk '{sum += $2} END {print sum}' data.txt" },
+                            { label: "Calculate average", code: "awk '{sum += $2; count++} END {print sum/count}' data.txt" },
+                            { label: "Remove duplicate lines", code: "awk '!seen[$0]++' file.txt" },
+                            { label: "Replace field separator", code: "awk -F: -v OFS='\\t' '{print $1, $3}' /etc/passwd" },
+                            { label: "Print between two patterns", code: "awk '/START/,/END/' file.txt" },
+                            { label: "Count word frequency", code: "awk '{for(i=1;i<=NF;i++) freq[$i]++} END {for(w in freq) print w, freq[w]}' file.txt" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-F", "Set input field separator"],
+                    ["-v", "Assign variable (e.g., -v OFS=',')"],
+                    ["-f", "Read awk program from file"],
+                    ["$0", "Entire line"],
+                    ["$1,$2..", "Individual fields"],
+                    ["NR", "Current line/record number"],
+                    ["NF", "Number of fields in current line"],
+                    ["FS", "Input field separator"],
+                    ["OFS", "Output field separator"]
+                ]
+            },
+            {
+                name: "sed",
+                brief: "Stream editor for text transformation",
+                category: "text",
+                description: "Stream editor for filtering and transforming text. Commonly used for find-and-replace operations.",
+                usages: [
+                    {
+                        title: "Substitution (Find & Replace)",
+                        items: [
+                            { label: "Replace first occurrence per line", code: "sed 's/old/new/' file.txt" },
+                            { label: "Replace ALL occurrences (global)", code: "sed 's/old/new/g' file.txt" },
+                            { label: "Case-insensitive replace", code: "sed 's/old/new/gi' file.txt" },
+                            { label: "Replace and edit in-place", code: "sed -i 's/old/new/g' file.txt" },
+                            { label: "In-place with backup", code: "sed -i.bak 's/old/new/g' file.txt" },
+                            { label: "Replace on specific line", code: "sed '3s/old/new/' file.txt" },
+                            { label: "Replace in line range", code: "sed '2,5s/old/new/g' file.txt" }
+                        ]
+                    },
+                    {
+                        title: "Deletion & Insertion",
+                        items: [
+                            { label: "Delete a specific line", code: "sed '3d' file.txt" },
+                            { label: "Delete line range", code: "sed '2,5d' file.txt" },
+                            { label: "Delete lines matching pattern", code: "sed '/pattern/d' file.txt" },
+                            { label: "Delete empty lines", code: "sed '/^$/d' file.txt" },
+                            { label: "Insert line before match", code: "sed '/pattern/i\\New line before' file.txt" },
+                            { label: "Append line after match", code: "sed '/pattern/a\\New line after' file.txt" }
+                        ]
+                    },
+                    {
+                        title: "Advanced Usage",
+                        items: [
+                            { label: "Print only matching lines", code: "sed -n '/pattern/p' file.txt" },
+                            { label: "Print specific line", code: "sed -n '5p' file.txt" },
+                            { label: "Print line range", code: "sed -n '10,20p' file.txt" },
+                            { label: "Multiple operations", code: "sed -e 's/foo/bar/g' -e 's/baz/qux/g' file.txt" },
+                            { label: "Use different delimiter", code: "sed 's|/old/path|/new/path|g' file.txt" },
+                            { label: "Capture groups", code: "sed 's/\\(.*\\)@\\(.*\\)/User: \\1, Domain: \\2/' emails.txt" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-i", "Edit file in-place"],
+                    ["-n", "Suppress automatic output"],
+                    ["-e", "Add editing command"],
+                    ["-f", "Read commands from file"],
+                    ["s///", "Substitution command"],
+                    ["g", "Global flag (all occurrences)"],
+                    ["p", "Print command"],
+                    ["d", "Delete command"]
+                ]
+            },
+            {
+                name: "sort",
+                brief: "Sort lines of text",
+                category: "text",
+                description: "Sort lines of text files or input alphabetically, numerically, or by other criteria.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Sort alphabetically", code: "sort file.txt" },
+                            { label: "Sort in reverse", code: "sort -r file.txt" },
+                            { label: "Sort numerically", code: "sort -n numbers.txt" },
+                            { label: "Sort by specific column", code: "sort -k2 file.txt" },
+                            { label: "Sort with custom delimiter", code: "sort -t: -k3 -n /etc/passwd" },
+                            { label: "Remove duplicates while sorting", code: "sort -u file.txt" },
+                            { label: "Sort human-readable sizes", code: "sort -h sizes.txt" },
+                            { label: "Case-insensitive sort", code: "sort -f file.txt" },
+                            { label: "Sort by month name", code: "sort -M dates.txt" },
+                            { label: "Check if file is sorted", code: "sort -c file.txt" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-r", "Reverse sort order"],
+                    ["-n", "Numeric sort"],
+                    ["-k", "Sort by specific field/column"],
+                    ["-t", "Set field delimiter"],
+                    ["-u", "Remove duplicate lines"],
+                    ["-f", "Case-insensitive"],
+                    ["-h", "Human-readable numeric sort"],
+                    ["-o", "Write output to file"]
+                ]
+            },
+            {
+                name: "cut",
+                brief: "Extract sections from lines",
+                category: "text",
+                description: "Remove or extract sections from each line of input based on character position, byte position, or field delimiter.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Cut by character position", code: "cut -c1-5 file.txt" },
+                            { label: "Cut specific field (tab-delimited)", code: "cut -f2 file.txt" },
+                            { label: "Cut with custom delimiter", code: "cut -d: -f1,3 /etc/passwd" },
+                            { label: "Cut multiple fields", code: "cut -d, -f1,3,5 data.csv" },
+                            { label: "Cut from position to end", code: "cut -c5- file.txt" },
+                            { label: "Cut first 10 characters", code: "cut -c-10 file.txt" },
+                            { label: "Extract from CSV", code: "cut -d',' -f2 data.csv" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-c", "Cut by character position"],
+                    ["-f", "Cut by field number"],
+                    ["-d", "Set field delimiter"],
+                    ["-b", "Cut by byte position"],
+                    ["--complement", "Invert selection"]
+                ]
+            },
+            {
+                name: "head",
+                brief: "Display beginning of file",
+                category: "text",
+                description: "Output the first part of files. Default is first 10 lines.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Show first 10 lines", code: "head file.txt" },
+                            { label: "Show first N lines", code: "head -n 20 file.txt" },
+                            { label: "Show first N bytes", code: "head -c 100 file.txt" },
+                            { label: "All but last N lines", code: "head -n -5 file.txt" },
+                            { label: "Multiple files", code: "head -n 5 file1.txt file2.txt" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "tail",
+                brief: "Display end of file",
+                category: "text",
+                description: "Output the last part of files. Default is last 10 lines. Very useful for monitoring log files.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Show last 10 lines", code: "tail file.txt" },
+                            { label: "Show last N lines", code: "tail -n 20 file.txt" },
+                            { label: "Follow file (live updates)", code: "tail -f /var/log/syslog" },
+                            { label: "Follow with retry", code: "tail -F /var/log/syslog" },
+                            { label: "Show from line N onwards", code: "tail -n +5 file.txt" },
+                            { label: "Last N bytes", code: "tail -c 100 file.txt" },
+                            { label: "Follow multiple files", code: "tail -f log1.txt log2.txt" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-n", "Number of lines to show"],
+                    ["-f", "Follow — output appended data as file grows"],
+                    ["-F", "Follow with retry (handles file rotation)"],
+                    ["-c", "Number of bytes to show"],
+                    ["--pid", "Terminate after process dies"]
+                ]
+            },
+            {
+                name: "wc",
+                brief: "Count lines, words, characters",
+                category: "text",
+                description: "Print newline, word, and byte counts for each file.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Full count (lines, words, bytes)", code: "wc file.txt" },
+                            { label: "Count lines only", code: "wc -l file.txt" },
+                            { label: "Count words only", code: "wc -w file.txt" },
+                            { label: "Count characters", code: "wc -m file.txt" },
+                            { label: "Count bytes", code: "wc -c file.txt" },
+                            { label: "Count lines from pipe", code: 'grep "error" log.txt | wc -l' },
+                            { label: "Count files in directory", code: "ls | wc -l" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "tr",
+                brief: "Translate or delete characters",
+                category: "text",
+                description: "Translate, squeeze, or delete characters from standard input.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Convert lowercase to uppercase", code: "echo 'hello' | tr 'a-z' 'A-Z'" },
+                            { label: "Convert uppercase to lowercase", code: "echo 'HELLO' | tr 'A-Z' 'a-z'" },
+                            { label: "Replace spaces with tabs", code: "tr ' ' '\\t' < file.txt" },
+                            { label: "Delete specific characters", code: "echo 'hello 123' | tr -d '0-9'" },
+                            { label: "Squeeze repeated characters", code: "echo 'hello   world' | tr -s ' '" },
+                            { label: "Remove newlines", code: "tr -d '\\n' < file.txt" },
+                            { label: "Replace non-alphanumeric", code: "tr -c 'a-zA-Z0-9\\n' ' ' < file.txt" },
+                            { label: "ROT13 encoding", code: "echo 'hello' | tr 'a-zA-Z' 'n-za-mN-ZA-M'" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-d", "Delete characters"],
+                    ["-s", "Squeeze repeated characters"],
+                    ["-c", "Complement (use inverse of SET1)"]
+                ]
+            },
+            {
+                name: "uniq",
+                brief: "Report or omit repeated lines",
+                category: "text",
+                description: "Filter adjacent matching lines. Usually used with sort since it only detects adjacent duplicates.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Remove adjacent duplicates", code: "sort file.txt | uniq" },
+                            { label: "Count occurrences", code: "sort file.txt | uniq -c" },
+                            { label: "Show only duplicate lines", code: "sort file.txt | uniq -d" },
+                            { label: "Show only unique lines", code: "sort file.txt | uniq -u" },
+                            { label: "Case-insensitive", code: "sort file.txt | uniq -i" },
+                            { label: "Top 10 most frequent lines", code: "sort file.txt | uniq -c | sort -rn | head" }
+                        ]
+                    }
+                ]
+            },
+            // ── SYSTEM & PROCESS ──
+            {
+                name: "ps",
+                brief: "Display running processes",
+                category: "system",
+                description: "Report a snapshot of current processes running on the system.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Show current user processes", code: "ps" },
+                            { label: "Show all processes (detailed)", code: "ps aux" },
+                            { label: "Show all processes (full format)", code: "ps -ef" },
+                            { label: "Show process tree", code: "ps auxf" },
+                            { label: "Filter by process name", code: "ps aux | grep nginx" },
+                            { label: "Show specific user's processes", code: "ps -u username" },
+                            { label: "Show by PID", code: "ps -p 1234" },
+                            { label: "Custom output format", code: "ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem" },
+                            { label: "Top 10 memory processes", code: "ps aux --sort=-%mem | head -10" },
+                            { label: "Top 10 CPU processes", code: "ps aux --sort=-%cpu | head -10" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "kill",
+                brief: "Send signals to processes",
+                category: "system",
+                description: "Send a signal to a process. Default signal is SIGTERM (15) for graceful termination.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Graceful termination", code: "kill PID" },
+                            { label: "Force kill", code: "kill -9 PID\nkill -SIGKILL PID" },
+                            { label: "Kill by name", code: "killall process_name" },
+                            { label: "Kill using pkill (pattern match)", code: "pkill -f 'pattern'" },
+                            { label: "Send HUP signal (reload config)", code: "kill -HUP PID" },
+                            { label: "List all signals", code: "kill -l" },
+                            { label: "Kill all processes of a user", code: "pkill -u username" },
+                            { label: "Kill process group", code: "kill -TERM -PID" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-9", "SIGKILL — Force kill (cannot be caught)"],
+                    ["-15", "SIGTERM — Graceful termination (default)"],
+                    ["-1", "SIGHUP — Hangup / reload config"],
+                    ["-2", "SIGINT — Interrupt (like Ctrl+C)"],
+                    ["-l", "List all signal names"]
+                ]
+            },
+            {
+                name: "top",
+                brief: "Real-time system monitoring",
+                category: "system",
+                description: "Display real-time view of running system — CPU, memory, processes.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Start top", code: "top" },
+                            { label: "Batch mode (for scripting)", code: "top -b -n 1" },
+                            { label: "Show specific user", code: "top -u username" },
+                            { label: "Set refresh interval", code: "top -d 5  # every 5 seconds" },
+                            { label: "Show specific PID", code: "top -p PID" }
+                        ]
+                    },
+                    {
+                        title: "Interactive Keys (while running)",
+                        items: [
+                            { label: "Keyboard shortcuts inside top", code: "# Press while top is running:\n# q     - Quit\n# M     - Sort by memory\n# P     - Sort by CPU\n# k     - Kill a process\n# r     - Renice a process\n# 1     - Show individual CPUs\n# h     - Help" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "df",
+                brief: "Disk space usage",
+                category: "system",
+                description: "Report file system disk space usage.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Show disk usage", code: "df" },
+                            { label: "Human-readable format", code: "df -h" },
+                            { label: "Show filesystem type", code: "df -T" },
+                            { label: "Show specific filesystem", code: "df -h /dev/sda1" },
+                            { label: "Show inode usage", code: "df -i" },
+                            { label: "Show only local filesystems", code: "df -l" },
+                            { label: "Total summary", code: "df -h --total" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "du",
+                brief: "Directory space usage",
+                category: "system",
+                description: "Estimate file and directory space usage.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Show directory sizes", code: "du -h" },
+                            { label: "Summary of current directory", code: "du -sh" },
+                            { label: "Show sizes up to depth N", code: "du -h --max-depth=1" },
+                            { label: "Sort by size", code: "du -h --max-depth=1 | sort -hr" },
+                            { label: "Top 10 largest directories", code: "du -h --max-depth=1 | sort -hr | head -10" },
+                            { label: "Size of specific directory", code: "du -sh /var/log" },
+                            { label: "Exclude pattern", code: "du -h --exclude='*.log'" }
+                        ]
+                    }
+                ]
+            },
+            // ── FLOW CONTROL ──
+            {
+                name: "if/else",
+                brief: "Conditional statements",
+                category: "flow",
+                description: "Conditional execution of commands based on test expressions. The foundation of bash script logic.",
+                usages: [
+                    {
+                        title: "Basic Syntax",
+                        items: [
+                            { label: "Simple if statement", code: 'if [ "$name" = "John" ]; then\n    echo "Hello John"\nfi' },
+                            { label: "If-else", code: 'if [ "$age" -ge 18 ]; then\n    echo "Adult"\nelse\n    echo "Minor"\nfi' },
+                            { label: "If-elif-else", code: 'if [ "$score" -ge 90 ]; then\n    echo "A"\nelif [ "$score" -ge 80 ]; then\n    echo "B"\nelif [ "$score" -ge 70 ]; then\n    echo "C"\nelse\n    echo "F"\nfi' }
+                        ]
+                    },
+                    {
+                        title: "Test Conditions",
+                        items: [
+                            { label: "String comparisons", code: '# Equal\nif [ "$str1" = "$str2" ]; then ...\n\n# Not equal\nif [ "$str1" != "$str2" ]; then ...\n\n# Empty string\nif [ -z "$str" ]; then ...\n\n# Non-empty string\nif [ -n "$str" ]; then ...' },
+                            { label: "Numeric comparisons", code: '# Equal\nif [ "$a" -eq "$b" ]; then ...\n\n# Not equal\nif [ "$a" -ne "$b" ]; then ...\n\n# Greater than\nif [ "$a" -gt "$b" ]; then ...\n\n# Less than\nif [ "$a" -lt "$b" ]; then ...\n\n# Greater or equal\nif [ "$a" -ge "$b" ]; then ...\n\n# Less or equal\nif [ "$a" -le "$b" ]; then ...' },
+                            { label: "File tests", code: '# File exists\nif [ -f "$file" ]; then ...\n\n# Directory exists\nif [ -d "$dir" ]; then ...\n\n# File is readable\nif [ -r "$file" ]; then ...\n\n# File is writable\nif [ -w "$file" ]; then ...\n\n# File is executable\nif [ -x "$file" ]; then ...\n\n# File is not empty\nif [ -s "$file" ]; then ...\n\n# Path exists (file or dir)\nif [ -e "$path" ]; then ...' },
+                            { label: "Logical operators", code: '# AND\nif [ "$a" -gt 0 ] && [ "$a" -lt 100 ]; then ...\n\n# OR\nif [ "$a" -eq 0 ] || [ "$a" -eq 1 ]; then ...\n\n# NOT\nif [ ! -f "$file" ]; then ...\n\n# Using [[ ]] (bash extended test)\nif [[ "$str" == *"pattern"* ]]; then ...' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "for",
+                brief: "Loop over a list of items",
+                category: "flow",
+                description: "Execute a block of commands for each item in a list. Essential for batch processing and automation.",
+                usages: [
+                    {
+                        title: "Basic Syntax",
+                        items: [
+                            { label: "Loop over a list", code: 'for fruit in apple banana cherry; do\n    echo "I like $fruit"\ndone' },
+                            { label: "Loop over files", code: 'for file in *.txt; do\n    echo "Processing $file"\n    wc -l "$file"\ndone' },
+                            { label: "Loop over range", code: 'for i in {1..10}; do\n    echo "Number: $i"\ndone' },
+                            { label: "Loop with step", code: 'for i in {0..20..5}; do\n    echo "$i"\ndone' },
+                            { label: "C-style for loop", code: 'for ((i=0; i<10; i++)); do\n    echo "$i"\ndone' },
+                            { label: "Loop over command output", code: 'for user in $(cat users.txt); do\n    echo "Hello $user"\ndone' },
+                            { label: "Loop over array", code: 'arr=("one" "two" "three")\nfor item in "${arr[@]}"; do\n    echo "$item"\ndone' },
+                            { label: "Loop with index", code: 'arr=("a" "b" "c")\nfor i in "${!arr[@]}"; do\n    echo "$i: ${arr[$i]}"\ndone' },
+                            { label: "Nested loops", code: 'for i in {1..3}; do\n    for j in {1..3}; do\n        echo "$i x $j = $((i*j))"\n    done\ndone' },
+                            { label: "Infinite loop with break", code: 'for ((;;)); do\n    read -p "Enter (q to quit): " input\n    [ "$input" = "q" ] && break\n    echo "You entered: $input"\ndone' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "while",
+                brief: "Loop while condition is true",
+                category: "flow",
+                description: "Execute commands repeatedly as long as a condition remains true.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Basic while loop", code: 'count=1\nwhile [ $count -le 5 ]; do\n    echo "Count: $count"\n    ((count++))\ndone' },
+                            { label: "Read file line by line", code: 'while IFS= read -r line; do\n    echo "$line"\ndone < file.txt' },
+                            { label: "Infinite loop", code: 'while true; do\n    echo "Running..."\n    sleep 1\ndone' },
+                            { label: "Until loop (opposite of while)", code: 'count=1\nuntil [ $count -gt 5 ]; do\n    echo "Count: $count"\n    ((count++))\ndone' },
+                            { label: "While with pipe", code: 'cat file.txt | while read line; do\n    echo "Line: $line"\ndone' },
+                            { label: "Menu-driven script", code: 'while true; do\n    echo "1) Option A"\n    echo "2) Option B"\n    echo "3) Exit"\n    read -p "Choose: " choice\n    case $choice in\n        1) echo "A selected" ;;\n        2) echo "B selected" ;;\n        3) break ;;\n        *) echo "Invalid" ;;\n    esac\ndone' },
+                            { label: "Wait for condition", code: 'while ! ping -c1 google.com &>/dev/null; do\n    echo "Waiting for network..."\n    sleep 5\ndone\necho "Network is up!"' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "case",
+                brief: "Pattern-based branching",
+                category: "flow",
+                description: "Execute commands based on pattern matching. Cleaner alternative to multiple if-elif statements.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Simple case statement", code: 'case "$fruit" in\n    apple)\n        echo "It\'s an apple"\n        ;;\n    banana)\n        echo "It\'s a banana"\n        ;;\n    *)\n        echo "Unknown fruit"\n        ;;\nesac' },
+                            { label: "Multiple patterns per case", code: 'case "$answer" in\n    [yY] | [yY][eE][sS])\n        echo "You said yes"\n        ;;\n    [nN] | [nN][oO])\n        echo "You said no"\n        ;;\n    *)\n        echo "Invalid answer"\n        ;;\nesac' },
+                            { label: "File extension handler", code: 'case "$file" in\n    *.tar.gz) tar xzf "$file" ;;\n    *.tar.bz2) tar xjf "$file" ;;\n    *.zip) unzip "$file" ;;\n    *.gz) gunzip "$file" ;;\n    *) echo "Unknown format" ;;\nesac' },
+                            { label: "Script argument parser", code: 'case "$1" in\n    start)\n        start_service\n        ;;\n    stop)\n        stop_service\n        ;;\n    restart)\n        stop_service\n        start_service\n        ;;\n    status)\n        show_status\n        ;;\n    *)\n        echo "Usage: $0 {start|stop|restart|status}"\n        exit 1\n        ;;\nesac' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "function",
+                brief: "Define reusable functions",
+                category: "flow",
+                description: "Define reusable blocks of code. Functions help organize scripts and avoid repetition.",
+                usages: [
+                    {
+                        title: "Defining Functions",
+                        items: [
+                            { label: "Basic function", code: 'greet() {\n    echo "Hello, World!"\n}\n\n# Call the function\ngreet' },
+                            { label: "Function with parameters", code: 'greet() {\n    echo "Hello, $1! You are $2 years old."\n}\n\ngreet "Alice" 30' },
+                            { label: "Function with return value", code: 'add() {\n    local result=$(( $1 + $2 ))\n    echo $result\n}\n\nsum=$(add 5 3)\necho "Sum: $sum"' },
+                            { label: "Function with return code", code: 'is_even() {\n    if [ $(( $1 % 2 )) -eq 0 ]; then\n        return 0  # true\n    else\n        return 1  # false\n    fi\n}\n\nif is_even 4; then\n    echo "Even!"\nfi' },
+                            { label: "Local variables", code: 'my_func() {\n    local name="local_var"\n    echo "Inside: $name"\n}\n\nmy_func\necho "Outside: $name"  # empty' },
+                            { label: "Alternative syntax", code: 'function greet {\n    echo "Hello, $1!"\n}' },
+                            { label: "Function with all args", code: 'log_all() {\n    echo "Number of args: $#"\n    echo "All args: $@"\n    for arg in "$@"; do\n        echo "  - $arg"\n    done\n}\n\nlog_all "one" "two" "three"' }
+                        ]
+                    }
+                ]
+            },
+            // ── VARIABLES & I/O ──
+            {
+                name: "variables",
+                brief: "Variable declaration and usage",
+                category: "variable",
+                description: "Bash variables store data as strings. No type declaration needed. Case-sensitive.",
+                usages: [
+                    {
+                        title: "Basic Variables",
+                        items: [
+                            { label: "Assign and use variables", code: 'name="John"\nage=30\necho "Name: $name, Age: $age"\necho "Name: ${name}, Age: ${age}"' },
+                            { label: "Command substitution", code: 'current_date=$(date)\nfile_count=$(ls | wc -l)\necho "Date: $current_date"\necho "Files: $file_count"' },
+                            { label: "Arithmetic", code: 'a=5\nb=3\nsum=$((a + b))\ndiff=$((a - b))\nproduct=$((a * b))\nquotient=$((a / b))\nremainder=$((a % b))\necho "Sum: $sum"' },
+                            { label: "String operations", code: 'str="Hello World"\n\n# Length\necho ${#str}         # 11\n\n# Substring\necho ${str:0:5}      # Hello\n\n# Replace\necho ${str/World/Bash}  # Hello Bash\n\n# Uppercase\necho ${str^^}        # HELLO WORLD\n\n# Lowercase\necho ${str,,}        # hello world' }
+                        ]
+                    },
+                    {
+                        title: "Special Variables",
+                        items: [
+                            { label: "Script special variables", code: 'echo $0     # Script name\necho $1     # First argument\necho $2     # Second argument\necho $#     # Number of arguments\necho $@     # All arguments (as separate words)\necho $*     # All arguments (as single string)\necho $?     # Exit status of last command\necho $$     # Current process ID\necho $!     # PID of last background process' }
+                        ]
+                    },
+                    {
+                        title: "Default Values",
+                        items: [
+                            { label: "Default value patterns", code: '# Use default if unset\necho ${name:-"Default"}\n\n# Set default if unset\necho ${name:="Default"}\n\n# Error if unset\necho ${name:?"Variable not set!"}\n\n# Use alt value if SET\necho ${name:+"Alternative"}' }
+                        ]
+                    },
+                    {
+                        title: "Arrays",
+                        items: [
+                            { label: "Array operations", code: '# Declare array\nfruits=("apple" "banana" "cherry")\n\n# Access elements\necho ${fruits[0]}        # apple\necho ${fruits[1]}        # banana\n\n# All elements\necho ${fruits[@]}        # apple banana cherry\n\n# Array length\necho ${#fruits[@]}       # 3\n\n# Add element\nfruits+=("date")\n\n# Loop over array\nfor f in "${fruits[@]}"; do\n    echo "$f"\ndone\n\n# Associative array (bash 4+)\ndeclare -A colors\ncolors[red]="#FF0000"\ncolors[green]="#00FF00"\necho ${colors[red]}' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "echo/printf",
+                brief: "Output text and variables",
+                category: "variable",
+                description: "Display text or variables to standard output. printf offers more formatting control.",
+                usages: [
+                    {
+                        title: "echo",
+                        items: [
+                            { label: "Basic output", code: 'echo "Hello World"' },
+                            { label: "With variables", code: 'name="Alice"\necho "Hello, $name!"' },
+                            { label: "Enable escape sequences", code: 'echo -e "Line1\\nLine2\\tTabbed"' },
+                            { label: "No trailing newline", code: 'echo -n "No newline at end"' },
+                            { label: "Write to file", code: 'echo "content" > file.txt    # overwrite\necho "more" >> file.txt     # append' },
+                            { label: "Colors", code: 'echo -e "\\033[31mRed\\033[0m"\necho -e "\\033[32mGreen\\033[0m"\necho -e "\\033[1;34mBold Blue\\033[0m"' }
+                        ]
+                    },
+                    {
+                        title: "printf",
+                        items: [
+                            { label: "Basic printf", code: 'printf "Hello %s, you are %d years old\\n" "Alice" 30' },
+                            { label: "Formatted numbers", code: 'printf "Price: $%.2f\\n" 19.99\nprintf "Hex: %x\\n" 255\nprintf "Octal: %o\\n" 8' },
+                            { label: "Padding and alignment", code: 'printf "%-20s %10s\\n" "Name" "Score"\nprintf "%-20s %10d\\n" "Alice" 95\nprintf "%-20s %10d\\n" "Bob" 87' },
+                            { label: "Zero-padded numbers", code: 'for i in {1..10}; do\n    printf "file_%03d.txt\\n" $i\ndone' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "read",
+                brief: "Read user input",
+                category: "variable",
+                description: "Read a line of input from the user or from a file descriptor.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Read into variable", code: 'read -p "Enter your name: " name\necho "Hello, $name!"' },
+                            { label: "Read password (hidden)", code: 'read -sp "Password: " password\necho\necho "Password received"' },
+                            { label: "Read with timeout", code: 'read -t 5 -p "Quick! Enter value: " val' },
+                            { label: "Read single character", code: 'read -n 1 -p "Press any key..."' },
+                            { label: "Read into multiple variables", code: 'echo "Enter first and last name:"\nread first last\necho "First: $first, Last: $last"' },
+                            { label: "Read with default value", code: 'read -p "Enter name [John]: " name\nname=${name:-John}\necho "Name: $name"' },
+                            { label: "Read into array", code: 'read -a fruits -p "Enter fruits: "\necho "First fruit: ${fruits[0]}"' },
+                            { label: "Read file line by line", code: 'while IFS= read -r line; do\n    echo "Line: $line"\ndone < input.txt' }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-p", "Display prompt string"],
+                    ["-s", "Silent mode (hide input)"],
+                    ["-t", "Timeout in seconds"],
+                    ["-n", "Read N characters"],
+                    ["-a", "Read into array"],
+                    ["-r", "Don't interpret backslashes"],
+                    ["-d", "Set delimiter (instead of newline)"]
+                ]
+            },
+            // ── NETWORK ──
+            {
+                name: "curl",
+                brief: "Transfer data from URLs",
+                category: "network",
+                description: "Command-line tool for transferring data with URLs. Supports HTTP, HTTPS, FTP, and many more protocols.",
+                usages: [
+                    {
+                        title: "Basic Requests",
+                        items: [
+                            { label: "GET request", code: "curl https://api.example.com/data" },
+                            { label: "Save output to file", code: "curl -o output.html https://example.com" },
+                            { label: "Save with original filename", code: "curl -O https://example.com/file.zip" },
+                            { label: "Follow redirects", code: "curl -L https://example.com" },
+                            { label: "Show response headers", code: "curl -I https://example.com" },
+                            { label: "Verbose output", code: "curl -v https://example.com" },
+                            { label: "Silent mode", code: "curl -s https://api.example.com/data" }
+                        ]
+                    },
+                    {
+                        title: "POST & Data",
+                        items: [
+                            { label: "POST request with data", code: 'curl -X POST -d "name=John&age=30" https://api.example.com/users' },
+                            { label: "POST JSON data", code: "curl -X POST \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"name\":\"John\",\"age\":30}' \\\n  https://api.example.com/users" },
+                            { label: "Upload a file", code: "curl -F 'file=@photo.jpg' https://api.example.com/upload" },
+                            { label: "PUT request", code: "curl -X PUT -d '{\"name\":\"Jane\"}' https://api.example.com/users/1" },
+                            { label: "DELETE request", code: "curl -X DELETE https://api.example.com/users/1" }
+                        ]
+                    },
+                    {
+                        title: "Headers & Auth",
+                        items: [
+                            { label: "Custom headers", code: "curl -H 'Authorization: Bearer TOKEN' https://api.example.com" },
+                            { label: "Basic authentication", code: "curl -u username:password https://api.example.com" },
+                            { label: "Send cookies", code: "curl -b 'session=abc123' https://example.com" },
+                            { label: "Save cookies", code: "curl -c cookies.txt https://example.com" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-o", "Write output to file"],
+                    ["-O", "Save with remote filename"],
+                    ["-L", "Follow redirects"],
+                    ["-I", "Show headers only"],
+                    ["-s", "Silent mode"],
+                    ["-v", "Verbose output"],
+                    ["-X", "Specify HTTP method"],
+                    ["-d", "Send data in request body"],
+                    ["-H", "Add custom header"],
+                    ["-u", "Authentication credentials"],
+                    ["-F", "Multipart form data"]
+                ]
+            },
+            {
+                name: "wget",
+                brief: "Download files from the web",
+                category: "network",
+                description: "Non-interactive network downloader. Great for downloading files, mirroring websites.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Download a file", code: "wget https://example.com/file.zip" },
+                            { label: "Save with different name", code: "wget -O newname.zip https://example.com/file.zip" },
+                            { label: "Download in background", code: "wget -b https://example.com/large_file.zip" },
+                            { label: "Resume interrupted download", code: "wget -c https://example.com/large_file.zip" },
+                            { label: "Download multiple files", code: "wget -i url_list.txt" },
+                            { label: "Limit download speed", code: "wget --limit-rate=1m https://example.com/file.zip" },
+                            { label: "Mirror a website", code: "wget --mirror --convert-links --page-requisites https://example.com" },
+                            { label: "Download recursively", code: "wget -r -l 2 https://example.com" },
+                            { label: "Quiet mode", code: "wget -q https://example.com/file.zip" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "ssh",
+                brief: "Secure shell remote login",
+                category: "network",
+                description: "OpenSSH client for secure remote login, command execution, and tunneling.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Connect to remote host", code: "ssh user@hostname" },
+                            { label: "Connect on specific port", code: "ssh -p 2222 user@hostname" },
+                            { label: "Execute remote command", code: 'ssh user@host "ls -la /var/log"' },
+                            { label: "Use specific key file", code: "ssh -i ~/.ssh/mykey.pem user@host" },
+                            { label: "SSH with verbose output", code: "ssh -v user@host" },
+                            { label: "Port forwarding (local)", code: "ssh -L 8080:localhost:80 user@host" },
+                            { label: "Port forwarding (remote)", code: "ssh -R 9090:localhost:3000 user@host" },
+                            { label: "SSH tunnel (SOCKS proxy)", code: "ssh -D 1080 user@host" },
+                            { label: "Copy SSH key to remote", code: "ssh-copy-id user@host" },
+                            { label: "Generate SSH key pair", code: 'ssh-keygen -t ed25519 -C "email@example.com"' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "scp",
+                brief: "Secure copy between hosts",
+                category: "network",
+                description: "Securely copy files between hosts over SSH.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Copy file to remote", code: "scp file.txt user@host:/path/to/dest/" },
+                            { label: "Copy file from remote", code: "scp user@host:/path/file.txt ./local/" },
+                            { label: "Copy directory recursively", code: "scp -r local_dir/ user@host:/path/" },
+                            { label: "Specify port", code: "scp -P 2222 file.txt user@host:/path/" },
+                            { label: "Copy between two remotes", code: "scp user1@host1:/file.txt user2@host2:/path/" },
+                            { label: "Use specific key", code: "scp -i key.pem file.txt user@host:/path/" },
+                            { label: "Preserve timestamps", code: "scp -p file.txt user@host:/path/" },
+                            { label: "Compress during transfer", code: "scp -C large_file.txt user@host:/path/" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "ping",
+                brief: "Test network connectivity",
+                category: "network",
+                description: "Send ICMP ECHO_REQUEST packets to network hosts to test connectivity.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Ping a host", code: "ping google.com" },
+                            { label: "Ping with count limit", code: "ping -c 5 google.com" },
+                            { label: "Ping with interval", code: "ping -i 2 google.com  # every 2 seconds" },
+                            { label: "Ping with timeout", code: "ping -W 3 google.com  # 3 second timeout" },
+                            { label: "Quick connectivity check", code: 'ping -c 1 -W 2 host && echo "UP" || echo "DOWN"' }
+                        ]
+                    }
+                ]
+            },
+            // ── PERMISSIONS ──
+            {
+                name: "chmod",
+                brief: "Change file permissions",
+                category: "permission",
+                description: "Change the access permissions of files and directories.",
+                usages: [
+                    {
+                        title: "Numeric (Octal) Mode",
+                        items: [
+                            { label: "Common permissions", code: "chmod 755 script.sh   # rwxr-xr-x\nchmod 644 file.txt    # rw-r--r--\nchmod 700 private.sh  # rwx------\nchmod 666 shared.txt  # rw-rw-rw-\nchmod 600 secret.txt  # rw-------\nchmod 777 open_dir/   # rwxrwxrwx" },
+                            { label: "Recursive change", code: "chmod -R 755 directory/" }
+                        ]
+                    },
+                    {
+                        title: "Symbolic Mode",
+                        items: [
+                            { label: "Add execute permission", code: "chmod +x script.sh" },
+                            { label: "Remove write permission", code: "chmod -w file.txt" },
+                            { label: "User, Group, Others", code: "chmod u+x script.sh     # user +execute\nchmod g+rw file.txt     # group +read+write\nchmod o-rwx private.sh  # others -all\nchmod a+r public.txt    # all +read" },
+                            { label: "Set exact permissions", code: "chmod u=rwx,g=rx,o=r file.txt" }
+                        ]
+                    },
+                    {
+                        title: "Permission Reference",
+                        items: [
+                            { label: "Understanding permission numbers", code: "# r (read)    = 4\n# w (write)   = 3\n# x (execute) = 1\n# \n# 7 = rwx (4+2+1)\n# 6 = rw- (4+2)\n# 5 = r-x (4+1)\n# 4 = r-- (4)\n# 3 = -wx (2+1)\n# 2 = -w- (2)\n# 1 = --x (1)\n# 0 = --- (0)\n#\n# Position: [user][group][others]\n# Example:  755 = rwxr-xr-x" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "chown",
+                brief: "Change file ownership",
+                category: "permission",
+                description: "Change the user and/or group ownership of files and directories.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Change owner", code: "chown newuser file.txt" },
+                            { label: "Change owner and group", code: "chown newuser:newgroup file.txt" },
+                            { label: "Change group only", code: "chown :newgroup file.txt\nchgrp newgroup file.txt" },
+                            { label: "Recursive change", code: "chown -R user:group directory/" },
+                            { label: "Copy ownership from reference", code: "chown --reference=ref_file target_file" },
+                            { label: "Verbose output", code: "chown -v user:group file.txt" }
+                        ]
+                    }
+                ]
+            },
+            // ── ARCHIVE ──
+            {
+                name: "tar",
+                brief: "Archive and compress files",
+                category: "archive",
+                description: "Create, extract, and manipulate tar archives. Often combined with compression (gzip, bzip2, xz).",
+                usages: [
+                    {
+                        title: "Creating Archives",
+                        items: [
+                            { label: "Create tar archive", code: "tar -cf archive.tar files/" },
+                            { label: "Create with gzip compression", code: "tar -czf archive.tar.gz files/" },
+                            { label: "Create with bzip2 compression", code: "tar -cjf archive.tar.bz2 files/" },
+                            { label: "Create with xz compression", code: "tar -cJf archive.tar.xz files/" },
+                            { label: "Verbose creation", code: "tar -czvf archive.tar.gz files/" },
+                            { label: "Exclude files", code: "tar -czf archive.tar.gz --exclude='*.log' files/" }
+                        ]
+                    },
+                    {
+                        title: "Extracting Archives",
+                        items: [
+                            { label: "Extract tar", code: "tar -xf archive.tar" },
+                            { label: "Extract tar.gz", code: "tar -xzf archive.tar.gz" },
+                            { label: "Extract tar.bz2", code: "tar -xjf archive.tar.bz2" },
+                            { label: "Extract to specific directory", code: "tar -xzf archive.tar.gz -C /destination/" },
+                            { label: "Extract specific file", code: "tar -xzf archive.tar.gz path/to/file.txt" },
+                            { label: "Verbose extraction", code: "tar -xzvf archive.tar.gz" }
+                        ]
+                    },
+                    {
+                        title: "Listing & Other",
+                        items: [
+                            { label: "List contents", code: "tar -tf archive.tar.gz" },
+                            { label: "Append to existing archive", code: "tar -rf archive.tar newfile.txt" }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-c", "Create archive"],
+                    ["-x", "Extract archive"],
+                    ["-t", "List contents"],
+                    ["-f", "Specify filename"],
+                    ["-z", "Use gzip compression"],
+                    ["-j", "Use bzip2 compression"],
+                    ["-J", "Use xz compression"],
+                    ["-v", "Verbose output"],
+                    ["-C", "Change to directory before extracting"],
+                    ["-r", "Append files to archive"]
+                ]
+            },
+            {
+                name: "zip/unzip",
+                brief: "Compress and extract ZIP files",
+                category: "archive",
+                description: "Create and extract ZIP archives.",
+                usages: [
+                    {
+                        title: "ZIP (Compress)",
+                        items: [
+                            { label: "Create zip from files", code: "zip archive.zip file1.txt file2.txt" },
+                            { label: "Zip a directory", code: "zip -r archive.zip directory/" },
+                            { label: "Add to existing zip", code: "zip archive.zip newfile.txt" },
+                            { label: "Password-protected zip", code: "zip -e secure.zip file.txt" },
+                            { label: "Exclude files", code: "zip -r archive.zip dir/ -x '*.log'" }
+                        ]
+                    },
+                    {
+                        title: "UNZIP (Extract)",
+                        items: [
+                            { label: "Extract zip", code: "unzip archive.zip" },
+                            { label: "Extract to directory", code: "unzip archive.zip -d /destination/" },
+                            { label: "List zip contents", code: "unzip -l archive.zip" },
+                            { label: "Extract specific file", code: "unzip archive.zip file.txt" },
+                            { label: "Overwrite without asking", code: "unzip -o archive.zip" },
+                            { label: "Test zip integrity", code: "unzip -t archive.zip" }
+                        ]
+                    }
+                ]
+            },
+            // ── MISC ──
+            {
+                name: "xargs",
+                brief: "Build commands from standard input",
+                category: "misc",
+                description: "Build and execute commands from standard input. Converts input into arguments for another command.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Basic xargs usage", code: 'echo "file1 file2 file3" | xargs rm' },
+                            { label: "Find and delete", code: 'find . -name "*.tmp" | xargs rm' },
+                            { label: "With placeholder", code: 'find . -name "*.txt" | xargs -I {} cp {} /backup/' },
+                            { label: "Parallel execution", code: 'find . -name "*.jpg" | xargs -P 4 -I {} convert {} {}.png' },
+                            { label: "Handle spaces in filenames", code: 'find . -name "*.txt" -print0 | xargs -0 rm' },
+                            { label: "Limit args per command", code: 'echo "1 2 3 4 5 6" | xargs -n 2 echo' },
+                            { label: "Confirm before executing", code: 'echo "file1 file2" | xargs -p rm' },
+                            { label: "Grep in found files", code: 'find . -name "*.py" | xargs grep "import"' }
+                        ]
+                    }
+                ],
+                options: [
+                    ["-I {}", "Replace placeholder with input"],
+                    ["-n", "Max args per command line"],
+                    ["-P", "Max parallel processes"],
+                    ["-0", "Handle null-delimited input"],
+                    ["-p", "Prompt before execution"],
+                    ["-t", "Print command before executing"]
+                ]
+            },
+            {
+                name: "cron/crontab",
+                brief: "Schedule recurring tasks",
+                category: "misc",
+                description: "Schedule commands to run automatically at specified intervals using cron daemon.",
+                usages: [
+                    {
+                        title: "Crontab Commands",
+                        items: [
+                            { label: "Edit crontab", code: "crontab -e" },
+                            { label: "List crontab entries", code: "crontab -l" },
+                            { label: "Remove all crontab entries", code: "crontab -r" },
+                            { label: "Edit another user's crontab", code: "crontab -u username -e" }
+                        ]
+                    },
+                    {
+                        title: "Cron Schedule Format",
+                        items: [
+                            { label: "Format explanation", code: "# ┌───────── minute (0-59)\n# │ ┌─────── hour (0-23)\n# │ │ ┌───── day of month (1-31)\n# │ │ │ ┌─── month (1-12)\n# │ │ │ │ ┌─ day of week (0-7, 0&7=Sunday)\n# │ │ │ │ │\n# * * * * * command" },
+                            { label: "Common examples", code: "# Every minute\n* * * * * /path/to/script.sh\n\n# Every hour\n0 * * * * /path/to/script.sh\n\n# Every day at midnight\n0 0 * * * /path/to/script.sh\n\n# Every Monday at 9 AM\n0 9 * * 1 /path/to/script.sh\n\n# Every 5 minutes\n*/5 * * * * /path/to/script.sh\n\n# Twice a day (9 AM and 6 PM)\n0 9,18 * * * /path/to/script.sh\n\n# Weekdays at 8 AM\n0 8 * * 1-5 /path/to/script.sh\n\n# First day of every month\n0 0 1 * * /path/to/script.sh\n\n# With output logging\n*/5 * * * * /path/to/script.sh >> /var/log/myscript.log 2>&1" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "pipe & redirect",
+                brief: "Piping and I/O redirection",
+                category: "misc",
+                description: "Connect commands together with pipes (|) and redirect input/output to/from files.",
+                usages: [
+                    {
+                        title: "Pipes",
+                        items: [
+                            { label: "Chain commands with pipe", code: 'ls -la | grep ".txt"\ncat file.txt | sort | uniq\nps aux | grep nginx | wc -l\nhistory | grep "ssh" | tail -20' },
+                            { label: "Tee (output to both file and screen)", code: 'echo "Hello" | tee output.txt\nls -la | tee listing.txt | grep ".sh"' }
+                        ]
+                    },
+                    {
+                        title: "Output Redirection",
+                        items: [
+                            { label: "Redirect stdout", code: 'echo "text" > file.txt       # Overwrite\necho "more" >> file.txt      # Append\nls -la > listing.txt' },
+                            { label: "Redirect stderr", code: 'command 2> errors.txt        # stderr to file\ncommand 2>> errors.txt       # append stderr' },
+                            { label: "Redirect both stdout and stderr", code: 'command > output.txt 2>&1    # Both to same file\ncommand &> output.txt        # Shorthand (bash)\ncommand > out.txt 2> err.txt # Separate files' },
+                            { label: "Discard output", code: 'command > /dev/null          # Discard stdout\ncommand 2> /dev/null         # Discard stderr\ncommand &> /dev/null         # Discard all output' }
+                        ]
+                    },
+                    {
+                        title: "Input Redirection",
+                        items: [
+                            { label: "Redirect stdin", code: 'sort < unsorted.txt\nwc -l < file.txt' },
+                            { label: "Here document", code: 'cat << EOF\nThis is a\nmulti-line\nstring\nEOF' },
+                            { label: "Here string", code: 'grep "pattern" <<< "search in this string"' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "test/[[ ]]",
+                brief: "Evaluate conditional expressions",
+                category: "misc",
+                description: "Evaluate conditional expressions. [[ ]] is a bash built-in with more features than [ ].",
+                usages: [
+                    {
+                        title: "Usage",
+                        items: [
+                            { label: "File tests", code: '[[ -f "file.txt" ]] && echo "File exists"\n[[ -d "dir/" ]] && echo "Directory exists"\n[[ -r "file.txt" ]] && echo "Readable"\n[[ -w "file.txt" ]] && echo "Writable"\n[[ -x "script.sh" ]] && echo "Executable"\n[[ -s "file.txt" ]] && echo "Not empty"\n[[ -L "link" ]] && echo "Symbolic link"' },
+                            { label: "String tests", code: '[[ -z "$var" ]] && echo "Empty"\n[[ -n "$var" ]] && echo "Not empty"\n[[ "$a" == "$b" ]] && echo "Equal"\n[[ "$a" != "$b" ]] && echo "Not equal"\n[[ "$a" < "$b" ]] && echo "a before b"\n[[ "$str" == *"sub"* ]] && echo "Contains sub"\n[[ "$str" =~ ^[0-9]+$ ]] && echo "Is numeric"' },
+                            { label: "Numeric tests", code: '[[ $a -eq $b ]]  # Equal\n[[ $a -ne $b ]]  # Not equal\n[[ $a -gt $b ]]  # Greater than\n[[ $a -lt $b ]]  # Less than\n[[ $a -ge $b ]]  # Greater or equal\n[[ $a -le $b ]]  # Less or equal' },
+                            { label: "Logical operators in [[ ]]", code: '[[ $a -gt 0 && $a -lt 100 ]]  # AND\n[[ $a -eq 0 || $a -eq 1 ]]   # OR\n[[ ! -f "file.txt" ]]         # NOT' },
+                            { label: "One-liner conditionals", code: '[[ -f "config.txt" ]] && source config.txt || echo "No config"\n[[ $# -eq 0 ]] && { echo "Usage: $0 <arg>"; exit 1; }' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "trap",
+                brief: "Handle signals and cleanup",
+                category: "misc",
+                description: "Catch signals and execute commands when they occur. Essential for cleanup on script exit.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Cleanup on exit", code: 'cleanup() {\n    rm -f /tmp/mytempfile\n    echo "Cleaned up!"\n}\ntrap cleanup EXIT' },
+                            { label: "Handle Ctrl+C", code: 'trap "echo Interrupted!; exit 1" SIGINT' },
+                            { label: "Ignore signal", code: 'trap "" SIGINT  # Ignore Ctrl+C' },
+                            { label: "Reset to default", code: 'trap - SIGINT  # Reset Ctrl+C to default' },
+                            { label: "Temp file pattern", code: 'TMPFILE=$(mktemp)\ntrap "rm -f $TMPFILE" EXIT\n\n# Use $TMPFILE safely\necho "data" > "$TMPFILE"\ncat "$TMPFILE"\n# File auto-deleted on exit' },
+                            { label: "Multiple signals", code: 'trap "echo Caught signal" SIGINT SIGTERM SIGHUP' },
+                            { label: "Error handling", code: 'set -e  # Exit on error\ntrap \'echo "Error on line $LINENO"\' ERR' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "set",
+                brief: "Set shell options and behavior",
+                category: "misc",
+                description: "Set or unset shell options and positional parameters. Controls script behavior.",
+                usages: [
+                    {
+                        title: "Common Options",
+                        items: [
+                            { label: "Strict mode (recommended)", code: 'set -euo pipefail\n\n# -e: Exit on error\n# -u: Error on undefined variable\n# -o pipefail: Pipe fails on any error' },
+                            { label: "Debug mode", code: 'set -x  # Print each command before execution\nset +x  # Turn off debug mode' },
+                            { label: "Exit on error", code: 'set -e\n# Script exits if any command fails' },
+                            { label: "Error on undefined variables", code: 'set -u\n# Treats unset variables as errors' },
+                            { label: "Full robust script header", code: '#!/bin/bash\nset -euo pipefail\nIFS=$\'\\n\\t\'\n\n# Your script here...' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "date",
+                brief: "Display or set system date/time",
+                category: "misc",
+                description: "Display the current date and time, or set the system date.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Current date and time", code: "date" },
+                            { label: "Custom format", code: 'date "+%Y-%m-%d %H:%M:%S"' },
+                            { label: "Date only", code: 'date "+%Y-%m-%d"' },
+                            { label: "Time only", code: 'date "+%H:%M:%S"' },
+                            { label: "Unix timestamp", code: 'date "+%s"' },
+                            { label: "Day of week", code: 'date "+%A"' },
+                            { label: "ISO 8601 format", code: 'date -Iseconds' },
+                            { label: "Yesterday's date", code: 'date -d "yesterday" "+%Y-%m-%d"' },
+                            { label: "Date arithmetic", code: 'date -d "+7 days" "+%Y-%m-%d"\ndate -d "2 hours ago" "+%H:%M"' },
+                            { label: "Timestamp for filenames", code: 'backup_file="backup_$(date +%Y%m%d_%H%M%S).tar.gz"' }
+                        ]
+                    }
+                ],
+                options: [
+                    ["%Y", "4-digit year (2024)"],
+                    ["%m", "Month (01-12)"],
+                    ["%d", "Day (01-31)"],
+                    ["%H", "Hour 24h (00-23)"],
+                    ["%M", "Minute (00-59)"],
+                    ["%S", "Second (00-59)"],
+                    ["%A", "Full weekday name"],
+                    ["%B", "Full month name"],
+                    ["%s", "Unix timestamp"],
+                    ["%j", "Day of year (001-366)"]
+                ]
+            },
+            {
+                name: "alias",
+                brief: "Create command shortcuts",
+                category: "misc",
+                description: "Create shortcut names for commands. Add to ~/.bashrc for persistence.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Create an alias", code: "alias ll='ls -la'\nalias gs='git status'\nalias ..='cd ..'" },
+                            { label: "List all aliases", code: "alias" },
+                            { label: "Remove an alias", code: "unalias ll" },
+                            { label: "Common useful aliases", code: "alias ll='ls -alF'\nalias la='ls -A'\nalias l='ls -CF'\nalias ..='cd ..'\nalias ...='cd ../..'\nalias grep='grep --color=auto'\nalias mkdir='mkdir -pv'\nalias df='df -h'\nalias du='du -h'\nalias free='free -h'\nalias ports='netstat -tulanp'" },
+                            { label: "Make aliases permanent", code: '# Add to ~/.bashrc or ~/.bash_aliases\necho "alias ll=\'ls -la\'" >> ~/.bashrc\nsource ~/.bashrc' }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "history",
+                brief: "Command history management",
+                category: "misc",
+                description: "Display or manipulate the command history list.",
+                usages: [
+                    {
+                        title: "Basic Usage",
+                        items: [
+                            { label: "Show command history", code: "history" },
+                            { label: "Show last N commands", code: "history 20" },
+                            { label: "Run previous command", code: "!!" },
+                            { label: "Run command by number", code: "!42" },
+                            { label: "Run last command starting with...", code: "!ssh  # last command starting with 'ssh'" },
+                            { label: "Search history", code: "history | grep 'pattern'\n# Or press Ctrl+R for interactive search" },
+                            { label: "Clear history", code: "history -c" },
+                            { label: "Delete specific entry", code: "history -d 42" },
+                            { label: "Last argument of previous command", code: "!$\n# Example: mkdir newdir && cd !$" },
+                            { label: "All args of previous command", code: "!*" }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "exit codes",
+                brief: "Return status and error handling",
+                category: "misc",
+                description: "Every command returns an exit code (0 = success, non-zero = error). Essential for error handling in scripts.",
+                usages: [
+                    {
+                        title: "Usage",
+                        items: [
+                            { label: "Check exit status", code: 'ls /nonexistent\necho $?  # 2 (error)\n\nls /tmp\necho $?  # 0 (success)' },
+                            { label: "Use in conditionals", code: 'if grep -q "pattern" file.txt; then\n    echo "Found"\nelse\n    echo "Not found"\nfi' },
+                            { label: "AND / OR operators", code: 'command1 && command2  # Run 2 only if 1 succeeds\ncommand1 || command2  # Run 2 only if 1 fails\n\n# Example:\nmkdir /tmp/test && echo "Created" || echo "Failed"' },
+                            { label: "Exit with specific code", code: '#!/bin/bash\nif [ $# -eq 0 ]; then\n    echo "Usage: $0 <filename>"\n    exit 1\nfi\n\nif [ ! -f "$1" ]; then\n    echo "File not found: $1"\n    exit 2\nfi\n\necho "Processing $1..."\nexit 0' },
+                            { label: "Common exit codes", code: '# 0   - Success\n# 1   - General error\n# 2   - Misuse of shell command\n# 126 - Command not executable\n# 127 - Command not found\n# 128 - Invalid exit argument\n# 130 - Terminated by Ctrl+C\n# 255 - Exit status out of range' }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // ===== RENDER FUNCTIONS =====
+
+        function renderGrid(filteredCommands) {
+            const grid = document.getElementById('commandsGrid');
+            const stats = document.getElementById('statsBar');
+
+            if (filteredCommands.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <div class="emoji">🔍</div>
+                        <p>No commands found. Try a different search term.</p>
+                    </div>`;
+                stats.textContent = '0 commands shown';
+                return;
+            }
+
+            grid.innerHTML = filteredCommands.map(cmd => `
+                <div class="command-card" data-name="${cmd.name}" onclick="openModal('${cmd.name}')">
+                    <div class="cmd-name">${cmd.name}</div>
+                    <div class="cmd-brief">${cmd.brief}</div>
+                    <span class="cmd-category">${cmd.category}</span>
+                </div>
+            `).join('');
+
+            stats.textContent = `Showing ${filteredCommands.length} of ${commands.length} commands`;
+        }
+
+        function openModal(name) {
+            const cmd = commands.find(c => c.name === name);
+            if (!cmd) return;
+
+            document.getElementById('modalTitle').textContent = cmd.name;
+
+            let html = '';
+
+            if (cmd.description) {
+                html += `<div class="description">${cmd.description}</div>`;
+            }
+
+            if (cmd.usages) {
+                cmd.usages.forEach(section => {
+                    html += `<div class="usage-section"><h3>${section.title}</h3>`;
+                    section.items.forEach(item => {
+                        const id = 'code-' + Math.random().toString(36).substr(2, 9);
+                        html += `
+                            <div class="usage-item">
+                                <div class="usage-label">${item.label}</div>
+                                <pre id="${id}"><button class="copy-btn" onclick="copyCode('${id}', this)">Copy</button><code>${escapeHtml(item.code)}</code></pre>
+                            </div>`;
+                    });
+                    html += `</div>`;
+                });
+            }
+
+            if (cmd.options) {
+                html += `<div class="usage-section"><h3>Options Reference</h3>`;
+                html += `<table class="options-table">
+                    <thead><tr><th>Option</th><th>Description</th></tr></thead><tbody>`;
+                cmd.options.forEach(([opt, desc]) => {
+                    html += `<tr><td>${escapeHtml(opt)}</td><td>${desc}</td></tr>`;
+                });
+                html += `</tbody></table></div>`;
+            }
+
+            document.getElementById('modalBody').innerHTML = html;
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function copyCode(id, btn) {
+            const code = document.getElementById(id).querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // ===== FILTERING =====
+        let currentCategory = 'all';
+
+        function filterCommands() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = commands;
+
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(c => c.category === currentCategory);
+            }
+
+            if (search) {
+                filtered = filtered.filter(c =>
+                    c.name.toLowerCase().includes(search) ||
+                    c.brief.toLowerCase().includes(search) ||
+                    c.category.toLowerCase().includes(search)
+                );
+            }
+
+            renderGrid(filtered);
+        }
+
+        // ===== EVENT LISTENERS =====
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', filterCommands);
+
+        // Category tabs
+        document.getElementById('categoryTabs').addEventListener('click', (e) => {
+            if (e.target.classList.contains('category-tab')) {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCategory = e.target.dataset.category;
+                filterCommands();
+            }
+        });
+
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', closeModal);
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalOverlay')) closeModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Back to top
+        window.addEventListener('scroll', () => {
+            document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 300);
+        });
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== INIT =====
+        renderGrid(commands);
+    </script>
+</body>
+</html>

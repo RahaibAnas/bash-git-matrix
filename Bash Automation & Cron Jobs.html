@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bash Automation & Cron Jobs Reference</title>
+    <style>
+        /* ===== CSS RESET & VARIABLES ===== */
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --bg-card-hover: #212845;
+            --bg-code: #0d1117;
+            --bg-modal: #141a2e;
+            --border: #2a3150;
+            --border-hover: #4f6df5;
+            --text-primary: #e2e8f0;
+            --text-secondary: #8892b0;
+            --text-muted: #5a6380;
+            --accent-blue: #4f6df5;
+            --accent-cyan: #22d3ee;
+            --accent-green: #34d399;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-purple: #a78bfa;
+            --accent-red: #ef4444;
+            --accent-teal: #14b8a6;
+            --glow-blue: rgba(79, 109, 245, 0.15);
+            --glow-green: rgba(52, 211, 153, 0.15);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-modal: 0 25px 60px rgba(0, 0, 0, 0.5);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-pattern::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79, 109, 245, 0.06), transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation: floatBlob1 25s ease-in-out infinite;
+        }
+
+        .bg-pattern::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.05), transparent 70%);
+            bottom: -100px;
+            left: -100px;
+            animation: floatBlob2 30s ease-in-out infinite;
+        }
+
+        @keyframes floatBlob1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-80px, 60px) scale(1.1); }
+            66% { transform: translate(40px, -40px) scale(0.9); }
+        }
+
+        @keyframes floatBlob2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(60px, -80px) scale(1.15); }
+            66% { transform: translate(-50px, 50px) scale(0.85); }
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+        }
+
+        .header-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px 24px 20px;
+            text-align: center;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(79, 109, 245, 0.15), rgba(34, 211, 238, 0.1));
+            border: 1px solid rgba(79, 109, 245, 0.3);
+            padding: 5px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-badge .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 50%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        header .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 18px;
+        }
+
+        /* ===== SEARCH ===== */
+        .search-wrapper {
+            max-width: 520px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-icon-wrap {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 13px 50px 13px 46px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-wrapper input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px var(--glow-blue);
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--border);
+            border: none;
+            color: var(--text-secondary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .search-clear.visible {
+            display: flex;
+        }
+
+        .search-clear:hover {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        .shortcut-hint {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--border);
+            color: var(--text-muted);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-family: monospace;
+            pointer-events: none;
+        }
+
+        /* ===== CATEGORY FILTER ===== */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px 24px 6px;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .filter-chip {
+            padding: 7px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+            background: var(--bg-card);
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, var(--accent-blue), #6366f1);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(79, 109, 245, 0.3);
+        }
+
+        .filter-chip .chip-count {
+            background: rgba(255,255,255,0.15);
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+        }
+
+        .filter-chip.active .chip-count {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* ===== STATS ===== */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 14px 24px 8px;
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        .stat-item .stat-num {
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        /* ===== COMMANDS GRID ===== */
+        .grid-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 10px 24px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 14px;
+        }
+
+        /* ===== COMMAND CARD ===== */
+        .cmd-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .cmd-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .cmd-card:hover {
+            border-color: var(--border-hover);
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card), 0 0 30px var(--glow-blue);
+        }
+
+        .cmd-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .card-icon.cron { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05)); color: var(--accent-orange); }
+        .card-icon.script { background: linear-gradient(135deg, rgba(79, 109, 245, 0.2), rgba(79, 109, 245, 0.05)); color: var(--accent-blue); }
+        .card-icon.system { background: linear-gradient(135deg, rgba(52, 211, 153, 0.2), rgba(52, 211, 153, 0.05)); color: var(--accent-green); }
+        .card-icon.file { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(236, 72, 153, 0.05)); color: var(--accent-pink); }
+        .card-icon.monitor { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.05)); color: var(--accent-cyan); }
+        .card-icon.network { background: linear-gradient(135deg, rgba(167, 139, 250, 0.2), rgba(167, 139, 250, 0.05)); color: var(--accent-purple); }
+        .card-icon.deploy { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.05)); color: var(--accent-red); }
+        .card-icon.util { background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(20, 184, 166, 0.05)); color: var(--accent-teal); }
+
+        .card-arrow {
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateX(-5px);
+        }
+
+        .cmd-card:hover .card-arrow {
+            opacity: 1;
+            transform: translateX(0);
+            color: var(--accent-blue);
+        }
+
+        .card-name {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .card-brief {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .card-tag {
+            padding: 3px 10px;
+            background: rgba(79, 109, 245, 0.1);
+            border: 1px solid rgba(79, 109, 245, 0.2);
+            border-radius: 50px;
+            font-size: 0.7rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-tag.cron { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+        .card-tag.script { background: rgba(79, 109, 245, 0.1); border-color: rgba(79, 109, 245, 0.2); color: var(--accent-blue); }
+        .card-tag.system { background: rgba(52, 211, 153, 0.1); border-color: rgba(52, 211, 153, 0.2); color: var(--accent-green); }
+        .card-tag.file { background: rgba(236, 72, 153, 0.1); border-color: rgba(236, 72, 153, 0.2); color: var(--accent-pink); }
+        .card-tag.monitor { background: rgba(34, 211, 238, 0.1); border-color: rgba(34, 211, 238, 0.2); color: var(--accent-cyan); }
+        .card-tag.network { background: rgba(167, 139, 250, 0.1); border-color: rgba(167, 139, 250, 0.2); color: var(--accent-purple); }
+        .card-tag.deploy { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .card-tag.util { background: rgba(20, 184, 166, 0.1); border-color: rgba(20, 184, 166, 0.2); color: var(--accent-teal); }
+
+        .card-usage-count {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== NO RESULTS ===== */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .no-results .nr-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .no-results h3 {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .no-results p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* ===== MODAL OVERLAY ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 500;
+            padding: 30px 16px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.open {
+            display: block;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            max-width: 860px;
+            margin: 0 auto 40px;
+            background: var(--bg-modal);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-modal);
+            animation: modalEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        @keyframes modalEnter {
+            from { opacity: 0; transform: translateY(40px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ===== MODAL HEADER ===== */
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 28px;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-modal));
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .modal-title-group h2 {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 1.5rem;
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .modal-title-group .modal-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .modal-close {
+            width: 38px;
+            height: 38px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        /* ===== MODAL BODY ===== */
+        .modal-body {
+            padding: 28px;
+        }
+
+        .cmd-description {
+            padding: 16px 18px;
+            background: var(--bg-code);
+            border-left: 3px solid var(--accent-blue);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        /* ===== USAGE SECTIONS ===== */
+        .usage-section {
+            margin-bottom: 24px;
+        }
+
+        .usage-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(245, 158, 11, 0.15);
+        }
+
+        .usage-section-title .section-icon {
+            width: 26px;
+            height: 26px;
+            background: rgba(245, 158, 11, 0.12);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        /* ===== CODE BLOCK ===== */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 14px;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .code-block:hover {
+            border-color: rgba(79, 109, 245, 0.3);
+        }
+
+        .code-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: rgba(26, 31, 53, 0.6);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-label-text {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-label-text::before {
+            content: '›';
+            color: var(--accent-cyan);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .copy-btn {
+            padding: 4px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-green);
+            border-color: var(--accent-green);
+            color: #fff;
+        }
+
+        .code-content {
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: var(--text-primary);
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        /* ===== SYNTAX COLORS ===== */
+        .syn-comment { color: #6a737d; font-style: italic; }
+        .syn-keyword { color: #ff7b72; }
+        .syn-string { color: #a5d6ff; }
+        .syn-variable { color: #ffa657; }
+        .syn-command { color: #7ee787; }
+        .syn-flag { color: #d2a8ff; }
+        .syn-number { color: #79c0ff; }
+        .syn-operator { color: #ff7b72; }
+
+        /* ===== OPTIONS TABLE ===== */
+        .options-section {
+            margin-top: 24px;
+        }
+
+        .options-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .options-table thead th {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .options-table tbody td {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(42, 49, 80, 0.5);
+        }
+
+        .options-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .options-table tbody tr:hover {
+            background: rgba(79, 109, 245, 0.05);
+        }
+
+        .options-table td:first-child {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-purple);
+            font-size: 0.82rem;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        .options-table td:last-child {
+            color: var(--text-secondary);
+        }
+
+        /* ===== TIP BOX ===== */
+        .tip-box {
+            display: flex;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(52, 211, 153, 0.06);
+            border: 1px solid rgba(52, 211, 153, 0.15);
+            border-radius: var(--radius-md);
+            margin-top: 16px;
+        }
+
+        .tip-box .tip-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .tip-box .tip-text {
+            font-size: 0.83rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .tip-box .tip-text strong {
+            color: var(--accent-green);
+        }
+
+        .warning-box {
+            background: rgba(239, 68, 68, 0.06);
+            border-color: rgba(239, 68, 68, 0.15);
+        }
+
+        .warning-box .tip-text strong {
+            color: var(--accent-red);
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-blue), #6366f1);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(79, 109, 245, 0.4);
+            transition: var(--transition);
+            z-index: 90;
+        }
+
+        .back-top:hover {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .back-top.show {
+            display: flex;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.5rem; }
+
+            .commands-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 10px;
+            }
+
+            .cmd-card { padding: 16px; }
+            .modal { border-radius: var(--radius-lg); }
+            .modal-header { padding: 18px 20px; }
+            .modal-body { padding: 20px; }
+            .modal-title-group h2 { font-size: 1.2rem; }
+            .modal-overlay { padding: 16px 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-bar { gap: 6px; }
+            .filter-chip { font-size: 0.75rem; padding: 6px 12px; }
+            .stats-row { flex-wrap: wrap; gap: 10px; }
+            header h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background -->
+    <div class="bg-pattern"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="header-badge">
+                <span class="pulse-dot"></span>
+                Interactive Reference Guide
+            </div>
+            <h1>⚙️ Bash Automation & Cron Jobs</h1>
+            <p class="subtitle">Click any command card to explore its full usage, syntax, options & real-world examples</p>
+            <div class="search-wrapper">
+                <span class="search-icon-wrap">🔍</span>
+                <input type="text" id="searchInput" placeholder="Search commands, concepts, keywords...">
+                <button class="search-clear" id="searchClear">✕</button>
+                <span class="shortcut-hint" id="shortcutHint">/</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Filter -->
+    <div class="filter-bar" id="filterBar"></div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- Commands Grid -->
+    <div class="grid-container">
+        <div class="commands-grid" id="commandsGrid"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header" id="modalHeader"></div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <button class="back-top" id="backTop">↑</button>
+
+    <!-- Footer -->
+    <footer>
+        <p>Bash Automation & Cron Jobs Reference — Built for DevOps engineers, sysadmins & developers</p>
+    </footer>
+
+    <script>
+    // =====================================================
+    // DATA — All Bash Automation & Cron Job Commands
+    // =====================================================
+    const commandsData = [
+        // ─── CRON & SCHEDULING ───
+        {
+            id: "crontab",
+            name: "crontab",
+            brief: "Schedule recurring automated tasks using the cron daemon",
+            category: "cron",
+            icon: "⏰",
+            description: "Crontab (cron table) is the primary tool for scheduling recurring tasks in Unix/Linux. Each user can have their own crontab file that specifies commands to run at specific times, dates, or intervals.",
+            usages: [
+                {
+                    title: "Managing Crontab",
+                    items: [
+                        { label: "Edit current user's crontab", code: "crontab -e" },
+                        { label: "List current user's crontab entries", code: "crontab -l" },
+                        { label: "Remove all crontab entries", code: "crontab -r" },
+                        { label: "Edit crontab for a specific user", code: "sudo crontab -u username -e" },
+                        { label: "List another user's crontab", code: "sudo crontab -u username -l" },
+                        { label: "Load crontab from a file", code: "crontab mycron.txt" },
+                        { label: "Backup current crontab", code: "crontab -l > crontab_backup_$(date +%Y%m%d).txt" },
+                        { label: "Restore crontab from backup", code: "crontab crontab_backup_20240101.txt" }
+                    ]
+                },
+                {
+                    title: "Cron Schedule Format",
+                    items: [
+                        { label: "Format breakdown", code: "# ┌──────────── minute (0-59)\n# │ ┌────────── hour (0-23)\n# │ │ ┌──────── day of month (1-31)\n# │ │ │ ┌────── month (1-12 or jan-dec)\n# │ │ │ │ ┌──── day of week (0-7, 0&7=Sun, or sun-sat)\n# │ │ │ │ │\n# * * * * * command_to_execute" },
+                        { label: "Special characters", code: "# *     Any/every value\n# ,     Value list separator (1,3,5)\n# -     Range of values (1-5)\n# /     Step values (*/5 = every 5th)" }
+                    ]
+                },
+                {
+                    title: "Common Schedule Examples",
+                    items: [
+                        { label: "Every minute", code: "* * * * * /path/to/script.sh" },
+                        { label: "Every 5 minutes", code: "*/5 * * * * /path/to/script.sh" },
+                        { label: "Every 15 minutes", code: "*/15 * * * * /path/to/script.sh" },
+                        { label: "Every hour (at minute 0)", code: "0 * * * * /path/to/script.sh" },
+                        { label: "Every 2 hours", code: "0 */2 * * * /path/to/script.sh" },
+                        { label: "Every day at midnight", code: "0 0 * * * /path/to/script.sh" },
+                        { label: "Every day at 6 AM", code: "0 6 * * * /path/to/script.sh" },
+                        { label: "Twice a day (9AM and 6PM)", code: "0 9,18 * * * /path/to/script.sh" },
+                        { label: "Every Monday at 8 AM", code: "0 8 * * 1 /path/to/script.sh" },
+                        { label: "Weekdays at 8:30 AM", code: "30 8 * * 1-5 /path/to/script.sh" },
+                        { label: "Every weekend at noon", code: "0 12 * * 6,0 /path/to/script.sh" },
+                        { label: "First day of every month", code: "0 0 1 * * /path/to/script.sh" },
+                        { label: "Every quarter (Jan, Apr, Jul, Oct)", code: "0 0 1 1,4,7,10 * /path/to/script.sh" },
+                        { label: "Every Sunday at 2:30 AM", code: "30 2 * * 0 /path/to/script.sh" },
+                        { label: "Every 10 min during business hours", code: "*/10 9-17 * * 1-5 /path/to/script.sh" }
+                    ]
+                },
+                {
+                    title: "Special Cron Strings",
+                    items: [
+                        { label: "Predefined scheduling shortcuts", code: "@reboot    /path/to/script.sh  # Run once at startup\n@yearly    /path/to/script.sh  # 0 0 1 1 *\n@annually  /path/to/script.sh  # Same as @yearly\n@monthly   /path/to/script.sh  # 0 0 1 * *\n@weekly    /path/to/script.sh  # 0 0 * * 0\n@daily     /path/to/script.sh  # 0 0 * * *\n@midnight  /path/to/script.sh  # Same as @daily\n@hourly    /path/to/script.sh  # 0 * * * *" }
+                    ]
+                },
+                {
+                    title: "Output & Logging",
+                    items: [
+                        { label: "Log output to file", code: "*/5 * * * * /path/to/script.sh >> /var/log/myjob.log 2>&1" },
+                        { label: "Log with timestamp", code: '*/5 * * * * echo "$(date): Starting job" >> /var/log/myjob.log && /path/to/script.sh >> /var/log/myjob.log 2>&1' },
+                        { label: "Suppress all output", code: "*/5 * * * * /path/to/script.sh > /dev/null 2>&1" },
+                        { label: "Email output (if mail configured)", code: "MAILTO=admin@example.com\n0 6 * * * /path/to/report.sh" },
+                        { label: "Disable email for specific job", code: "0 6 * * * /path/to/script.sh > /dev/null 2>&1" },
+                        { label: "Separate stdout and stderr logs", code: "0 2 * * * /path/to/script.sh >> /var/log/job.log 2>> /var/log/job_errors.log" }
+                    ]
+                },
+                {
+                    title: "Environment & Best Practices",
+                    items: [
+                        { label: "Set environment variables in crontab", code: "SHELL=/bin/bash\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\nHOME=/home/user\nMAILTO=admin@example.com\n\n0 2 * * * /path/to/script.sh" },
+                        { label: "Use full paths (important!)", code: "# BAD - may not work:\n0 * * * * script.sh\n\n# GOOD - always use full paths:\n0 * * * * /home/user/scripts/script.sh" },
+                        { label: "Use a wrapper script for complex jobs", code: "# In crontab:\n0 2 * * * /home/user/scripts/nightly_wrapper.sh\n\n# nightly_wrapper.sh:\n#!/bin/bash\nsource /home/user/.bash_profile\nexport PATH=/usr/local/bin:$PATH\ncd /home/user/project\n./complex_job.sh" }
+                    ]
+                }
+            ],
+            options: [
+                ["-e", "Edit crontab for current user"],
+                ["-l", "List crontab entries"],
+                ["-r", "Remove all crontab entries"],
+                ["-u user", "Specify which user's crontab to manage"],
+                ["-i", "Prompt before removing with -r"]
+            ],
+            tips: ["Always use absolute paths in cron jobs", "Test your script manually before adding to cron", "Add logging to troubleshoot cron job failures"]
+        },
+        {
+            id: "at",
+            name: "at",
+            brief: "Schedule a one-time task to run at a specific time",
+            category: "cron",
+            icon: "🕐",
+            description: "The 'at' command schedules a one-time task to be executed at a specified time in the future. Unlike cron, which handles recurring tasks, 'at' is designed for single execution. Requires the atd daemon to be running.",
+            usages: [
+                {
+                    title: "Scheduling Tasks",
+                    items: [
+                        { label: "Run at a specific time", code: "at 10:30\nat> /path/to/script.sh\nat> <Ctrl+D>" },
+                        { label: "Run at a specific time (one-liner)", code: 'echo "/path/to/script.sh" | at 10:30' },
+                        { label: "Run at specific date & time", code: 'echo "/path/to/backup.sh" | at 2:00 AM December 25' },
+                        { label: "Run in 30 minutes", code: 'echo "/path/to/script.sh" | at now + 30 minutes' },
+                        { label: "Run in 2 hours", code: 'echo "/path/to/script.sh" | at now + 2 hours' },
+                        { label: "Run tomorrow at noon", code: 'echo "/path/to/script.sh" | at noon tomorrow' },
+                        { label: "Run next Monday", code: 'echo "/path/to/script.sh" | at 9:00 AM next monday' },
+                        { label: "Run at teatime (4 PM)", code: 'echo "/path/to/script.sh" | at teatime' },
+                        { label: "Run at midnight", code: 'echo "/path/to/script.sh" | at midnight' },
+                        { label: "Complex command scheduling", code: 'at now + 1 hour << EOF\n/usr/bin/mysqldump mydb > /backup/db_$(date +%Y%m%d).sql\ngzip /backup/db_$(date +%Y%m%d).sql\nEOF' }
+                    ]
+                },
+                {
+                    title: "Managing Scheduled Tasks",
+                    items: [
+                        { label: "List pending jobs", code: "atq\nat -l" },
+                        { label: "View job details", code: "at -c job_number" },
+                        { label: "Remove a scheduled job", code: "atrm job_number\nat -d job_number" },
+                        { label: "Remove multiple jobs", code: "atrm 5 6 7 8" }
+                    ]
+                },
+                {
+                    title: "Access Control",
+                    items: [
+                        { label: "Allow/Deny users", code: "# /etc/at.allow  — users who CAN use at\n# /etc/at.deny   — users who CANNOT use at\n\n# If at.allow exists, only listed users can use at\n# If at.allow doesn't exist, users NOT in at.deny can use at\n# If neither exists, only root can use at" }
+                    ]
+                }
+            ],
+            options: [
+                ["-l", "List pending jobs (same as atq)"],
+                ["-c", "Show contents of a job"],
+                ["-d", "Delete a job (same as atrm)"],
+                ["-f file", "Read job from file instead of stdin"],
+                ["-m", "Send mail when job completes"],
+                ["-v", "Show time when job will run"]
+            ]
+        },
+        {
+            id: "systemd-timers",
+            name: "systemd timers",
+            brief: "Modern alternative to cron using systemd timer units",
+            category: "cron",
+            icon: "🔄",
+            description: "Systemd timers are a modern replacement for cron jobs on systems using systemd. They offer better logging, dependency management, and resource control compared to traditional cron.",
+            usages: [
+                {
+                    title: "Creating a Timer",
+                    items: [
+                        { label: "Step 1: Create the service unit", code: "# /etc/systemd/system/mybackup.service\n[Unit]\nDescription=My Backup Script\n\n[Service]\nType=oneshot\nExecStart=/home/user/scripts/backup.sh\nUser=user\nGroup=user\nStandardOutput=journal\nStandardError=journal" },
+                        { label: "Step 2: Create the timer unit", code: "# /etc/systemd/system/mybackup.timer\n[Unit]\nDescription=Run backup daily\n\n[Timer]\nOnCalendar=daily\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target" },
+                        { label: "Step 3: Enable and start", code: "sudo systemctl daemon-reload\nsudo systemctl enable mybackup.timer\nsudo systemctl start mybackup.timer" }
+                    ]
+                },
+                {
+                    title: "Timer Schedule Examples",
+                    items: [
+                        { label: "OnCalendar syntax examples", code: "OnCalendar=minutely\nOnCalendar=hourly\nOnCalendar=daily\nOnCalendar=weekly\nOnCalendar=monthly\nOnCalendar=yearly\nOnCalendar=*-*-* 06:00:00          # Daily at 6AM\nOnCalendar=Mon *-*-* 09:00:00      # Every Monday 9AM\nOnCalendar=*-*-* *:*:00             # Every minute\nOnCalendar=*-*-* *:00/15:00         # Every 15 minutes\nOnCalendar=Mon..Fri *-*-* 08:30:00  # Weekdays 8:30AM\nOnCalendar=*-*-01 00:00:00          # First of each month\nOnCalendar=*-01,04,07,10-01 00:00:00 # Quarterly" },
+                        { label: "Relative timer (from boot/activation)", code: "# Run 15 minutes after boot:\nOnBootSec=15min\n\n# Run 1 hour after service was last activated:\nOnUnitActiveSec=1h\n\n# Run 30 min after timer was started:\nOnActiveSec=30min" }
+                    ]
+                },
+                {
+                    title: "Managing Timers",
+                    items: [
+                        { label: "List all active timers", code: "systemctl list-timers --all" },
+                        { label: "Check timer status", code: "systemctl status mybackup.timer" },
+                        { label: "Check service logs", code: "journalctl -u mybackup.service -f\njournalctl -u mybackup.service --since today" },
+                        { label: "Start/Stop timer", code: "sudo systemctl start mybackup.timer\nsudo systemctl stop mybackup.timer" },
+                        { label: "Enable/Disable on boot", code: "sudo systemctl enable mybackup.timer\nsudo systemctl disable mybackup.timer" },
+                        { label: "Manually trigger the service", code: "sudo systemctl start mybackup.service" },
+                        { label: "Validate timer syntax", code: "systemd-analyze calendar daily\nsystemd-analyze calendar 'Mon *-*-* 09:00:00'" }
+                    ]
+                }
+            ],
+            options: [
+                ["OnCalendar", "Calendar-based schedule"],
+                ["OnBootSec", "Time after system boot"],
+                ["OnActiveSec", "Time after timer activation"],
+                ["OnUnitActiveSec", "Time after unit was last active"],
+                ["Persistent", "Run missed triggers after downtime"],
+                ["RandomizedDelaySec", "Random delay to prevent thundering herd"],
+                ["AccuracySec", "Timer accuracy (default 1min)"]
+            ]
+        },
+        {
+            id: "anacron",
+            name: "anacron",
+            brief: "Run cron jobs that were missed while system was off",
+            category: "cron",
+            icon: "🔃",
+            description: "Anacron ensures that scheduled tasks are executed even if the system was off at the scheduled time. Ideal for laptops and systems that aren't running 24/7. It runs jobs on a daily/weekly/monthly basis.",
+            usages: [
+                {
+                    title: "Configuration",
+                    items: [
+                        { label: "Anacrontab format", code: "# /etc/anacrontab\n# period  delay  job-id          command\n1          5     daily-backup    /home/user/scripts/backup.sh\n7          10    weekly-cleanup  /home/user/scripts/cleanup.sh\n30         15    monthly-report  /home/user/scripts/report.sh\n@monthly   15    monthly-audit   /home/user/scripts/audit.sh" },
+                        { label: "Format explained", code: "# period: frequency in days (1=daily, 7=weekly, 30=monthly)\n# delay: minutes to wait after anacron starts\n# job-id: unique identifier for the job\n# command: the command/script to execute" },
+                        { label: "Test anacron", code: "sudo anacron -T        # Test config syntax\nsudo anacron -f        # Force run all jobs now\nsudo anacron -f -n     # Force run, don't wait for delays\nsudo anacron -u        # Update timestamps without running" }
+                    ]
+                }
+            ],
+            options: [
+                ["-T", "Test configuration file syntax"],
+                ["-f", "Force execution of all jobs"],
+                ["-n", "Run jobs now without delays"],
+                ["-u", "Update timestamps only"],
+                ["-s", "Serialize job execution"],
+                ["-d", "Print debug info to stderr"]
+            ]
+        },
+
+        // ─── BASH SCRIPTING ───
+        {
+            id: "bash-script-basics",
+            name: "bash script basics",
+            brief: "Essential script structure, shebang, execution, and best practices",
+            category: "script",
+            icon: "📜",
+            description: "Every bash automation starts with a well-structured script. This covers the essential structure, headers, execution permissions, and best practices for creating reliable automation scripts.",
+            usages: [
+                {
+                    title: "Script Structure",
+                    items: [
+                        { label: "Basic script template", code: '#!/bin/bash\n# ============================================\n# Script: my_automation.sh\n# Description: Brief description of the script\n# Author: Your Name\n# Date: 2024-01-01\n# Usage: ./my_automation.sh [options]\n# ============================================\n\nset -euo pipefail\nIFS=$\'\\n\\t\'\n\n# --- Configuration ---\nLOG_FILE="/var/log/my_script.log"\nBACKUP_DIR="/backup"\nMAX_RETRIES=3\n\n# --- Functions ---\nlog() {\n    echo "[$(date \'%Y-%m-%d %H:%M:%S\')] $*" | tee -a "$LOG_FILE"\n}\n\ncleanup() {\n    log "Cleaning up temporary files..."\n    rm -f /tmp/my_script_*\n}\n\ntrap cleanup EXIT\n\n# --- Main Logic ---\nlog "Script started"\n\n# Your automation code here\n\nlog "Script completed successfully"' }
+                    ]
+                },
+                {
+                    title: "Making Scripts Executable",
+                    items: [
+                        { label: "Create and run a script", code: "# Create the script\ntouch my_script.sh\nchmod +x my_script.sh\n\n# Run it\n./my_script.sh\n\n# Or with bash explicitly\nbash my_script.sh\n\n# Run with debug output\nbash -x my_script.sh" },
+                        { label: "Shebang variations", code: "#!/bin/bash          # Standard bash\n#!/usr/bin/env bash  # Portable (finds bash in PATH)\n#!/bin/sh            # POSIX shell (more portable, fewer features)\n#!/bin/bash -e       # Exit on error (or use set -e)" }
+                    ]
+                },
+                {
+                    title: "Strict Mode & Error Handling",
+                    items: [
+                        { label: "Recommended strict mode header", code: '#!/bin/bash\nset -euo pipefail\nIFS=$\'\\n\\t\'\n\n# set -e          Exit immediately if a command fails\n# set -u          Treat unset variables as errors\n# set -o pipefail Pipe fails if any command in pipe fails\n# IFS             Set safe Internal Field Separator' },
+                        { label: "Error handling with trap", code: '#!/bin/bash\nset -euo pipefail\n\nerror_handler() {\n    echo "ERROR: Script failed at line $1"\n    echo "Command: $2"\n    echo "Exit code: $3"\n    # Send alert, cleanup, etc.\n}\n\ntrap \'error_handler $LINENO "$BASH_COMMAND" $?\' ERR\n\n# Your code here - any error auto-triggers handler' },
+                        { label: "Graceful shutdown on Ctrl+C", code: '#!/bin/bash\n\nshutdown_handler() {\n    echo ""\n    echo "Caught interrupt signal. Shutting down gracefully..."\n    # Cleanup operations\n    kill $(jobs -p) 2>/dev/null\n    exit 130\n}\n\ntrap shutdown_handler SIGINT SIGTERM\n\n# Long-running operations here\nwhile true; do\n    echo "Working..."\n    sleep 5\ndone' }
+                    ]
+                },
+                {
+                    title: "Argument Parsing",
+                    items: [
+                        { label: "Simple positional arguments", code: '#!/bin/bash\n\nif [ $# -lt 2 ]; then\n    echo "Usage: $0 <source> <destination>"\n    echo "Example: $0 /data /backup"\n    exit 1\nfi\n\nSOURCE="$1"\nDEST="$2"\necho "Copying from $SOURCE to $DEST"' },
+                        { label: "Using getopts for flags", code: '#!/bin/bash\n\nVERBOSE=false\nDRY_RUN=false\nOUTPUT=""\n\nusage() {\n    echo "Usage: $0 [-v] [-d] [-o output_file] input_file"\n    echo "  -v  Verbose mode"\n    echo "  -d  Dry run"\n    echo "  -o  Output file"\n    echo "  -h  Show this help"\n    exit 1\n}\n\nwhile getopts ":vdo:h" opt; do\n    case $opt in\n        v) VERBOSE=true ;;\n        d) DRY_RUN=true ;;\n        o) OUTPUT="$OPTARG" ;;\n        h) usage ;;\n        \\?) echo "Invalid option: -$OPTARG"; usage ;;\n        :) echo "Option -$OPTARG requires argument"; usage ;;\n    esac\ndone\n\nshift $((OPTIND - 1))\n\nINPUT="${1:?Input file required}"\n\n$VERBOSE && echo "Processing: $INPUT"\n$DRY_RUN && echo "[DRY RUN] Would process $INPUT" && exit 0' },
+                        { label: "Long options with case", code: '#!/bin/bash\n\nwhile [[ $# -gt 0 ]]; do\n    case "$1" in\n        --verbose|-v)\n            VERBOSE=true\n            shift\n            ;;\n        --output|-o)\n            OUTPUT="$2"\n            shift 2\n            ;;\n        --config)\n            CONFIG_FILE="$2"\n            shift 2\n            ;;\n        --help|-h)\n            show_help\n            exit 0\n            ;;\n        --)\n            shift\n            break\n            ;;\n        -*)\n            echo "Unknown option: $1"\n            exit 1\n            ;;\n        *)\n            POSITIONAL_ARGS+=("$1")\n            shift\n            ;;\n    esac\ndone' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "logging",
+            name: "logging & output",
+            brief: "Implement structured logging, colored output, and progress indicators",
+            category: "script",
+            icon: "📋",
+            description: "Professional automation scripts need good logging. This covers implementing structured logging with levels, timestamps, colored output, and log rotation in bash scripts.",
+            usages: [
+                {
+                    title: "Logging Functions",
+                    items: [
+                        { label: "Professional logging system", code: '#!/bin/bash\nLOG_FILE="/var/log/automation.log"\nLOG_LEVEL=${LOG_LEVEL:-INFO}  # DEBUG, INFO, WARN, ERROR\n\n# Colors\nRED=\'\\033[0;31m\'\nGREEN=\'\\033[0;32m\'\nYELLOW=\'\\033[1;33m\'\nBLUE=\'\\033[0;34m\'\nNC=\'\\033[0m\'\n\nlog() {\n    local level="$1"\n    shift\n    local msg="$*"\n    local timestamp\n    timestamp=$(date "+%Y-%m-%d %H:%M:%S")\n    \n    # Write to log file\n    echo "[$timestamp] [$level] $msg" >> "$LOG_FILE"\n    \n    # Print to console with colors\n    case "$level" in\n        DEBUG) [[ "$LOG_LEVEL" == "DEBUG" ]] && echo -e "${BLUE}[$timestamp] [DEBUG]${NC} $msg" ;;\n        INFO)  echo -e "${GREEN}[$timestamp] [INFO]${NC} $msg" ;;\n        WARN)  echo -e "${YELLOW}[$timestamp] [WARN]${NC} $msg" ;;\n        ERROR) echo -e "${RED}[$timestamp] [ERROR]${NC} $msg" >&2 ;;\n    esac\n}\n\n# Usage:\nlog INFO "Starting backup process"\nlog WARN "Disk space below 20%"\nlog ERROR "Connection failed"\nlog DEBUG "Variable value: $myvar"' },
+                        { label: "Simple log rotation", code: '#!/bin/bash\nrotate_logs() {\n    local log_file="$1"\n    local max_size=${2:-10485760}  # 10MB default\n    local max_files=${3:-5}\n    \n    if [ -f "$log_file" ]; then\n        local size\n        size=$(stat -f%z "$log_file" 2>/dev/null || stat -c%s "$log_file")\n        \n        if [ "$size" -gt "$max_size" ]; then\n            for ((i=max_files-1; i>=1; i--)); do\n                [ -f "${log_file}.$i" ] && mv "${log_file}.$i" "${log_file}.$((i+1))"\n            done\n            mv "$log_file" "${log_file}.1"\n            touch "$log_file"\n            echo "[$(date)] Log rotated" > "$log_file"\n        fi\n    fi\n}\n\nrotate_logs "/var/log/myapp.log" 5242880 3' }
+                    ]
+                },
+                {
+                    title: "Progress Indicators",
+                    items: [
+                        { label: "Progress bar", code: '#!/bin/bash\nprogress_bar() {\n    local current=$1\n    local total=$2\n    local width=50\n    local percent=$((current * 100 / total))\n    local filled=$((width * current / total))\n    local empty=$((width - filled))\n    \n    printf "\\r["\n    printf "%${filled}s" | tr \' \' \'█\'\n    printf "%${empty}s" | tr \' \' \'░\'\n    printf "] %3d%% (%d/%d)" "$percent" "$current" "$total"\n}\n\n# Usage:\ntotal=100\nfor ((i=1; i<=total; i++)); do\n    progress_bar $i $total\n    sleep 0.05\ndone\necho ""  # newline after completion' },
+                        { label: "Spinner animation", code: '#!/bin/bash\nspinner() {\n    local pid=$1\n    local msg="${2:-Processing}"\n    local chars=\'⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏\'\n    \n    while kill -0 "$pid" 2>/dev/null; do\n        for ((i=0; i<${#chars}; i++)); do\n            printf "\\r%s %s..." "${chars:$i:1}" "$msg"\n            sleep 0.1\n        done\n    done\n    printf "\\r✓ %s... Done!\\n" "$msg"\n}\n\n# Usage:\nlong_running_command &\nspinner $! "Downloading files"\nwait' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "conditional-logic",
+            name: "if/else & case",
+            brief: "Conditional branching for automation decision-making",
+            category: "script",
+            icon: "🔀",
+            description: "Conditional statements are crucial for automation scripts that need to make decisions based on file states, command results, system conditions, and more.",
+            usages: [
+                {
+                    title: "File & Directory Checks",
+                    items: [
+                        { label: "Common file condition checks", code: '#!/bin/bash\n\n# Check if file exists\nif [ -f "/etc/nginx/nginx.conf" ]; then\n    echo "Nginx config found"\nfi\n\n# Check if directory exists\nif [ -d "/var/log/nginx" ]; then\n    echo "Log directory exists"\nelse\n    mkdir -p /var/log/nginx\nfi\n\n# Check if file is readable/writable/executable\n[ -r "$file" ] && echo "Readable"\n[ -w "$file" ] && echo "Writable"\n[ -x "$file" ] && echo "Executable"\n\n# Check if file is not empty\nif [ -s "/var/log/errors.log" ]; then\n    echo "Error log has content!"\nfi\n\n# Check if file is newer than another\nif [ "$file1" -nt "$file2" ]; then\n    echo "$file1 is newer"\nfi' }
+                    ]
+                },
+                {
+                    title: "Command Success/Failure",
+                    items: [
+                        { label: "Check command results", code: '#!/bin/bash\n\n# Run command and check result\nif ping -c 1 -W 2 google.com &>/dev/null; then\n    echo "Internet is up"\nelse\n    echo "No internet connection"\n    send_alert "Internet down"\nfi\n\n# Check if a service is running\nif systemctl is-active --quiet nginx; then\n    echo "Nginx is running"\nelse\n    echo "Nginx is NOT running - restarting..."\n    systemctl restart nginx\nfi\n\n# Check if user exists\nif id "deploy_user" &>/dev/null; then\n    echo "User exists"\nelse\n    useradd deploy_user\nfi\n\n# Short-circuit patterns\ncommand1 && echo "Success" || echo "Failed"\n[ -f config.yml ] && source_config || use_defaults' }
+                    ]
+                },
+                {
+                    title: "Case Statements for Automation",
+                    items: [
+                        { label: "Service control script", code: '#!/bin/bash\n\ncase "${1,,}" in  # ${1,,} converts to lowercase\n    start)\n        echo "Starting service..."\n        systemctl start myapp\n        ;;\n    stop)\n        echo "Stopping service..."\n        systemctl stop myapp\n        ;;\n    restart)\n        echo "Restarting service..."\n        systemctl restart myapp\n        ;;\n    status)\n        systemctl status myapp\n        ;;\n    deploy)\n        echo "Deploying..."\n        git pull origin main\n        systemctl restart myapp\n        ;;\n    logs)\n        journalctl -u myapp -f\n        ;;\n    *)\n        echo "Usage: $0 {start|stop|restart|status|deploy|logs}"\n        exit 1\n        ;;\nesac' },
+                        { label: "OS detection for cross-platform scripts", code: '#!/bin/bash\n\ncase "$(uname -s)" in\n    Linux*)\n        PKG_MANAGER="apt-get"\n        SERVICE_CMD="systemctl"\n        ;;\n    Darwin*)\n        PKG_MANAGER="brew"\n        SERVICE_CMD="launchctl"\n        ;;\n    CYGWIN*|MINGW*)\n        echo "Windows detected - limited support"\n        ;;\n    *)\n        echo "Unknown OS: $(uname -s)"\n        exit 1\n        ;;\nesac\n\necho "Using $PKG_MANAGER for package management"' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "loops",
+            name: "for/while loops",
+            brief: "Iterate over files, lists, ranges, and process streams",
+            category: "script",
+            icon: "🔁",
+            description: "Loops are essential for batch processing, file operations, retry logic, and monitoring in automation scripts.",
+            usages: [
+                {
+                    title: "File Processing Loops",
+                    items: [
+                        { label: "Process all files in directory", code: '#!/bin/bash\nfor file in /var/log/*.log; do\n    if [ -f "$file" ]; then\n        size=$(du -sh "$file" | cut -f1)\n        echo "Processing: $file ($size)"\n        gzip "$file"\n    fi\ndone' },
+                        { label: "Find and process files", code: '#!/bin/bash\nwhile IFS= read -r -d \'\' file; do\n    echo "Found: $file"\n    # Process each file safely (handles spaces in names)\ndone < <(find /data -name "*.csv" -mtime -7 -print0)' },
+                        { label: "Batch rename files", code: '#!/bin/bash\nfor file in *.jpg; do\n    # Rename with date prefix\n    new_name="$(date +%Y%m%d)_${file}"\n    mv "$file" "$new_name"\n    echo "Renamed: $file -> $new_name"\ndone' }
+                    ]
+                },
+                {
+                    title: "Server & Network Loops",
+                    items: [
+                        { label: "Loop over multiple servers", code: '#!/bin/bash\nSERVERS=(\n    "web1.example.com"\n    "web2.example.com"\n    "db1.example.com"\n)\n\nfor server in "${SERVERS[@]}"; do\n    echo "--- Checking $server ---"\n    if ssh "$server" "uptime" 2>/dev/null; then\n        echo "✓ $server is reachable"\n    else\n        echo "✗ $server is DOWN"\n    fi\ndone' },
+                        { label: "Retry logic with backoff", code: '#!/bin/bash\nmax_retries=5\nretry_delay=2\n\nfor ((attempt=1; attempt<=max_retries; attempt++)); do\n    echo "Attempt $attempt of $max_retries..."\n    \n    if curl -sf https://api.example.com/health; then\n        echo "Success on attempt $attempt"\n        break\n    fi\n    \n    if [ $attempt -eq $max_retries ]; then\n        echo "Failed after $max_retries attempts"\n        exit 1\n    fi\n    \n    sleep_time=$((retry_delay ** attempt))\n    echo "Retrying in ${sleep_time}s..."\n    sleep $sleep_time\ndone' }
+                    ]
+                },
+                {
+                    title: "Monitoring Loops",
+                    items: [
+                        { label: "Continuous monitoring script", code: '#!/bin/bash\nCHECK_INTERVAL=30\nALERT_THRESHOLD=90\n\nwhile true; do\n    # Check disk usage\n    disk_usage=$(df / | awk \'NR==2 {print $5}\' | tr -d \'%\')\n    \n    if [ "$disk_usage" -gt "$ALERT_THRESHOLD" ]; then\n        echo "[ALERT] Disk usage at ${disk_usage}%"\n        # Send notification\n    fi\n    \n    # Check memory\n    mem_free=$(free -m | awk \'NR==2 {printf "%.0f", $3/$2*100}\')\n    echo "[$(date +%H:%M:%S)] Disk: ${disk_usage}% | Memory: ${mem_free}%"\n    \n    sleep $CHECK_INTERVAL\ndone' },
+                        { label: "Watch for file changes", code: '#!/bin/bash\nWATCH_DIR="/etc/nginx"\nLAST_HASH=""\n\nwhile true; do\n    CURRENT_HASH=$(find "$WATCH_DIR" -type f -exec md5sum {} \\; | sort | md5sum)\n    \n    if [ "$LAST_HASH" != "" ] && [ "$CURRENT_HASH" != "$LAST_HASH" ]; then\n        echo "[$(date)] Configuration changed! Reloading nginx..."\n        nginx -t && systemctl reload nginx\n    fi\n    \n    LAST_HASH="$CURRENT_HASH"\n    sleep 10\ndone' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "functions",
+            name: "functions",
+            brief: "Create reusable function libraries for automation scripts",
+            category: "script",
+            icon: "🧩",
+            description: "Functions help organize automation scripts into modular, reusable components. You can create shared function libraries that multiple scripts can source.",
+            usages: [
+                {
+                    title: "Function Library Pattern",
+                    items: [
+                        { label: "Create a shared library (lib/common.sh)", code: '#!/bin/bash\n# lib/common.sh - Common functions library\n\n# Prevent double-sourcing\n[ -n "$_COMMON_SH_LOADED" ] && return\n_COMMON_SH_LOADED=1\n\n# --- Logging ---\nlog_info()  { echo -e "\\033[32m[INFO]\\033[0m  $(date +%T) $*"; }\nlog_warn()  { echo -e "\\033[33m[WARN]\\033[0m  $(date +%T) $*"; }\nlog_error() { echo -e "\\033[31m[ERROR]\\033[0m $(date +%T) $*" >&2; }\nlog_debug() { [ "${DEBUG:-0}" = "1" ] && echo -e "\\033[34m[DEBUG]\\033[0m $(date +%T) $*"; }\n\n# --- Validation ---\nrequire_root() {\n    [ "$(id -u)" -eq 0 ] || { log_error "This script must be run as root"; exit 1; }\n}\n\nrequire_command() {\n    command -v "$1" &>/dev/null || { log_error "Required command not found: $1"; exit 1; }\n}\n\nrequire_file() {\n    [ -f "$1" ] || { log_error "Required file not found: $1"; exit 1; }\n}\n\n# --- Confirmation ---\nconfirm() {\n    local msg="${1:-Are you sure?}"\n    read -rp "$msg [y/N] " response\n    [[ "$response" =~ ^[Yy]$ ]]\n}\n\n# --- Retry logic ---\nretry() {\n    local retries="${1:-3}"\n    local delay="${2:-5}"\n    shift 2\n    local cmd="$@"\n    \n    for ((i=1; i<=retries; i++)); do\n        if eval "$cmd"; then\n            return 0\n        fi\n        log_warn "Attempt $i/$retries failed. Retrying in ${delay}s..."\n        sleep "$delay"\n    done\n    log_error "All $retries attempts failed: $cmd"\n    return 1\n}' },
+                        { label: "Using the library in scripts", code: '#!/bin/bash\n# my_automation.sh\n\n# Source the library\nSCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"\nsource "$SCRIPT_DIR/lib/common.sh"\n\n# Now use library functions\nrequire_root\nrequire_command rsync\nrequire_command ssh\n\nlog_info "Starting backup process"\n\nif confirm "Proceed with backup?"; then\n    retry 3 5 rsync -avz /data/ remote:/backup/\n    log_info "Backup completed"\nelse\n    log_warn "Backup cancelled by user"\nfi' }
+                    ]
+                },
+                {
+                    title: "Advanced Function Patterns",
+                    items: [
+                        { label: "Function with named parameters", code: '#!/bin/bash\nsend_notification() {\n    local channel=""\n    local message=""\n    local severity="info"\n    \n    while [[ $# -gt 0 ]]; do\n        case "$1" in\n            --channel) channel="$2"; shift 2 ;;\n            --message) message="$2"; shift 2 ;;\n            --severity) severity="$2"; shift 2 ;;\n            *) echo "Unknown param: $1"; return 1 ;;\n        esac\n    done\n    \n    echo "[$severity] Sending to $channel: $message"\n    # Actual notification logic here\n}\n\n# Usage:\nsend_notification --channel "#alerts" --message "Deploy complete" --severity "info"' },
+                        { label: "Lock file to prevent concurrent execution", code: '#!/bin/bash\nLOCK_FILE="/tmp/my_script.lock"\n\nacquire_lock() {\n    if [ -f "$LOCK_FILE" ]; then\n        local pid\n        pid=$(cat "$LOCK_FILE")\n        if kill -0 "$pid" 2>/dev/null; then\n            echo "Script already running (PID: $pid)"\n            exit 1\n        else\n            echo "Removing stale lock file"\n            rm -f "$LOCK_FILE"\n        fi\n    fi\n    echo $$ > "$LOCK_FILE"\n}\n\nrelease_lock() {\n    rm -f "$LOCK_FILE"\n}\n\ntrap release_lock EXIT\nacquire_lock\n\n# Your script logic here\necho "Running safely with lock..."' }
+                    ]
+                }
+            ]
+        },
+
+        // ─── FILE AUTOMATION ───
+        {
+            id: "backup-scripts",
+            name: "backup automation",
+            brief: "Automated backup scripts with rotation, compression, and verification",
+            category: "file",
+            icon: "💾",
+            description: "Automated backup scripts are one of the most critical automation tasks. This covers creating reliable, compressed, rotated backups with verification and notifications.",
+            usages: [
+                {
+                    title: "Full Backup Script",
+                    items: [
+                        { label: "Complete backup automation script", code: '#!/bin/bash\n# Automated Backup Script with Rotation\nset -euo pipefail\n\n# Configuration\nBACKUP_SOURCE="/var/www /etc/nginx /home"\nBACKUP_DEST="/backup"\nDATE=$(date +%Y%m%d_%H%M%S)\nBACKUP_FILE="$BACKUP_DEST/backup_$DATE.tar.gz"\nMAX_BACKUPS=7\nLOG="/var/log/backup.log"\n\nlog() { echo "[$(date +\"%Y-%m-%d %H:%M:%S\")] $*" | tee -a "$LOG"; }\n\nlog "=== Backup Started ===" \n\n# Create backup directory\nmkdir -p "$BACKUP_DEST"\n\n# Create compressed backup\nlog "Creating backup: $BACKUP_FILE"\ntar -czf "$BACKUP_FILE" $BACKUP_SOURCE 2>> "$LOG"\n\n# Verify backup\nif tar -tzf "$BACKUP_FILE" &>/dev/null; then\n    SIZE=$(du -sh "$BACKUP_FILE" | cut -f1)\n    log "✓ Backup verified successfully ($SIZE)"\nelse\n    log "✗ Backup verification FAILED!"\n    exit 1\nfi\n\n# Rotate old backups\nBACKUP_COUNT=$(ls -1 "$BACKUP_DEST"/backup_*.tar.gz 2>/dev/null | wc -l)\nif [ "$BACKUP_COUNT" -gt "$MAX_BACKUPS" ]; then\n    DELETE_COUNT=$((BACKUP_COUNT - MAX_BACKUPS))\n    ls -1t "$BACKUP_DEST"/backup_*.tar.gz | tail -n "$DELETE_COUNT" | while read -r old; do\n        log "Deleting old backup: $old"\n        rm -f "$old"\n    done\nfi\n\nlog "=== Backup Completed ==="' }
+                    ]
+                },
+                {
+                    title: "Database Backup",
+                    items: [
+                        { label: "MySQL/MariaDB backup", code: '#!/bin/bash\nDB_USER="backup_user"\nDB_PASS="secure_password"\nDB_HOST="localhost"\nBACKUP_DIR="/backup/mysql"\nDATE=$(date +%Y%m%d)\n\nmkdir -p "$BACKUP_DIR"\n\n# Backup all databases\nfor db in $(mysql -u"$DB_USER" -p"$DB_PASS" -h"$DB_HOST" -e "SHOW DATABASES;" -s --skip-column-names | grep -Ev "^(information_schema|performance_schema|sys)$"); do\n    echo "Backing up: $db"\n    mysqldump -u"$DB_USER" -p"$DB_PASS" -h"$DB_HOST" \\\n        --single-transaction \\\n        --routines \\\n        --triggers \\\n        "$db" | gzip > "$BACKUP_DIR/${db}_${DATE}.sql.gz"\ndone\n\n# Cleanup backups older than 14 days\nfind "$BACKUP_DIR" -name "*.sql.gz" -mtime +14 -delete\n\necho "Database backup complete"' },
+                        { label: "PostgreSQL backup", code: '#!/bin/bash\nBACKUP_DIR="/backup/postgres"\nDATE=$(date +%Y%m%d_%H%M%S)\n\nmkdir -p "$BACKUP_DIR"\n\n# Backup all databases\npg_dumpall -U postgres | gzip > "$BACKUP_DIR/all_dbs_${DATE}.sql.gz"\n\n# Or backup specific database\npg_dump -U postgres mydb | gzip > "$BACKUP_DIR/mydb_${DATE}.sql.gz"\n\nfind "$BACKUP_DIR" -name "*.sql.gz" -mtime +7 -delete' }
+                    ]
+                },
+                {
+                    title: "Rsync Backup",
+                    items: [
+                        { label: "Incremental backup with rsync", code: '#!/bin/bash\nSOURCE="/var/www/"\nDEST="/backup/www"\nLATEST="$DEST/latest"\nDATE=$(date +%Y%m%d_%H%M%S)\nNEW_BACKUP="$DEST/$DATE"\n\nmkdir -p "$DEST"\n\n# Incremental backup using hard links\nrsync -avz --delete \\\n    --link-dest="$LATEST" \\\n    "$SOURCE" "$NEW_BACKUP"\n\n# Update latest symlink\nrm -f "$LATEST"\nln -s "$NEW_BACKUP" "$LATEST"\n\n# Keep only last 30 backups\nls -1dt "$DEST"/20* | tail -n +31 | xargs rm -rf\n\necho "Incremental backup completed: $NEW_BACKUP"' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "file-sync",
+            name: "rsync & file sync",
+            brief: "Synchronize files locally and remotely with rsync",
+            category: "file",
+            icon: "🔄",
+            description: "Rsync is the go-to tool for efficient file synchronization and transfer. It only transfers changed data, making it ideal for backups and deployments.",
+            usages: [
+                {
+                    title: "Basic Rsync Usage",
+                    items: [
+                        { label: "Local sync", code: "rsync -avh /source/ /destination/" },
+                        { label: "Remote sync (push)", code: "rsync -avz /local/path/ user@remote:/remote/path/" },
+                        { label: "Remote sync (pull)", code: "rsync -avz user@remote:/remote/path/ /local/path/" },
+                        { label: "Dry run (preview changes)", code: "rsync -avzn --delete /source/ /dest/" },
+                        { label: "Delete files not in source", code: "rsync -avz --delete /source/ /dest/" },
+                        { label: "Exclude patterns", code: 'rsync -avz \\\n    --exclude="*.log" \\\n    --exclude=".git/" \\\n    --exclude="node_modules/" \\\n    --exclude="__pycache__/" \\\n    /source/ /dest/' },
+                        { label: "Include/exclude with file", code: "rsync -avz --filter='merge rsync-filter.txt' /source/ /dest/\n\n# rsync-filter.txt:\n# - *.log\n# - .git/\n# - node_modules/\n# + *.conf\n# + *.sh" },
+                        { label: "Bandwidth limit", code: "rsync -avz --bwlimit=5000 /source/ user@remote:/dest/  # 5000 KB/s" },
+                        { label: "Resume interrupted transfer", code: "rsync -avz --partial --progress /source/ /dest/" },
+                        { label: "Sync with SSH key", code: 'rsync -avz -e "ssh -i ~/.ssh/mykey -p 2222" /source/ user@host:/dest/' }
+                    ]
+                },
+                {
+                    title: "Automated Sync Script",
+                    items: [
+                        { label: "Two-way sync with conflict detection", code: '#!/bin/bash\nSOURCE="/data/project/"\nDEST="user@server:/data/project/"\nLOG="/var/log/sync.log"\n\nlog() { echo "[$(date +\"%H:%M:%S\")] $*" | tee -a "$LOG"; }\n\nlog "Starting sync..."\n\nrsync -avz --delete \\\n    --exclude=".git/" \\\n    --backup --backup-dir="$(date +%Y%m%d)_conflicts" \\\n    "$SOURCE" "$DEST" 2>&1 | tee -a "$LOG"\n\nif [ ${PIPESTATUS[0]} -eq 0 ]; then\n    log "✓ Sync completed successfully"\nelse\n    log "✗ Sync failed with errors"\n    exit 1\nfi' }
+                    ]
+                }
+            ],
+            options: [
+                ["-a", "Archive mode (preserves permissions, times, etc.)"],
+                ["-v", "Verbose output"],
+                ["-z", "Compress data during transfer"],
+                ["-h", "Human-readable output"],
+                ["-n", "Dry run (no changes made)"],
+                ["--delete", "Delete files in dest not in source"],
+                ["--exclude", "Exclude files matching pattern"],
+                ["--progress", "Show transfer progress"],
+                ["--partial", "Keep partially transferred files"],
+                ["--bwlimit", "Limit bandwidth in KB/s"],
+                ["-e", "Specify remote shell (e.g., ssh)"]
+            ]
+        },
+        {
+            id: "log-rotation",
+            name: "log management",
+            brief: "Automate log rotation, cleanup, and archival",
+            category: "file",
+            icon: "📁",
+            description: "Automated log management prevents disk space issues and keeps log files organized. Covers logrotate configuration, custom cleanup scripts, and log archival.",
+            usages: [
+                {
+                    title: "Logrotate Configuration",
+                    items: [
+                        { label: "Custom logrotate config", code: "# /etc/logrotate.d/myapp\n/var/log/myapp/*.log {\n    daily\n    rotate 14\n    compress\n    delaycompress\n    missingok\n    notifempty\n    create 0640 www-data www-data\n    sharedscripts\n    postrotate\n        systemctl reload myapp 2>/dev/null || true\n    endscript\n}" },
+                        { label: "Test logrotate config", code: "logrotate -d /etc/logrotate.d/myapp     # Debug/dry run\nlogrotate -f /etc/logrotate.d/myapp     # Force rotation\nlogrotate -v /etc/logrotate.conf        # Verbose run" }
+                    ]
+                },
+                {
+                    title: "Custom Log Cleanup Script",
+                    items: [
+                        { label: "Automated log cleanup", code: '#!/bin/bash\n# Log cleanup automation\nset -euo pipefail\n\nLOG_DIRS=(\n    "/var/log/myapp"\n    "/var/log/nginx"\n    "/home/*/logs"\n)\nMAX_AGE_DAYS=30\nCOMPRESS_AGE_DAYS=7\n\nfor dir in "${LOG_DIRS[@]}"; do\n    for log_dir in $dir; do\n        [ -d "$log_dir" ] || continue\n        \n        echo "Processing: $log_dir"\n        \n        # Compress logs older than 7 days\n        find "$log_dir" -name "*.log" -mtime +$COMPRESS_AGE_DAYS \\\n            -exec gzip {} \\;\n        \n        # Delete logs older than 30 days\n        find "$log_dir" -name "*.log.gz" -mtime +$MAX_AGE_DAYS \\\n            -delete -print\n        \n        # Delete empty files\n        find "$log_dir" -type f -empty -delete\n    done\ndone\n\necho "Log cleanup complete"' }
+                    ]
+                },
+                {
+                    title: "Disk Space Monitoring",
+                    items: [
+                        { label: "Auto-cleanup when disk is full", code: '#!/bin/bash\nTHRESHOLD=85\nCLEANUP_DIRS="/var/log /tmp /var/cache"\n\nusage=$(df / | awk \'NR==2 {print $5}\' | tr -d \'%\')\n\nif [ "$usage" -gt "$THRESHOLD" ]; then\n    echo "[ALERT] Disk usage at ${usage}% - cleaning up..."\n    \n    # Clean old logs\n    find /var/log -name "*.gz" -mtime +7 -delete\n    \n    # Clean temp files\n    find /tmp -type f -mtime +3 -delete\n    \n    # Clean package cache\n    apt-get clean 2>/dev/null || yum clean all 2>/dev/null\n    \n    # Clean old journal logs\n    journalctl --vacuum-time=3d\n    \n    new_usage=$(df / | awk \'NR==2 {print $5}\' | tr -d \'%\')\n    echo "Disk usage reduced from ${usage}% to ${new_usage}%"\nfi' }
+                    ]
+                }
+            ]
+        },
+
+        // ─── SYSTEM AUTOMATION ───
+        {
+            id: "service-management",
+            name: "systemctl & services",
+            brief: "Automate service management, health checks, and auto-restart",
+            category: "system",
+            icon: "⚙️",
+            description: "System service automation ensures critical services stay running with health checks, auto-restart capabilities, and monitoring.",
+            usages: [
+                {
+                    title: "Service Management Commands",
+                    items: [
+                        { label: "Essential systemctl commands", code: "systemctl start nginx        # Start service\nsystemctl stop nginx         # Stop service\nsystemctl restart nginx      # Restart service\nsystemctl reload nginx       # Reload config\nsystemctl status nginx       # Check status\nsystemctl enable nginx       # Enable on boot\nsystemctl disable nginx      # Disable on boot\nsystemctl is-active nginx    # Check if running\nsystemctl is-enabled nginx   # Check if enabled\nsystemctl list-units --type=service  # List all services\nsystemctl list-units --type=service --state=running  # Running only\nsystemctl list-units --failed  # Failed services" }
+                    ]
+                },
+                {
+                    title: "Auto-Restart Script",
+                    items: [
+                        { label: "Service watchdog script", code: '#!/bin/bash\n# Service Watchdog - monitors and auto-restarts services\n\nSERVICES=("nginx" "mysql" "redis-server" "myapp")\nMAX_RESTARTS=3\nRESTART_WINDOW=3600  # 1 hour\nLOG="/var/log/watchdog.log"\n\nlog() { echo "[$(date +\"%Y-%m-%d %H:%M:%S\")] $*" | tee -a "$LOG"; }\n\nfor service in "${SERVICES[@]}"; do\n    if ! systemctl is-active --quiet "$service"; then\n        log "⚠ $service is DOWN - attempting restart"\n        \n        # Count recent restarts\n        recent=$(grep -c "Restarted $service" "$LOG" 2>/dev/null | \\\n            awk -v window=$RESTART_WINDOW \'{print}\')\n        \n        if systemctl restart "$service"; then\n            log "✓ Restarted $service successfully"\n        else\n            log "✗ Failed to restart $service - manual intervention needed"\n            # Send critical alert\n        fi\n    fi\ndone' }
+                    ]
+                },
+                {
+                    title: "Custom Systemd Service",
+                    items: [
+                        { label: "Create a custom service with auto-restart", code: "# /etc/systemd/system/myapp.service\n[Unit]\nDescription=My Application Service\nAfter=network.target mysql.service\nWants=mysql.service\n\n[Service]\nType=simple\nUser=appuser\nGroup=appgroup\nWorkingDirectory=/opt/myapp\nExecStart=/opt/myapp/start.sh\nExecStop=/opt/myapp/stop.sh\nExecReload=/bin/kill -HUP $MAINPID\nRestart=on-failure\nRestartSec=10\nStartLimitBurst=5\nStartLimitIntervalSec=60\n\n# Environment\nEnvironmentFile=/opt/myapp/.env\n\n# Logging\nStandardOutput=journal\nStandardError=journal\nSyslogIdentifier=myapp\n\n# Security\nNoNewPrivileges=true\nProtectSystem=strict\nReadWritePaths=/opt/myapp/data /var/log/myapp\n\n[Install]\nWantedBy=multi-user.target" },
+                        { label: "Enable and manage custom service", code: "sudo systemctl daemon-reload\nsudo systemctl enable myapp.service\nsudo systemctl start myapp.service\nsudo systemctl status myapp.service\njournalctl -u myapp.service -f  # Follow logs" }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "system-updates",
+            name: "system updates",
+            brief: "Automate package updates, security patches, and system maintenance",
+            category: "system",
+            icon: "🔧",
+            description: "Automated system updates keep servers secure and up-to-date without manual intervention. Includes safe update procedures with rollback capabilities.",
+            usages: [
+                {
+                    title: "Automated Updates Script",
+                    items: [
+                        { label: "Safe system update automation", code: '#!/bin/bash\n# Automated System Update Script\nset -euo pipefail\n\nLOG="/var/log/auto-update.log"\nDATE=$(date +"%Y-%m-%d %H:%M:%S")\n\nlog() { echo "[$DATE] $*" | tee -a "$LOG"; }\n\n# Detect package manager\nif command -v apt-get &>/dev/null; then\n    PKG="apt"\nelif command -v yum &>/dev/null; then\n    PKG="yum"\nelif command -v dnf &>/dev/null; then\n    PKG="dnf"\nelse\n    log "ERROR: No supported package manager found"\n    exit 1\nfi\n\nlog "=== System Update Started (using $PKG) ==="\n\ncase "$PKG" in\n    apt)\n        apt-get update -qq\n        \n        # List available upgrades\n        UPGRADES=$(apt-get -s upgrade | grep -c "^Inst" || true)\n        log "Available updates: $UPGRADES"\n        \n        # Security updates only\n        apt-get -y upgrade -o Dpkg::Options::="--force-confold" 2>&1 | tee -a "$LOG"\n        \n        # Clean up\n        apt-get autoremove -y\n        apt-get autoclean -y\n        ;;\n    yum|dnf)\n        $PKG check-update 2>&1 | tee -a "$LOG" || true\n        $PKG -y update --security 2>&1 | tee -a "$LOG"\n        $PKG clean all\n        ;;\nesac\n\n# Check if reboot needed\nif [ -f /var/run/reboot-required ]; then\n    log "⚠ System reboot required"\n    # Optionally schedule reboot\n    # shutdown -r +5 "System reboot for updates"\nfi\n\nlog "=== System Update Completed ==="' }
+                    ]
+                },
+                {
+                    title: "Unattended Upgrades (Debian/Ubuntu)",
+                    items: [
+                        { label: "Configure unattended-upgrades", code: "# Install\nsudo apt install unattended-upgrades\n\n# Configure\nsudo dpkg-reconfigure unattended-upgrades\n\n# /etc/apt/apt.conf.d/50unattended-upgrades\nUnattended-Upgrade::Allowed-Origins {\n    \"${distro_id}:${distro_codename}-security\";\n};\nUnattended-Upgrade::AutoFixInterruptedDpkg \"true\";\nUnattended-Upgrade::Remove-Unused-Dependencies \"true\";\nUnattended-Upgrade::Automatic-Reboot \"false\";\nUnattended-Upgrade::Mail \"admin@example.com\";\n\n# /etc/apt/apt.conf.d/20auto-upgrades\nAPT::Periodic::Update-Package-Lists \"1\";\nAPT::Periodic::Unattended-Upgrade \"1\";\nAPT::Periodic::AutocleanInterval \"7\";" }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "user-management",
+            name: "user automation",
+            brief: "Automate user account creation, management, and cleanup",
+            category: "system",
+            icon: "👥",
+            description: "Automate user account provisioning, SSH key deployment, permission management, and inactive account cleanup.",
+            usages: [
+                {
+                    title: "Bulk User Creation",
+                    items: [
+                        { label: "Create users from CSV file", code: '#!/bin/bash\n# users.csv format: username,fullname,group,shell\n# john,John Doe,developers,/bin/bash\n\nCSV_FILE="${1:?Usage: $0 users.csv}"\nLOG="/var/log/user_creation.log"\n\nlog() { echo "[$(date +\"%H:%M:%S\")] $*" | tee -a "$LOG"; }\n\nwhile IFS=, read -r username fullname group shell; do\n    # Skip header\n    [[ "$username" == "username" ]] && continue\n    \n    if id "$username" &>/dev/null; then\n        log "SKIP: User $username already exists"\n        continue\n    fi\n    \n    # Create group if not exists\n    getent group "$group" &>/dev/null || groupadd "$group"\n    \n    # Create user\n    useradd -m -c "$fullname" -g "$group" -s "$shell" "$username"\n    \n    # Generate random password\n    password=$(openssl rand -base64 12)\n    echo "$username:$password" | chpasswd\n    \n    # Force password change on first login\n    chage -d 0 "$username"\n    \n    log "CREATED: $username ($fullname) in group $group"\n    echo "$username,$password" >> /root/new_user_passwords.txt\n    \ndone < "$CSV_FILE"\n\nchmod 600 /root/new_user_passwords.txt\nlog "User creation complete"' }
+                    ]
+                },
+                {
+                    title: "SSH Key Deployment",
+                    items: [
+                        { label: "Deploy SSH keys to multiple servers", code: '#!/bin/bash\nPUB_KEY="${1:?Usage: $0 public_key_file}"\nSERVERS=("web1" "web2" "db1" "app1")\nUSER="deploy"\n\nfor server in "${SERVERS[@]}"; do\n    echo "Deploying key to $server..."\n    ssh-copy-id -i "$PUB_KEY" "${USER}@${server}" 2>/dev/null && \\\n        echo "  ✓ $server" || echo "  ✗ $server (failed)"\ndone' }
+                    ]
+                },
+                {
+                    title: "Inactive User Cleanup",
+                    items: [
+                        { label: "Find and disable inactive users", code: '#!/bin/bash\n# Disable users inactive for 90+ days\nINACTIVE_DAYS=90\n\nwhile IFS=: read -r username _ uid _ _ home shell; do\n    # Skip system users and nologin users\n    [ "$uid" -lt 1000 ] && continue\n    [[ "$shell" == *nologin* ]] && continue\n    [[ "$shell" == */false ]] && continue\n    \n    # Check last login\n    last_login=$(lastlog -u "$username" | awk \'NR==2 {print $4, $5, $9}\')\n    \n    if [[ "$last_login" == *"Never"* ]]; then\n        echo "NEVER LOGGED IN: $username"\n        # usermod -L "$username"  # Lock account\n    else\n        days_since=$(( ($(date +%s) - $(date -d "$last_login" +%s)) / 86400 ))\n        if [ "$days_since" -gt "$INACTIVE_DAYS" ]; then\n            echo "INACTIVE ($days_since days): $username"\n            # usermod -L "$username"  # Lock account\n        fi\n    fi\ndone < /etc/passwd' }
+                    ]
+                }
+            ]
+        },
+
+        // ─── MONITORING ───
+        {
+            id: "health-checks",
+            name: "health checks",
+            brief: "Automated health monitoring for services, servers, and applications",
+            category: "monitor",
+            icon: "💓",
+            description: "Health check scripts continuously monitor system resources, service availability, and application health, sending alerts when issues are detected.",
+            usages: [
+                {
+                    title: "Comprehensive Health Check Script",
+                    items: [
+                        { label: "System health monitoring", code: '#!/bin/bash\n# system_health_check.sh\nset -uo pipefail\n\nALERT_EMAIL="admin@example.com"\nHOSTNAME=$(hostname)\nALERTS=()\n\n# --- CPU Check ---\ncpu_usage=$(top -bn1 | grep "Cpu(s)" | awk \'{print $2}\' | cut -d. -f1)\nif [ "$cpu_usage" -gt 90 ]; then\n    ALERTS+=("CPU usage critical: ${cpu_usage}%")\nfi\n\n# --- Memory Check ---\nmem_usage=$(free | awk \'NR==2 {printf "%.0f", $3/$2*100}\')\nif [ "$mem_usage" -gt 85 ]; then\n    ALERTS+=("Memory usage high: ${mem_usage}%")\nfi\n\n# --- Disk Check ---\nwhile read -r usage mount; do\n    usage_num=${usage%\\%}\n    if [ "$usage_num" -gt 80 ]; then\n        ALERTS+=("Disk usage high on $mount: $usage")\n    fi\ndone < <(df -h | awk \'NR>1 && $5+0 > 0 {print $5, $6}\')\n\n# --- Service Checks ---\nfor svc in nginx mysql redis-server; do\n    if ! systemctl is-active --quiet "$svc" 2>/dev/null; then\n        ALERTS+=("Service DOWN: $svc")\n    fi\ndone\n\n# --- Port Checks ---\nfor port in 80 443 3306 6379; do\n    if ! ss -tlnp | grep -q ":$port "; then\n        ALERTS+=("Port not listening: $port")\n    fi\ndone\n\n# --- Load Average ---\nload=$(awk \'{print $1}\' /proc/loadavg)\ncpus=$(nproc)\nif (( $(echo "$load > $cpus * 2" | bc -l) )); then\n    ALERTS+=("Load average high: $load (CPUs: $cpus)")\nfi\n\n# --- Report ---\nif [ ${#ALERTS[@]} -gt 0 ]; then\n    echo "=== ⚠ ALERTS on $HOSTNAME ===" \n    printf "  • %s\\n" "${ALERTS[@]}"\n    # Send email alert\n    printf "  • %s\\n" "${ALERTS[@]}" | \\\n        mail -s "⚠ Health Alert: $HOSTNAME" "$ALERT_EMAIL"\nelse\n    echo "✓ All systems healthy on $HOSTNAME"\nfi' }
+                    ]
+                },
+                {
+                    title: "Website Monitoring",
+                    items: [
+                        { label: "HTTP endpoint health checker", code: '#!/bin/bash\n# website_monitor.sh\n\nURLs=(\n    "https://example.com|200"\n    "https://api.example.com/health|200"\n    "https://admin.example.com|301"\n)\n\nTIMEOUT=10\nLOG="/var/log/website_monitor.log"\n\nfor entry in "${URLs[@]}"; do\n    url="${entry%%|*}"\n    expected="${entry##*|}"\n    \n    status=$(curl -o /dev/null -s -w "%{http_code}" \\\n        --connect-timeout $TIMEOUT "$url" || echo "000")\n    \n    response_time=$(curl -o /dev/null -s -w "%{time_total}" \\\n        --connect-timeout $TIMEOUT "$url" 2>/dev/null || echo "N/A")\n    \n    if [ "$status" = "$expected" ]; then\n        echo "[$(date +%T)] ✓ $url - HTTP $status (${response_time}s)"\n    else\n        echo "[$(date +%T)] ✗ $url - HTTP $status (expected $expected)"\n        # Send alert\n    fi\ndone | tee -a "$LOG"' }
+                    ]
+                },
+                {
+                    title: "SSL Certificate Monitoring",
+                    items: [
+                        { label: "Check SSL certificate expiry", code: '#!/bin/bash\n# ssl_monitor.sh\nDOMAINS=("example.com" "api.example.com" "shop.example.com")\nWARN_DAYS=30\n\nfor domain in "${DOMAINS[@]}"; do\n    expiry=$(echo | openssl s_client -servername "$domain" \\\n        -connect "${domain}:443" 2>/dev/null | \\\n        openssl x509 -noout -dates | \\\n        grep notAfter | cut -d= -f2)\n    \n    expiry_epoch=$(date -d "$expiry" +%s)\n    now_epoch=$(date +%s)\n    days_left=$(( (expiry_epoch - now_epoch) / 86400 ))\n    \n    if [ "$days_left" -lt "$WARN_DAYS" ]; then\n        echo "⚠ $domain: SSL expires in $days_left days ($expiry)"\n    else\n        echo "✓ $domain: SSL valid for $days_left days"\n    fi\ndone' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "alerting",
+            name: "alerts & notifications",
+            brief: "Send alerts via email, Slack, Telegram, and webhooks",
+            category: "monitor",
+            icon: "🔔",
+            description: "Notification systems are crucial for automation. This covers sending alerts through multiple channels when automation scripts detect issues.",
+            usages: [
+                {
+                    title: "Email Alerts",
+                    items: [
+                        { label: "Send email notification", code: '#!/bin/bash\nsend_email() {\n    local to="$1"\n    local subject="$2"\n    local body="$3"\n    \n    echo "$body" | mail -s "$subject" "$to"\n}\n\n# HTML email with mailx\nsend_html_email() {\n    local to="$1"\n    local subject="$2"\n    local body="$3"\n    \n    echo "$body" | mail -s "$(echo -e "$subject\\nContent-Type: text/html")" "$to"\n}\n\n# Usage:\nsend_email "admin@example.com" "Server Alert" "Disk usage at 95%"\n\n# With curl (using external SMTP)\ncurl --url "smtps://smtp.gmail.com:465" \\\n    --ssl-reqd \\\n    --mail-from "alerts@example.com" \\\n    --mail-rcpt "admin@example.com" \\\n    --user "alerts@example.com:app_password" \\\n    -T <(echo -e "Subject: Server Alert\\n\\nDisk usage critical")' }
+                    ]
+                },
+                {
+                    title: "Slack Notifications",
+                    items: [
+                        { label: "Send Slack webhook message", code: '#!/bin/bash\nSLACK_WEBHOOK="https://hooks.slack.com/services/T00000/B00000/XXXX"\n\nsend_slack() {\n    local message="$1"\n    local color="${2:-good}"  # good=green, warning=yellow, danger=red\n    local channel="${3:-#alerts}"\n    \n    curl -s -X POST "$SLACK_WEBHOOK" \\\n        -H "Content-Type: application/json" \\\n        -d "{\n            \\\"channel\\\": \\\"$channel\\\",\n            \\\"attachments\\\": [{\n                \\\"color\\\": \\\"$color\\\",\n                \\\"title\\\": \\\"$(hostname) Alert\\\",\n                \\\"text\\\": \\\"$message\\\",\n                \\\"ts\\\": $(date +%s)\n            }]\n        }"\n}\n\n# Usage:\nsend_slack "Deployment completed successfully ✓" "good"\nsend_slack "Disk space warning: 85% used" "warning"\nsend_slack "Service nginx is DOWN!" "danger"' }
+                    ]
+                },
+                {
+                    title: "Telegram Bot Alerts",
+                    items: [
+                        { label: "Send Telegram message", code: '#!/bin/bash\nTELEGRAM_TOKEN="YOUR_BOT_TOKEN"\nTELEGRAM_CHAT_ID="YOUR_CHAT_ID"\n\nsend_telegram() {\n    local message="$1"\n    local parse_mode="${2:-Markdown}"\n    \n    curl -s -X POST \\\n        "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \\\n        -d "chat_id=${TELEGRAM_CHAT_ID}" \\\n        -d "text=${message}" \\\n        -d "parse_mode=${parse_mode}" \\\n        > /dev/null\n}\n\n# Usage:\nsend_telegram "🚨 *Alert*: Server $(hostname) - CPU at 95%%"\nsend_telegram "✅ Backup completed successfully"\nsend_telegram "⚠️ SSL cert expires in 7 days for example.com"' }
+                    ]
+                },
+                {
+                    title: "Generic Webhook",
+                    items: [
+                        { label: "Universal webhook notification", code: '#!/bin/bash\nsend_webhook() {\n    local url="$1"\n    local payload="$2"\n    \n    curl -sf -X POST "$url" \\\n        -H "Content-Type: application/json" \\\n        -d "$payload" \\\n        --connect-timeout 10 \\\n        --max-time 30\n}\n\n# Discord webhook\nDISCORD_WEBHOOK="https://discord.com/api/webhooks/xxx/yyy"\nsend_webhook "$DISCORD_WEBHOOK" \\\n    "{\\\"content\\\": \\\"🔔 Server alert: $(hostname)\\\"}"' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "resource-monitoring",
+            name: "resource monitoring",
+            brief: "Track CPU, memory, disk, and network usage over time",
+            category: "monitor",
+            icon: "📊",
+            description: "Continuous resource monitoring scripts collect metrics, detect anomalies, and generate reports for system performance tracking.",
+            usages: [
+                {
+                    title: "Resource Collection Script",
+                    items: [
+                        { label: "Collect system metrics to CSV", code: '#!/bin/bash\n# resource_collector.sh - Run via cron every minute\nMETRICS_DIR="/var/log/metrics"\nDATE=$(date +%Y%m%d)\nFILE="$METRICS_DIR/metrics_$DATE.csv"\n\nmkdir -p "$METRICS_DIR"\n\n# Create header if file is new\n[ ! -f "$FILE" ] && echo "timestamp,cpu_percent,mem_percent,mem_used_mb,disk_percent,load_1m,load_5m,load_15m,net_rx_bytes,net_tx_bytes,processes" > "$FILE"\n\n# Collect metrics\ntimestamp=$(date +"%Y-%m-%d %H:%M:%S")\ncpu=$(top -bn1 | grep "Cpu(s)" | awk \'{printf "%.1f", $2}\')\nmem_pct=$(free | awk \'NR==2 {printf "%.1f", $3/$2*100}\')\nmem_used=$(free -m | awk \'NR==2 {print $3}\')\ndisk=$(df / | awk \'NR==2 {print $5}\' | tr -d \'%\')\nread load1 load5 load15 _ < /proc/loadavg\nrx=$(cat /sys/class/net/eth0/statistics/rx_bytes 2>/dev/null || echo 0)\ntx=$(cat /sys/class/net/eth0/statistics/tx_bytes 2>/dev/null || echo 0)\nprocs=$(ps aux | wc -l)\n\necho "$timestamp,$cpu,$mem_pct,$mem_used,$disk,$load1,$load5,$load15,$rx,$tx,$procs" >> "$FILE"\n\n# Cleanup old metric files (keep 30 days)\nfind "$METRICS_DIR" -name "metrics_*.csv" -mtime +30 -delete' }
+                    ]
+                },
+                {
+                    title: "Daily Report Generator",
+                    items: [
+                        { label: "Generate daily system report", code: '#!/bin/bash\n# daily_report.sh\nREPORT="/tmp/daily_report_$(date +%Y%m%d).txt"\n\ncat > "$REPORT" << HEADER\n=============================================\n     DAILY SYSTEM REPORT - $(hostname)\n     Generated: $(date)\n=============================================\n\nHEADER\n\n{\n    echo "=== SYSTEM INFO ==="\n    echo "Uptime: $(uptime -p)"\n    echo "Kernel: $(uname -r)"\n    echo ""\n    \n    echo "=== CPU & LOAD ==="\n    echo "Load Average: $(cat /proc/loadavg)"\n    echo "CPU Cores: $(nproc)"\n    echo ""\n    \n    echo "=== MEMORY ==="\n    free -h\n    echo ""\n    \n    echo "=== DISK USAGE ==="\n    df -h | grep -v tmpfs\n    echo ""\n    \n    echo "=== TOP 10 PROCESSES (CPU) ==="\n    ps aux --sort=-%cpu | head -11\n    echo ""\n    \n    echo "=== TOP 10 PROCESSES (MEMORY) ==="\n    ps aux --sort=-%mem | head -11\n    echo ""\n    \n    echo "=== FAILED SERVICES ==="\n    systemctl list-units --failed 2>/dev/null || echo "N/A"\n    echo ""\n    \n    echo "=== RECENT ERRORS (last 24h) ==="\n    journalctl --since "24 hours ago" -p err --no-pager | tail -20\n    echo ""\n    \n    echo "=== LAST 10 LOGINS ==="\n    last -10\n} >> "$REPORT"\n\necho "Report saved: $REPORT"\n# mail -s "Daily Report: $(hostname)" admin@example.com < "$REPORT"' }
+                    ]
+                }
+            ]
+        },
+
+        // ─── NETWORK AUTOMATION ───
+        {
+            id: "network-automation",
+            name: "network tasks",
+            brief: "Automate network checks, port scanning, and connectivity tests",
+            category: "network",
+            icon: "🌐",
+            description: "Network automation scripts handle connectivity testing, port availability checks, DNS monitoring, and network troubleshooting.",
+            usages: [
+                {
+                    title: "Connectivity & Port Checks",
+                    items: [
+                        { label: "Comprehensive network checker", code: '#!/bin/bash\n# network_check.sh\n\n# Ping check\ncheck_ping() {\n    local host="$1"\n    local timeout="${2:-3}"\n    if ping -c 1 -W "$timeout" "$host" &>/dev/null; then\n        echo "✓ PING $host - reachable"\n        return 0\n    else\n        echo "✗ PING $host - unreachable"\n        return 1\n    fi\n}\n\n# Port check\ncheck_port() {\n    local host="$1"\n    local port="$2"\n    local timeout="${3:-3}"\n    if timeout "$timeout" bash -c "echo >/dev/tcp/$host/$port" 2>/dev/null; then\n        echo "✓ PORT $host:$port - open"\n        return 0\n    else\n        echo "✗ PORT $host:$port - closed/filtered"\n        return 1\n    fi\n}\n\n# DNS check\ncheck_dns() {\n    local domain="$1"\n    if host "$domain" &>/dev/null; then\n        ip=$(host "$domain" | awk \'/has address/ {print $4; exit}\')\n        echo "✓ DNS $domain -> $ip"\n    else\n        echo "✗ DNS $domain - resolution failed"\n    fi\n}\n\n# Run checks\necho "=== Network Health Check $(date) ==="\ncheck_ping "8.8.8.8"\ncheck_ping "google.com"\ncheck_dns "example.com"\ncheck_port "example.com" 80\ncheck_port "example.com" 443\ncheck_port "db.internal" 3306\ncheck_port "redis.internal" 6379' }
+                    ]
+                },
+                {
+                    title: "Firewall Automation",
+                    items: [
+                        { label: "Automated firewall rules setup", code: '#!/bin/bash\n# firewall_setup.sh - Configure iptables/ufw\nset -euo pipefail\n\nif command -v ufw &>/dev/null; then\n    # UFW (Ubuntu Firewall)\n    ufw default deny incoming\n    ufw default allow outgoing\n    \n    # Allow SSH\n    ufw allow 22/tcp\n    \n    # Allow web traffic\n    ufw allow 80/tcp\n    ufw allow 443/tcp\n    \n    # Allow from specific IP\n    ufw allow from 10.0.0.0/24 to any port 3306\n    \n    # Enable firewall\n    ufw --force enable\n    ufw status verbose\nelse\n    # iptables fallback\n    iptables -F\n    iptables -P INPUT DROP\n    iptables -P FORWARD DROP\n    iptables -P OUTPUT ACCEPT\n    \n    iptables -A INPUT -i lo -j ACCEPT\n    iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT\n    iptables -A INPUT -p tcp --dport 22 -j ACCEPT\n    iptables -A INPUT -p tcp --dport 80 -j ACCEPT\n    iptables -A INPUT -p tcp --dport 443 -j ACCEPT\n    \n    iptables-save > /etc/iptables/rules.v4\nfi\n\necho "Firewall configured successfully"' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ssh-automation",
+            name: "SSH automation",
+            brief: "Automate remote commands, file transfers, and tunnel management",
+            category: "network",
+            icon: "🔑",
+            description: "SSH automation enables running commands on remote servers, managing deployments, and orchestrating multi-server operations.",
+            usages: [
+                {
+                    title: "Remote Command Execution",
+                    items: [
+                        { label: "Run commands on multiple servers", code: '#!/bin/bash\n# multi_server_exec.sh\nSERVERS=("web1" "web2" "web3" "db1")\nUSER="deploy"\nCOMMAND="${1:?Usage: $0 \'command to run\'}"\n\nfor server in "${SERVERS[@]}"; do\n    echo "=== $server ==="\n    ssh -o ConnectTimeout=5 \\\n        -o StrictHostKeyChecking=no \\\n        "${USER}@${server}" \\\n        "$COMMAND" 2>&1 || echo "  [FAILED to connect]"\n    echo ""\ndone' },
+                        { label: "Parallel execution with xargs", code: '#!/bin/bash\nexport -f run_remote\n\nrun_remote() {\n    local server="$1"\n    echo "[${server}] $(ssh -o ConnectTimeout=5 deploy@$server \'uptime\' 2>&1)"\n}\n\nprintf "%s\\n" web{1..5} db{1..2} | xargs -P 4 -I {} bash -c \'run_remote "$@"\' _ {}' },
+                        { label: "SSH with config file", code: "# ~/.ssh/config\nHost web-*\n    User deploy\n    IdentityFile ~/.ssh/deploy_key\n    StrictHostKeyChecking no\n    ConnectTimeout 10\n\nHost web-1\n    HostName 10.0.1.10\n\nHost web-2\n    HostName 10.0.1.11\n\nHost db-*\n    User dbadmin\n    Port 2222\n    IdentityFile ~/.ssh/db_key\n\n# Now simply:\nssh web-1 'uptime'\nssh db-1 'mysql -e \"SHOW STATUS\"'" }
+                    ]
+                },
+                {
+                    title: "SCP & SFTP Automation",
+                    items: [
+                        { label: "Batch file transfer", code: '#!/bin/bash\n# deploy_files.sh\nSERVERS=("web1" "web2" "web3")\nSOURCE="./dist/"\nDEST="/var/www/html/"\nUSER="deploy"\n\nfor server in "${SERVERS[@]}"; do\n    echo "Deploying to $server..."\n    rsync -avz --delete \\\n        -e "ssh -o ConnectTimeout=10" \\\n        "$SOURCE" "${USER}@${server}:${DEST}" && \\\n        echo "  ✓ $server" || echo "  ✗ $server"\ndone' }
+                    ]
+                }
+            ]
+        },
+
+        // ─── DEPLOYMENT ───
+        {
+            id: "deployment",
+            name: "deployment scripts",
+            brief: "Automate application deployments with rollback capability",
+            category: "deploy",
+            icon: "🚀",
+            description: "Deployment automation handles pulling code, building, testing, and deploying applications with safety mechanisms like rollbacks and health checks.",
+            usages: [
+                {
+                    title: "Complete Deployment Script",
+                    items: [
+                        { label: "Zero-downtime deployment", code: '#!/bin/bash\n# deploy.sh - Production Deployment Script\nset -euo pipefail\n\n# Configuration\nAPP_NAME="myapp"\nAPP_DIR="/var/www/$APP_NAME"\nREPO_URL="git@github.com:user/myapp.git"\nBRANCH="${1:-main}"\nKEEP_RELEASES=5\nRELEASE_DIR="$APP_DIR/releases/$(date +%Y%m%d_%H%M%S)"\nCURRENT_LINK="$APP_DIR/current"\nSHARED_DIR="$APP_DIR/shared"\n\nlog() { echo -e "\\033[34m[DEPLOY]\\033[0m $(date +%T) $*"; }\nlog_ok() { echo -e "\\033[32m[  OK  ]\\033[0m $(date +%T) $*"; }\nlog_err() { echo -e "\\033[31m[ERROR]\\033[0m $(date +%T) $*" >&2; }\n\n# Rollback function\nrollback() {\n    log_err "Deployment failed! Rolling back..."\n    if [ -L "$CURRENT_LINK" ]; then\n        local prev\n        prev=$(ls -1t "$APP_DIR/releases/" | sed -n \'2p\')\n        if [ -n "$prev" ]; then\n            ln -sfn "$APP_DIR/releases/$prev" "$CURRENT_LINK"\n            systemctl restart "$APP_NAME"\n            log "Rolled back to: $prev"\n        fi\n    fi\n    exit 1\n}\n\ntrap rollback ERR\n\nlog "Starting deployment of $APP_NAME ($BRANCH)"\n\n# 1. Clone/Pull code\nlog "Fetching code..."\nmkdir -p "$RELEASE_DIR"\ngit clone --branch "$BRANCH" --depth 1 "$REPO_URL" "$RELEASE_DIR"\nlog_ok "Code fetched"\n\n# 2. Link shared resources\nlog "Linking shared files..."\nmkdir -p "$SHARED_DIR"/{logs,uploads,config}\nln -sfn "$SHARED_DIR/logs" "$RELEASE_DIR/logs"\nln -sfn "$SHARED_DIR/uploads" "$RELEASE_DIR/uploads"\nln -sfn "$SHARED_DIR/config/.env" "$RELEASE_DIR/.env"\n\n# 3. Install dependencies\nlog "Installing dependencies..."\ncd "$RELEASE_DIR"\nnpm install --production 2>&1 | tail -1\nlog_ok "Dependencies installed"\n\n# 4. Build\nlog "Building application..."\nnpm run build 2>&1 | tail -3\nlog_ok "Build complete"\n\n# 5. Switch symlink (atomic operation)\nlog "Switching to new release..."\nln -sfn "$RELEASE_DIR" "$CURRENT_LINK"\nlog_ok "Symlink updated"\n\n# 6. Restart service\nlog "Restarting service..."\nsystemctl restart "$APP_NAME"\nsleep 3\n\n# 7. Health check\nlog "Running health check..."\nif curl -sf http://localhost:3000/health > /dev/null; then\n    log_ok "Health check passed ✓"\nelse\n    log_err "Health check FAILED"\n    rollback\nfi\n\n# 8. Cleanup old releases\ncd "$APP_DIR/releases"\nls -1t | tail -n +$((KEEP_RELEASES + 1)) | xargs -r rm -rf\n\nlog_ok "Deployment completed successfully! 🎉"' }
+                    ]
+                },
+                {
+                    title: "Docker Deployment",
+                    items: [
+                        { label: "Docker-based deployment", code: '#!/bin/bash\n# docker_deploy.sh\nset -euo pipefail\n\nIMAGE="myregistry/myapp"\nTAG="${1:-latest}"\nCONTAINER="myapp"\nPORT="3000"\n\necho "Deploying $IMAGE:$TAG"\n\n# Pull latest image\ndocker pull "$IMAGE:$TAG"\n\n# Stop old container (if exists)\nif docker ps -q -f name="$CONTAINER" | grep -q .; then\n    echo "Stopping old container..."\n    docker stop "$CONTAINER"\n    docker rm "$CONTAINER"\nfi\n\n# Start new container\ndocker run -d \\\n    --name "$CONTAINER" \\\n    --restart unless-stopped \\\n    -p "$PORT:$PORT" \\\n    --env-file /opt/myapp/.env \\\n    -v /opt/myapp/data:/app/data \\\n    "$IMAGE:$TAG"\n\n# Health check\nsleep 5\nif docker ps -f name="$CONTAINER" --format \'{{.Status}}\' | grep -q "Up"; then\n    echo "✓ Container is running"\n    docker logs --tail 5 "$CONTAINER"\nelse\n    echo "✗ Container failed to start"\n    docker logs "$CONTAINER"\n    exit 1\nfi\n\n# Cleanup old images\ndocker image prune -f' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "ci-cd",
+            name: "CI/CD helpers",
+            brief: "Build, test, and deployment pipeline automation scripts",
+            category: "deploy",
+            icon: "🔄",
+            description: "CI/CD helper scripts automate the build-test-deploy pipeline, integrating with tools like Git hooks, testing frameworks, and artifact management.",
+            usages: [
+                {
+                    title: "Git Hooks",
+                    items: [
+                        { label: "Pre-commit hook (code quality)", code: '#!/bin/bash\n# .git/hooks/pre-commit\nset -eo pipefail\n\necho "Running pre-commit checks..."\n\n# Check for debug statements\nif git diff --cached --name-only | xargs grep -l "console.log\\|debugger\\|import pdb" 2>/dev/null; then\n    echo "✗ Found debug statements! Remove before committing."\n    exit 1\nfi\n\n# Run linter\nif command -v eslint &>/dev/null; then\n    git diff --cached --name-only --diff-filter=ACM | grep -E \'\\.(js|ts)$\' | xargs eslint\nfi\n\n# Run tests\nnpm test --silent 2>&1 | tail -5\n\necho "✓ Pre-commit checks passed"' },
+                        { label: "Post-receive hook (auto-deploy)", code: '#!/bin/bash\n# server-side: hooks/post-receive\n\nTARGET="/var/www/myapp"\nGIT_DIR="/home/git/myapp.git"\nBRANCH="main"\n\nwhile read oldrev newrev ref; do\n    if [ "$ref" = "refs/heads/$BRANCH" ]; then\n        echo "Deploying $BRANCH branch..."\n        git --work-tree=$TARGET --git-dir=$GIT_DIR checkout -f $BRANCH\n        \n        cd $TARGET\n        npm install --production\n        npm run build\n        sudo systemctl restart myapp\n        \n        echo "✓ Deployed successfully"\n    fi\ndone' }
+                    ]
+                },
+                {
+                    title: "Build & Test Scripts",
+                    items: [
+                        { label: "CI pipeline script", code: '#!/bin/bash\n# ci_pipeline.sh - Run full CI pipeline\nset -euo pipefail\n\nSTART_TIME=$(date +%s)\n\nstep() {\n    echo ""\n    echo "════════════════════════════════════════"\n    echo "  STEP: $1"\n    echo "════════════════════════════════════════"\n}\n\n# Step 1: Install dependencies\nstep "Install Dependencies"\nnpm ci\n\n# Step 2: Lint\nstep "Code Linting"\nnpm run lint\n\n# Step 3: Unit Tests\nstep "Unit Tests"\nnpm run test:unit -- --coverage\n\n# Step 4: Build\nstep "Build"\nnpm run build\n\n# Step 5: Integration Tests\nstep "Integration Tests"\nnpm run test:integration\n\n# Summary\nEND_TIME=$(date +%s)\nDURATION=$((END_TIME - START_TIME))\n\necho ""\necho "════════════════════════════════════════"\necho "  ✓ CI Pipeline PASSED (${DURATION}s)"\necho "════════════════════════════════════════"' }
+                    ]
+                }
+            ]
+        },
+
+        // ─── UTILITIES ───
+        {
+            id: "text-processing",
+            name: "text processing",
+            brief: "Automate text transformation with awk, sed, grep, and pipes",
+            category: "util",
+            icon: "📝",
+            description: "Text processing automation for log analysis, data transformation, report generation, and configuration file management.",
+            usages: [
+                {
+                    title: "Log Analysis",
+                    items: [
+                        { label: "Analyze web server access logs", code: '#!/bin/bash\n# access_log_analyzer.sh\nLOG="${1:-/var/log/nginx/access.log}"\n\necho "=== Web Log Analysis: $LOG ==="\necho ""\n\necho "--- Top 10 IPs ---"\nawk \'{print $1}\' "$LOG" | sort | uniq -c | sort -rn | head -10\n\necho ""\necho "--- Top 10 URLs ---"\nawk \'{print $7}\' "$LOG" | sort | uniq -c | sort -rn | head -10\n\necho ""\necho "--- HTTP Status Codes ---"\nawk \'{print $9}\' "$LOG" | sort | uniq -c | sort -rn\n\necho ""\necho "--- Requests per Hour ---"\nawk \'{print $4}\' "$LOG" | cut -d: -f2 | sort | uniq -c\n\necho ""\necho "--- 404 Errors ---"\nawk \'$9 == 404 {print $7}\' "$LOG" | sort | uniq -c | sort -rn | head -10\n\necho ""\necho "--- Total Requests: $(wc -l < "$LOG") ---"\necho "--- Unique IPs: $(awk \'{print $1}\' "$LOG" | sort -u | wc -l) ---"' }
+                    ]
+                },
+                {
+                    title: "Data Transformation",
+                    items: [
+                        { label: "CSV processing automation", code: '#!/bin/bash\n# csv_processor.sh\nINPUT="${1:?Usage: $0 input.csv}"\n\n# Convert CSV to formatted table\necho "=== Formatted Table ==="\ncolumn -t -s, "$INPUT"\n\n# Extract specific columns\necho ""\necho "=== Names and Emails (columns 1,3) ==="\nawk -F, \'{print $1, $3}\' "$INPUT"\n\n# Filter rows\necho ""\necho "=== Active Users ==="\nawk -F, \'$4 == "active" {print $1, $2}\' "$INPUT"\n\n# Calculate statistics\necho ""\necho "=== Statistics ==="\nawk -F, \'NR>1 {sum+=$5; count++} END {printf "Average: %.2f\\n", sum/count}\' "$INPUT"\n\n# Convert to JSON\necho ""\necho "=== JSON Output ==="\nawk -F, \'NR==1 {split($0,headers,","); next}\n{\n    printf "{"\n    for(i=1;i<=NF;i++) {\n        printf "\\"%s\\": \\"%s\\"", headers[i], $i\n        if(i<NF) printf ", "\n    }\n    print "}"\n}\' "$INPUT"' }
+                    ]
+                },
+                {
+                    title: "Config File Management",
+                    items: [
+                        { label: "Automated config updates", code: '#!/bin/bash\n# update_config.sh - Safely modify configuration files\n\nupdate_config_value() {\n    local file="$1"\n    local key="$2"\n    local value="$3"\n    \n    # Create backup\n    cp "$file" "${file}.bak"\n    \n    if grep -q "^${key}=" "$file"; then\n        # Update existing key\n        sed -i "s|^${key}=.*|${key}=${value}|" "$file"\n        echo "Updated: ${key}=${value}"\n    else\n        # Add new key\n        echo "${key}=${value}" >> "$file"\n        echo "Added: ${key}=${value}"\n    fi\n}\n\n# Template processing\nprocess_template() {\n    local template="$1"\n    local output="$2"\n    local env_file="$3"\n    \n    source "$env_file"\n    envsubst < "$template" > "$output"\n    echo "Generated: $output"\n}\n\n# Usage:\nupdate_config_value "/etc/myapp/config.ini" "MAX_CONNECTIONS" "100"\nupdate_config_value "/etc/myapp/config.ini" "LOG_LEVEL" "info"' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "env-management",
+            name: "environment management",
+            brief: "Manage environment variables, dotenv files, and configurations",
+            category: "util",
+            icon: "🔐",
+            description: "Environment management scripts handle secrets, configuration across environments, and secure variable management for automation.",
+            usages: [
+                {
+                    title: "Dotenv File Management",
+                    items: [
+                        { label: "Load and validate .env files", code: '#!/bin/bash\n# env_loader.sh\n\nload_env() {\n    local env_file="${1:-.env}"\n    \n    if [ ! -f "$env_file" ]; then\n        echo "ERROR: $env_file not found"\n        return 1\n    fi\n    \n    # Load variables (skip comments and empty lines)\n    while IFS= read -r line; do\n        [[ -z "$line" || "$line" =~ ^# ]] && continue\n        export "$line"\n    done < "$env_file"\n    \n    echo "Loaded environment from: $env_file"\n}\n\nvalidate_env() {\n    local required_vars=("$@")\n    local missing=()\n    \n    for var in "${required_vars[@]}"; do\n        if [ -z "${!var:-}" ]; then\n            missing+=("$var")\n        fi\n    done\n    \n    if [ ${#missing[@]} -gt 0 ]; then\n        echo "ERROR: Missing required variables:"\n        printf "  - %s\\n" "${missing[@]}"\n        return 1\n    fi\n    \n    echo "✓ All required variables present"\n}\n\n# Usage:\nload_env ".env.production"\nvalidate_env DB_HOST DB_USER DB_PASS APP_SECRET' },
+                        { label: "Generate .env from template", code: '#!/bin/bash\n# generate_env.sh\n\nENV="${1:-development}"\nTEMPLATE=".env.template"\nOUTPUT=".env.$ENV"\n\nif [ ! -f "$TEMPLATE" ]; then\n    cat > "$TEMPLATE" << \'TMPL\'\n# Application\nAPP_NAME=myapp\nAPP_ENV={{ENV}}\nAPP_PORT={{PORT}}\nAPP_DEBUG={{DEBUG}}\n\n# Database\nDB_HOST={{DB_HOST}}\nDB_PORT=5432\nDB_NAME=myapp_{{ENV}}\nDB_USER={{DB_USER}}\nDB_PASS={{DB_PASS}}\n\n# Redis\nREDIS_HOST={{REDIS_HOST}}\nREDIS_PORT=6379\nTMPL\nfi\n\ncase "$ENV" in\n    development)\n        sed -e "s|{{ENV}}|development|g" \\\n            -e "s|{{PORT}}|3000|g" \\\n            -e "s|{{DEBUG}}|true|g" \\\n            -e "s|{{DB_HOST}}|localhost|g" \\\n            -e "s|{{DB_USER}}|dev_user|g" \\\n            -e "s|{{DB_PASS}}|dev_pass|g" \\\n            -e "s|{{REDIS_HOST}}|localhost|g" \\\n            "$TEMPLATE" > "$OUTPUT"\n        ;;\n    production)\n        # Prompt for sensitive values\n        read -sp "DB Password: " db_pass && echo\n        sed -e "s|{{ENV}}|production|g" \\\n            -e "s|{{PORT}}|8080|g" \\\n            -e "s|{{DEBUG}}|false|g" \\\n            -e "s|{{DB_HOST}}|db.prod.internal|g" \\\n            -e "s|{{DB_USER}}|prod_user|g" \\\n            -e "s|{{DB_PASS}}|$db_pass|g" \\\n            -e "s|{{REDIS_HOST}}|redis.prod.internal|g" \\\n            "$TEMPLATE" > "$OUTPUT"\n        chmod 600 "$OUTPUT"\n        ;;\nesac\n\necho "Generated: $OUTPUT"' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "parallel-execution",
+            name: "parallel & background",
+            brief: "Run tasks concurrently with background jobs, GNU parallel, and xargs",
+            category: "util",
+            icon: "⚡",
+            description: "Parallel execution dramatically speeds up automation by running multiple tasks simultaneously. Covers background jobs, GNU parallel, xargs, and job control.",
+            usages: [
+                {
+                    title: "Background Jobs & Wait",
+                    items: [
+                        { label: "Run jobs in parallel with wait", code: '#!/bin/bash\n# parallel_jobs.sh\n\ntask() {\n    local name="$1"\n    local duration="$2"\n    echo "[$(date +%T)] Starting: $name"\n    sleep "$duration"  # Simulate work\n    echo "[$(date +%T)] Finished: $name"\n}\n\n# Run tasks in parallel\ntask "Database Backup" 5 &\ntask "File Sync" 3 &\ntask "Log Rotation" 2 &\ntask "Cache Clear" 1 &\n\n# Wait for all background jobs\nwait\n\necho "All tasks completed!"' },
+                        { label: "Parallel with max concurrent limit", code: '#!/bin/bash\nMAX_PARALLEL=4\n\nprocess_file() {\n    local file="$1"\n    echo "Processing: $file"\n    # Heavy processing here\n    sleep 2\n    echo "Done: $file"\n}\n\ncount=0\nfor file in /data/input/*.csv; do\n    process_file "$file" &\n    ((count++))\n    \n    # Limit concurrent jobs\n    if [ "$count" -ge "$MAX_PARALLEL" ]; then\n        wait -n  # Wait for any one job to finish\n        ((count--))\n    fi\ndone\n\nwait  # Wait for remaining jobs\necho "All files processed"' }
+                    ]
+                },
+                {
+                    title: "xargs Parallel",
+                    items: [
+                        { label: "Process files in parallel with xargs", code: '# Compress files - 4 at a time\nfind /logs -name "*.log" -mtime +7 | xargs -P 4 -I {} gzip {}\n\n# Ping multiple hosts in parallel\necho -e "host1\\nhost2\\nhost3\\nhost4" | xargs -P 4 -I {} ping -c 1 {} 2>&1 | grep "bytes from"\n\n# Download multiple URLs in parallel\ncat urls.txt | xargs -P 8 -I {} curl -sO {}\n\n# Convert images in parallel\nfind . -name "*.png" | xargs -P $(nproc) -I {} convert {} -resize 50% {}_thumb.png' }
+                    ]
+                },
+                {
+                    title: "GNU Parallel",
+                    items: [
+                        { label: "Advanced parallel processing", code: '# Process files with progress bar\nfind . -name "*.csv" | parallel --bar --jobs 4 "python3 process.py {}"\n\n# Run on remote servers\nparallel --sshlogin web1,web2,web3 "uptime"\n\n# Retry failed jobs\nparallel --retries 3 --joblog /tmp/parallel.log "curl -sf {}" :::: urls.txt\n\n# Resume interrupted parallel job\nparallel --resume --joblog /tmp/parallel.log "process {}" :::: items.txt' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "temp-files",
+            name: "temp files & cleanup",
+            brief: "Safe temporary file handling with automatic cleanup",
+            category: "util",
+            icon: "🧹",
+            description: "Proper temporary file management prevents security issues and disk space problems. Always use mktemp and trap for cleanup.",
+            usages: [
+                {
+                    title: "Safe Temp File Patterns",
+                    items: [
+                        { label: "Create and auto-cleanup temp files", code: '#!/bin/bash\nset -euo pipefail\n\n# Create temp file and directory\nTMP_FILE=$(mktemp /tmp/myapp.XXXXXX)\nTMP_DIR=$(mktemp -d /tmp/myapp_dir.XXXXXX)\n\n# Auto-cleanup on exit (even on error)\ncleanup() {\n    rm -f "$TMP_FILE"\n    rm -rf "$TMP_DIR"\n    echo "Cleaned up temporary files"\n}\ntrap cleanup EXIT\n\n# Use temp files safely\necho "data" > "$TMP_FILE"\ncp important_files/* "$TMP_DIR/"\n\n# Process data\nsort "$TMP_FILE" > "${TMP_FILE}.sorted"\nwc -l "${TMP_FILE}.sorted"\n\n# Temp files automatically cleaned up on exit' },
+                        { label: "Named pipes (FIFO) for inter-process communication", code: '#!/bin/bash\nFIFO=$(mktemp -u /tmp/myfifo.XXXXXX)\nmkfifo "$FIFO"\ntrap "rm -f $FIFO" EXIT\n\n# Producer (background)\n( for i in {1..5}; do echo "Message $i"; sleep 1; done > "$FIFO" ) &\n\n# Consumer\nwhile read -r line; do\n    echo "Received: $line"\ndone < "$FIFO"' }
+                    ]
+                },
+                {
+                    title: "System Cleanup Automation",
+                    items: [
+                        { label: "Comprehensive system cleanup", code: '#!/bin/bash\n# system_cleanup.sh\nset -euo pipefail\n\necho "=== System Cleanup Started ==="\nBEFORE=$(df / | awk \'NR==2 {print $4}\')\n\n# Clean package cache\nif command -v apt-get &>/dev/null; then\n    apt-get autoremove -y\n    apt-get autoclean -y\nfi\n\n# Clean temp files older than 7 days\nfind /tmp -type f -mtime +7 -delete 2>/dev/null\nfind /var/tmp -type f -mtime +30 -delete 2>/dev/null\n\n# Clean old logs\nfind /var/log -name "*.gz" -mtime +30 -delete\nfind /var/log -name "*.old" -delete\nfind /var/log -name "*.[0-9]" -mtime +14 -delete\n\n# Clean journal logs\njournalctl --vacuum-time=7d 2>/dev/null || true\n\n# Clean user caches\nfind /home -name ".cache" -type d -exec du -sh {} \\; 2>/dev/null\n\n# Clean Docker (if installed)\nif command -v docker &>/dev/null; then\n    docker system prune -f\nfi\n\nAFTER=$(df / | awk \'NR==2 {print $4}\')\nFREED=$(( (AFTER - BEFORE) / 1024 ))\necho ""\necho "=== Cleanup Complete: ~${FREED}MB freed ===" ' }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "cron-debugging",
+            name: "cron debugging",
+            brief: "Troubleshoot and debug cron job issues",
+            category: "cron",
+            icon: "🐛",
+            description: "Cron jobs can silently fail for many reasons. This covers common issues, debugging techniques, and monitoring solutions for cron reliability.",
+            usages: [
+                {
+                    title: "Common Cron Issues & Fixes",
+                    items: [
+                        { label: "Debug wrapper for cron jobs", code: '#!/bin/bash\n# cron_wrapper.sh - Wraps any cron job with logging & error handling\n# Usage in crontab: * * * * * /path/to/cron_wrapper.sh /path/to/actual_script.sh\n\nSCRIPT="$1"\nshift\nLOG_DIR="/var/log/cron_debug"\nLOG_FILE="$LOG_DIR/$(basename "$SCRIPT")_$(date +%Y%m%d).log"\n\nmkdir -p "$LOG_DIR"\n\n{\n    echo "========================================"\n    echo "CRON JOB: $SCRIPT"\n    echo "STARTED: $(date)"\n    echo "USER: $(whoami)"\n    echo "PWD: $(pwd)"\n    echo "PATH: $PATH"\n    echo "SHELL: $SHELL"\n    echo "HOME: $HOME"\n    echo "========================================"\n    \n    # Run with full environment\n    /bin/bash "$SCRIPT" "$@"\n    EXIT_CODE=$?\n    \n    echo "========================================"\n    echo "FINISHED: $(date)"\n    echo "EXIT CODE: $EXIT_CODE"\n    echo "========================================"\n    \n    if [ $EXIT_CODE -ne 0 ]; then\n        echo "ALERT: Job failed with exit code $EXIT_CODE" >&2\n        # Send notification\n    fi\n    \n} >> "$LOG_FILE" 2>&1' },
+                        { label: "Check cron is running", code: '# Check if cron daemon is running\nsystemctl status cron        # Debian/Ubuntu\nsystemctl status crond       # RHEL/CentOS\n\n# Check cron logs\ngrep CRON /var/log/syslog     # Debian/Ubuntu\ngrep CRON /var/log/cron       # RHEL/CentOS\njournalctl -u cron --since today\n\n# Verify crontab syntax\ncrontab -l | grep -v "^#" | while read line; do\n    echo "Checking: $line"\ndone\n\n# Test cron environment\n* * * * * env > /tmp/cron_env.txt  # See what env cron uses' },
+                        { label: "Common cron pitfalls & solutions", code: '# PROBLEM: Script works manually but not in cron\n# SOLUTION: Use full paths everywhere\n# BAD:  python script.py\n# GOOD: /usr/bin/python3 /home/user/scripts/script.py\n\n# PROBLEM: Environment variables not available\n# SOLUTION: Source profile or set in crontab\nSHELL=/bin/bash\nPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n0 * * * * source /home/user/.profile && /path/to/script.sh\n\n# PROBLEM: % character causes issues\n# SOLUTION: Escape with backslash\n# BAD:  0 * * * * date +%Y%m%d\n# GOOD: 0 * * * * date +\\%Y\\%m\\%d\n\n# PROBLEM: No output/errors visible\n# SOLUTION: Always redirect output\n0 * * * * /path/to/script.sh >> /var/log/myjob.log 2>&1\n\n# PROBLEM: Script runs as wrong user\n# SOLUTION: Check with whoami in script\n0 * * * * echo "Running as: $(whoami)" >> /tmp/cron_user.txt' }
+                    ]
+                },
+                {
+                    title: "Cron Job Monitoring",
+                    items: [
+                        { label: "Monitor cron job execution", code: '#!/bin/bash\n# cron_monitor.sh - Check if cron jobs ran successfully\n# Run this from a separate monitoring cron\n\ncheck_job_ran() {\n    local job_name="$1"\n    local log_file="$2"\n    local max_age_minutes="$3"\n    \n    if [ ! -f "$log_file" ]; then\n        echo "⚠ $job_name: Log file not found"\n        return 1\n    fi\n    \n    # Check if log was modified recently\n    local file_age\n    file_age=$(( ($(date +%s) - $(stat -c %Y "$log_file")) / 60 ))\n    \n    if [ "$file_age" -gt "$max_age_minutes" ]; then\n        echo "✗ $job_name: Last ran ${file_age}min ago (threshold: ${max_age_minutes}min)"\n        return 1\n    else\n        echo "✓ $job_name: Last ran ${file_age}min ago"\n        return 0\n    fi\n}\n\n# Check expected jobs\ncheck_job_ran "Backup" "/var/log/backup.log" 1500      # Should run daily\ncheck_job_ran "Sync" "/var/log/sync.log" 15            # Should run every 10min\ncheck_job_ran "Cleanup" "/var/log/cleanup.log" 10100    # Should run weekly' }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    // =====================================================
+    // CATEGORY CONFIG
+    // =====================================================
+    const categories = [
+        { id: "all", label: "All", icon: "📋" },
+        { id: "cron", label: "Cron & Scheduling", icon: "⏰" },
+        { id: "script", label: "Bash Scripting", icon: "📜" },
+        { id: "file", label: "File Automation", icon: "💾" },
+        { id: "system", label: "System Tasks", icon: "⚙️" },
+        { id: "monitor", label: "Monitoring", icon: "📊" },
+        { id: "network", label: "Network", icon: "🌐" },
+        { id: "deploy", label: "Deployment", icon: "🚀" },
+        { id: "util", label: "Utilities", icon: "🔧" }
+    ];
+
+    // =====================================================
+    // STATE
+    // =====================================================
+    let activeCategory = "all";
+    let searchQuery = "";
+
+    // =====================================================
+    // RENDER FUNCTIONS
+    // =====================================================
+
+    function escapeHtml(text) {
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function countUsages(cmd) {
+        if (!cmd.usages) return 0;
+        return cmd.usages.reduce((sum, s) => sum + s.items.length, 0);
+    }
+
+    function getFilteredCommands() {
+        let filtered = commandsData;
+        if (activeCategory !== "all") {
+            filtered = filtered.filter(c => c.category === activeCategory);
+        }
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
+            filtered = filtered.filter(c =>
+                c.name.toLowerCase().includes(q) ||
+                c.brief.toLowerCase().includes(q) ||
+                c.category.toLowerCase().includes(q) ||
+                (c.description && c.description.toLowerCase().includes(q))
+            );
+        }
+        return filtered;
+    }
+
+    function renderFilterBar() {
+        const bar = document.getElementById("filterBar");
+        bar.innerHTML = categories.map(cat => {
+            const count = cat.id === "all" ? commandsData.length : commandsData.filter(c => c.category === cat.id).length;
+            return `<span class="filter-chip ${cat.id === activeCategory ? 'active' : ''}" data-cat="${cat.id}">
+                ${cat.icon} ${cat.label}
+                <span class="chip-count">${count}</span>
+            </span>`;
+        }).join("");
+    }
+
+    function renderStats(filtered) {
+        const total = commandsData.length;
+        const totalUsages = commandsData.reduce((s, c) => s + countUsages(c), 0);
+        document.getElementById("statsRow").innerHTML = `
+            <span class="stat-item">Showing <span class="stat-num">${filtered.length}</span> of <span class="stat-num">${total}</span> topics</span>
+            <span class="stat-item">|</span>
+            <span class="stat-item"><span class="stat-num">${totalUsages}</span> total examples</span>
+        `;
+    }
+
+    function renderGrid(filtered) {
+        const grid = document.getElementById("commandsGrid");
+
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="no-results">
+                <div class="nr-icon">🔍</div>
+                <h3>No commands found</h3>
+                <p>Try adjusting your search or category filter</p>
+            </div>`;
+            return;
+        }
+
+        grid.innerHTML = filtered.map(cmd => `
+            <div class="cmd-card" data-id="${cmd.id}" onclick="openModal('${cmd.id}')">
+                <div class="card-top">
+                    <div class="card-icon ${cmd.category}">${cmd.icon}</div>
+                    <span class="card-arrow">→</span>
+                </div>
+                <div class="card-name">${cmd.name}</div>
+                <div class="card-brief">${cmd.brief}</div>
+                <div class="card-footer">
+                    <span class="card-tag ${cmd.category}">${cmd.category}</span>
+                    <span class="card-usage-count">${countUsages(cmd)} examples</span>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function render() {
+        const filtered = getFilteredCommands();
+        renderFilterBar();
+        renderStats(filtered);
+        renderGrid(filtered);
+    }
+
+    // =====================================================
+    // MODAL
+    // =====================================================
+
+    function openModal(id) {
+        const cmd = commandsData.find(c => c.id === id);
+        if (!cmd) return;
+
+        // Header
+        document.getElementById("modalHeader").innerHTML = `
+            <div class="modal-header-left">
+                <div class="modal-icon card-icon ${cmd.category}">${cmd.icon}</div>
+                <div class="modal-title-group">
+                    <h2>${cmd.name}</h2>
+                    <div class="modal-subtitle">${cmd.category} • ${countUsages(cmd)} examples</div>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        `;
+
+        // Body
+        let html = "";
+
+        if (cmd.description) {
+            html += `<div class="cmd-description">${cmd.description}</div>`;
+        }
+
+        if (cmd.usages) {
+            cmd.usages.forEach(section => {
+                html += `<div class="usage-section">
+                    <div class="usage-section-title">
+                        <span class="section-icon">▸</span>
+                        ${section.title}
+                    </div>`;
+
+                section.items.forEach(item => {
+                    const codeId = "c_" + Math.random().toString(36).substr(2, 8);
+                    html += `<div class="code-block">
+                        <div class="code-label">
+                            <span class="code-label-text">${item.label}</span>
+                            <button class="copy-btn" onclick="copyCode('${codeId}', this)">
+                                📋 Copy
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre id="${codeId}">${escapeHtml(item.code)}</pre>
+                        </div>
+                    </div>`;
+                });
+
+                html += `</div>`;
+            });
+        }
+
+        if (cmd.options) {
+            html += `<div class="usage-section options-section">
+                <div class="usage-section-title">
+                    <span class="section-icon">⚙</span>
+                    Options & Parameters Reference
+                </div>
+                <table class="options-table">
+                    <thead><tr><th>Option</th><th>Description</th></tr></thead>
+                    <tbody>
+                        ${cmd.options.map(([opt, desc]) => `<tr><td>${escapeHtml(opt)}</td><td>${desc}</td></tr>`).join("")}
+                    </tbody>
+                </table>
+            </div>`;
+        }
+
+        if (cmd.tips) {
+            html += `<div class="tip-box">
+                <span class="tip-icon">💡</span>
+                <div class="tip-text">
+                    <strong>Pro Tips:</strong><br>
+                    ${cmd.tips.map(t => `• ${t}`).join("<br>")}
+                </div>
+            </div>`;
+        }
+
+        document.getElementById("modalBody").innerHTML = html;
+        document.getElementById("modalOverlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("open");
+        document.body.style.overflow = "";
+    }
+
+    function copyCode(id, btn) {
+        const text = document.getElementById(id).textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerHTML = "✓ Copied!";
+            btn.classList.add("copied");
+            setTimeout(() => {
+                btn.innerHTML = "📋 Copy";
+                btn.classList.remove("copied");
+            }, 2000);
+        });
+    }
+
+    // =====================================================
+    // EVENT LISTENERS
+    // =====================================================
+
+    // Search
+    const searchInput = document.getElementById("searchInput");
+    const searchClear = document.getElementById("searchClear");
+    const shortcutHint = document.getElementById("shortcutHint");
+
+    searchInput.addEventListener("input", () => {
+        searchQuery = searchInput.value.trim();
+        searchClear.classList.toggle("visible", searchQuery.length > 0);
+        shortcutHint.style.display = searchQuery.length > 0 ? "none" : "block";
+        render();
+    });
+
+    searchClear.addEventListener("click", () => {
+        searchInput.value = "";
+        searchQuery = "";
+        searchClear.classList.remove("visible");
+        shortcutHint.style.display = "block";
+        render();
+        searchInput.focus();
+    });
+
+    // Keyboard shortcut: / to focus search
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "/" && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+        }
+        if (e.key === "Escape") {
+            if (document.getElementById("modalOverlay").classList.contains("open")) {
+                closeModal();
+            } else {
+                searchInput.value = "";
+                searchQuery = "";
+                searchClear.classList.remove("visible");
+                shortcutHint.style.display = "block";
+                searchInput.blur();
+                render();
+            }
+        }
+    });
+
+    // Filter chips
+    document.getElementById("filterBar").addEventListener("click", (e) => {
+        const chip = e.target.closest(".filter-chip");
+        if (chip) {
+            activeCategory = chip.dataset.cat;
+            render();
+        }
+    });
+
+    // Modal close
+    document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("modalOverlay")) {
+            closeModal();
+        }
+    });
+
+    // Back to top
+    const backTop = document.getElementById("backTop");
+    window.addEventListener("scroll", () => {
+        backTop.classList.toggle("show", window.scrollY > 400);
+    });
+    backTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    // =====================================================
+    // INITIALIZE
+    // =====================================================
+    render();
+
+    </script>
+</body>
+</html>
