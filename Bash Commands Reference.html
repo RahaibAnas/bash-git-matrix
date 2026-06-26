@@ -8,6 +8,75 @@
     <!-- <link rel="shortcut icon" href="OIP.webp" type="image/x-icon"> -->
     <!-- <link rel="stylesheet" href="style.css"> -->
     <style>
+        /* ===== INTER-CONNECTIVITY TOP NAV BAR ===== */
+.global-nav-wrapper {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Keeps it above headers */
+}
+
+.global-nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.global-nav-logo {
+    color: #58a6ff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.global-nav-links {
+    display: flex;
+    gap: 8px;
+}
+
+.global-nav-item {
+    padding: 6px 14px;
+    background: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #8b949e;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.global-nav-item:hover {
+    border-color: #58a6ff;
+    color: #c9d1d9;
+    background: #1f6feb11;
+}
+
+.global-nav-item.current-hub {
+    background: #1f6feb;
+    color: #ffffff;
+    border-color: #1f6feb;
+    box-shadow: 0 0 12px rgba(31, 111, 235, 0.3);
+}
+
+/* Adjust your sticky headers to sit directly beneath the new bar */
+header {
+    top: 45px !important; 
+}
+@media (max-width: 768px) {
+    .global-nav-container { justify-content: center; }
+    header { top: 85px !important; }
+}
         /* ===== CSS RESET & BASE ===== */
         * {
             margin: 0;
@@ -419,14 +488,28 @@
         .hidden {
             display: none !important;
         }
+
+        
     </style>
 
 </head>
 
 <body>
 
+    <nav class="global-nav-wrapper">
+    <div class="global-nav-container">
+        <div class="global-nav-logo">🐧 <span>Bash Workspace Hub</span></div>
+        <div class="global-nav-links">
+            <a href="Bash Commands Reference.html" class="global-nav-item current-hub">📁 Core Commands</a>
+            <a href="Bash Scripting Reference.html" class="global-nav-item">📜 Scripting & Concepts</a>
+            <a href="Bash Automation & Cron Jobs.html" class="global-nav-item ">⏰ Automation & Cron</a>
+        </div>
+    </div>
+</nav>
+
     <!-- HEADER -->
     <header>
+        
         <h1>🐧 Bash Commands Reference</h1>
         <p>Click any command to see all usage examples</p>
         <div class="search-container">
@@ -435,6 +518,8 @@
                 autocomplete="off">
         </div>
     </header>
+
+    
 
     <!-- STATS -->
     <div class="stats-bar">
