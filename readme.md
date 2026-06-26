@@ -1,14 +1,17 @@
-# 🐧 Bash & Git Workspace Hub
+# 🐧 Dev Workspace Hub
 
-A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, automation, shell scripting, and Git version control systems.
+A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, system automation, shell scripting, and Git version control systems.
 
-This repository bundles **four distinct, fully responsive frontend environments** built with a highly cohesive, GitHub-inspired dark aesthetic. They serve as rich, client-side application modules to instantly query, analyze, and master shell paradigms and source control workflows.
+This repository features a **central landing dashboard (`index.html`)** connecting **four distinct, fully responsive frontend environments**. Built with a highly cohesive, GitHub-inspired dark aesthetic, these reference engines leverage high-performance client-side logic to query, analyze, and master essential DevOps and development paradigms.
 
 ---
 
-## 🗺️ Workspace Ecosystem
+## 🗺️ Hub Ecosystem Structure
 
-The toolkit is cleanly divided into four distinct reference architectures that seamlessly interconnect via a sticky high-level global layout top navigation matrix:
+The toolkit is organized around a core entry point that routes into four functional technical modules:
+
+### 🎛️ The Central Gateway (`index.html`)
+* **Role:** The primary interactive landing page. It provides an immediate visual status overview of all sub-modules, featuring a terminal-style interface designed for clean visibility, quick multi-module onboarding, and seamless deployment onto platforms like **GitHub Pages**.
 
 ### 1. 📁 Core Commands Reference (`Bash Commands Reference.html`)
 * **Focus:** Fundamental OS manipulation, file system utilities, network commands, permission tables, and user control systems.
@@ -32,12 +35,7 @@ The toolkit is cleanly divided into four distinct reference architectures that s
 
 * **🎨 Theme Paradigm:** Tailored dark mode dashboard layouts using unified professional custom palette properties (`#0d1117`, `#161b22`, `#30363d`, and vivid responsive color accents `#58a6ff`).
 * **⚡ Ultra-Low Latency Interactions:** Powered purely by modern raw client-side Vanilla ES6 JavaScript, resulting in instantaneous, hardware-accelerated text filtering and modal transitions without external framework overloads.
-* **🌐 Interconnected Layout Matrix:** Each interface embeds an active global navigational top bar that provides immediate cross-file routing while tracking the client's current operational scope.
+* **🌐 Interconnected Layout Matrix:** Each sub-module embeds an active global navigational top bar that provides immediate cross-file routing while tracking the client's current operational scope back to the index or sister hubs.
 * **📱 Clean Media Adaptability:** Explicitly uses responsive CSS design boundaries that automatically refactor complex table schemas, filters, and modal overlays into single-column layouts for mobile viewports and tablet screens.
 
 ---
-
-## 🛠️ Global Interconnectivity Framework
-
-To maintain full local fluid navigation across all dashboards, every workspace module mounts a unified, sticky navigation component matching the internal configuration paths:
-
