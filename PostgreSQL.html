@@ -1,0 +1,3004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dev Workspace Hub</title>
+    <link rel="shortcut icon" href="OIP.webp" type="image/x-icon">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --pg-blue: #58a6ff;
+            --pg-blue-dark: #0d1117;
+            --pg-blue-light: #388bfd;
+            --pg-orange: #f0883e;
+            --bg-dark: #0d1117;
+            --bg-card: #161b22;
+            --bg-card-hover: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --text-muted: #6b7394;
+            --border-color: #30363d;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --info: #60a5fa;
+            --purple: #a78bfa;
+            --cyan: #22d3ee;
+            --code-bg: #090d16;
+            --shadow: 0 4px 24px rgba(0,0,0,0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+           background-color: #1a1e30;   /* Put your custom hex color here */
+        border-bottom: 2px solid #0067bb;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header h1 .pg-logo {
+            width: 44px;
+            height: 44px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--pg-blue);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+        }
+
+        
+
+        /* Search & Filter */
+        .controls {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 18px 12px 44px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--pg-blue-light);
+            box-shadow: 0 0 0 3px rgba(74, 137, 185, 0.2);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--pg-blue-light);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background: var(--pg-blue);
+            border-color: var(--pg-blue);
+            color: white;
+        }
+
+        .stats-bar {
+            max-width: 1200px;
+            margin: 0 auto 10px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats-bar span {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Commands Grid */
+        .commands-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 20px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+
+        .command-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .command-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--pg-blue), var(--pg-blue-light));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .command-card:hover {
+            border-color: var(--pg-blue-light);
+            background: var(--bg-card-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(51, 103, 145, 0.15);
+        }
+
+        .command-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .command-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--pg-blue-light);
+            margin-bottom: 6px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .command-brief {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .command-category {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cat-ddl { background: rgba(167,139,250,0.15); color: var(--purple); }
+        .cat-dml { background: rgba(74,222,128,0.15); color: var(--success); }
+        .cat-dcl { background: rgba(251,191,36,0.15); color: var(--warning); }
+        .cat-tcl { background: rgba(248,113,113,0.15); color: var(--danger); }
+        .cat-query { background: rgba(96,165,250,0.15); color: var(--info); }
+        .cat-admin { background: rgba(232,144,62,0.15); color: var(--pg-orange); }
+        .cat-utility { background: rgba(34,211,238,0.15); color: var(--cyan); }
+        .cat-psql { background: rgba(255,255,255,0.1); color: var(--text-secondary); }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 30px 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 18px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-header {
+            padding: 24px 28px 18px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            border-radius: 18px 18px 0 0;
+            z-index: 10;
+        }
+
+        .modal-header-left h2 {
+            font-size: 1.6rem;
+            font-family: 'Courier New', monospace;
+            color: var(--pg-blue-light);
+            margin-bottom: 4px;
+        }
+
+        .modal-header-left .modal-brief {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .modal-close:hover {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+
+        .modal-body {
+            padding: 24px 28px 28px;
+        }
+
+        .usage-section {
+            margin-bottom: 28px;
+        }
+
+        .usage-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .usage-section h3 {
+            font-size: 1rem;
+            color: var(--pg-orange);
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .usage-section h3 .section-icon {
+            font-size: 0.9rem;
+        }
+
+        .syntax-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .syntax-block code {
+            font-family: 'Courier New', Consolas, monospace;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            white-space: pre;
+            color: var(--text-primary);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0;
+        }
+
+        .syntax-block:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: var(--pg-blue);
+            color: white;
+            border-color: var(--pg-blue);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .example-item {
+            margin-bottom: 16px;
+        }
+
+        .example-item .example-label {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .note-box {
+            background: rgba(96,165,250,0.08);
+            border-left: 3px solid var(--info);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+        }
+
+        .note-box p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .tip-box {
+            background: rgba(74,222,128,0.08);
+            border-left: 3px solid var(--success);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+        }
+
+        .tip-box p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .warning-box {
+            background: rgba(251,191,36,0.08);
+            border-left: 3px solid var(--warning);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 10px;
+        }
+
+        .warning-box p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Syntax Highlighting */
+        .kw { color: #c792ea; font-weight: 600; }
+        .fn { color: #82aaff; }
+        .str { color: #c3e88d; }
+        .num { color: #f78c6c; }
+        .cm { color: #546e7a; font-style: italic; }
+        .type { color: #ffcb6b; }
+        .op { color: #89ddff; }
+        .var { color: #f07178; }
+        .tbl { color: #80cbc4; }
+        .col { color: #e4e8f1; }
+
+        /* Options table */
+        .options-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 0.85rem;
+        }
+
+        .options-table th {
+            text-align: left;
+            padding: 8px 12px;
+            background: var(--code-bg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .options-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .options-table td:first-child {
+            font-family: 'Courier New', monospace;
+            color: var(--pg-blue-light);
+            white-space: nowrap;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-results .big-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .no-results p {
+            font-size: 1.1rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--pg-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                margin: 10px;
+                max-height: 95vh;
+            }
+
+            .modal-header {
+                padding: 18px 20px 14px;
+            }
+
+            .modal-body {
+                padding: 18px 20px 22px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-buttons {
+                width: 100%;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 4px;
+            }
+
+            .filter-btn {
+                flex-shrink: 0;
+            }
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: var(--pg-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+            z-index: 50;
+        }
+
+        .back-to-top:hover {
+            background: var(--pg-blue-light);
+            transform: translateY(-2px);
+        }
+
+        .back-to-top.visible {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <h1>
+                <span class="pg-logo">🐘</span>
+                PostgreSQL Commands & Concepts Reference
+            </h1>
+            <p>Click on any command to explore its full usage, syntax, and examples</p>
+        </div>
+    </header>
+
+    <div class="controls">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search commands... (e.g., SELECT, CREATE, INDEX)">
+        </div>
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="ddl">DDL</button>
+            <button class="filter-btn" data-filter="dml">DML</button>
+            <button class="filter-btn" data-filter="dcl">DCL</button>
+            <button class="filter-btn" data-filter="tcl">TCL</button>
+            <button class="filter-btn" data-filter="query">Query</button>
+            <button class="filter-btn" data-filter="admin">Admin</button>
+            <button class="filter-btn" data-filter="utility">Utility</button>
+            <button class="filter-btn" data-filter="psql">psql</button>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <span id="resultCount"></span>
+        <span id="categoryLabel"></span>
+    </div>
+
+    <div class="commands-grid" id="commandsGrid">
+        <!-- Cards injected by JS -->
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div class="modal-header-left">
+                    <h2 id="modalTitle"></h2>
+                    <span class="modal-brief" id="modalBrief"></span>
+                </div>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <button class="back-to-top" id="backToTop">↑</button>
+
+<script>
+// ─── PostgreSQL Commands Data ────────────────────────────────────────────────
+const commands = [
+    // ═══ DDL ═══
+    {
+        name: "CREATE TABLE",
+        brief: "Create a new table in the database",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Basic Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE TABLE</span> <span class="tbl">table_name</span> (
+    <span class="col">column1</span> <span class="type">data_type</span> <span class="kw">constraints</span>,
+    <span class="col">column2</span> <span class="type">data_type</span> <span class="kw">constraints</span>,
+    ...
+);`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Simple table with constraints",
+                            code: `<span class="kw">CREATE TABLE</span> <span class="tbl">employees</span> (
+    <span class="col">id</span>         <span class="type">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+    <span class="col">name</span>       <span class="type">VARCHAR(100)</span> <span class="kw">NOT NULL</span>,
+    <span class="col">email</span>      <span class="type">VARCHAR(255)</span> <span class="kw">UNIQUE</span>,
+    <span class="col">salary</span>     <span class="type">NUMERIC(10,2)</span> <span class="kw">DEFAULT</span> <span class="num">0.00</span>,
+    <span class="col">dept_id</span>    <span class="type">INTEGER</span> <span class="kw">REFERENCES</span> <span class="tbl">departments</span>(<span class="col">id</span>),
+    <span class="col">created_at</span> <span class="type">TIMESTAMP</span> <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>
+);`
+                        },
+                        {
+                            label: "Table with composite primary key",
+                            code: `<span class="kw">CREATE TABLE</span> <span class="tbl">order_items</span> (
+    <span class="col">order_id</span>   <span class="type">INTEGER</span> <span class="kw">REFERENCES</span> <span class="tbl">orders</span>(<span class="col">id</span>),
+    <span class="col">product_id</span> <span class="type">INTEGER</span> <span class="kw">REFERENCES</span> <span class="tbl">products</span>(<span class="col">id</span>),
+    <span class="col">quantity</span>   <span class="type">INTEGER</span> <span class="kw">NOT NULL CHECK</span> (<span class="col">quantity</span> <span class="op">></span> <span class="num">0</span>),
+    <span class="kw">PRIMARY KEY</span> (<span class="col">order_id</span>, <span class="col">product_id</span>)
+);`
+                        },
+                        {
+                            label: "Create table if it doesn't exist",
+                            code: `<span class="kw">CREATE TABLE IF NOT EXISTS</span> <span class="tbl">logs</span> (
+    <span class="col">id</span>       <span class="type">BIGSERIAL</span> <span class="kw">PRIMARY KEY</span>,
+    <span class="col">level</span>    <span class="type">VARCHAR(10)</span>,
+    <span class="col">message</span>  <span class="type">TEXT</span>,
+    <span class="col">log_time</span> <span class="type">TIMESTAMPTZ</span> <span class="kw">DEFAULT</span> <span class="fn">NOW</span>()
+);`
+                        },
+                        {
+                            label: "Partitioned table (Range)",
+                            code: `<span class="kw">CREATE TABLE</span> <span class="tbl">sales</span> (
+    <span class="col">id</span>        <span class="type">SERIAL</span>,
+    <span class="col">sale_date</span> <span class="type">DATE</span> <span class="kw">NOT NULL</span>,
+    <span class="col">amount</span>    <span class="type">NUMERIC</span>
+) <span class="kw">PARTITION BY RANGE</span> (<span class="col">sale_date</span>);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">sales_2024_q1</span> <span class="kw">PARTITION OF</span> <span class="tbl">sales</span>
+    <span class="kw">FOR VALUES FROM</span> (<span class="str">'2024-01-01'</span>) <span class="kw">TO</span> (<span class="str">'2024-04-01'</span>);`
+                        }
+                    ]
+                },
+                {
+                    title: "📊 Common Data Types",
+                    type: "table",
+                    headers: ["Type", "Description"],
+                    rows: [
+                        ["SERIAL / BIGSERIAL", "Auto-incrementing integer"],
+                        ["INTEGER / BIGINT", "Whole numbers"],
+                        ["NUMERIC(p,s)", "Exact decimal numbers"],
+                        ["VARCHAR(n) / TEXT", "Variable-length strings"],
+                        ["BOOLEAN", "true / false"],
+                        ["DATE / TIMESTAMP", "Date and time"],
+                        ["TIMESTAMPTZ", "Timestamp with timezone"],
+                        ["JSON / JSONB", "JSON data (JSONB is binary)"],
+                        ["UUID", "Universally unique identifier"],
+                        ["ARRAY", "Array of any type"]
+                    ]
+                },
+                {
+                    title: "💡 Tips",
+                    type: "tip",
+                    text: "Prefer BIGSERIAL over SERIAL for large tables. Use TEXT instead of VARCHAR when you don't need a length limit. Use TIMESTAMPTZ for timezone-aware applications."
+                }
+            ]
+        }
+    },
+    {
+        name: "ALTER TABLE",
+        brief: "Modify an existing table structure",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Basic Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">ALTER TABLE</span> <span class="tbl">table_name</span> <span class="kw">action</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Add a column",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">ADD COLUMN</span> <span class="col">phone</span> <span class="type">VARCHAR(20)</span>;`
+                        },
+                        {
+                            label: "Drop a column",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">DROP COLUMN</span> <span class="col">phone</span>;`
+                        },
+                        {
+                            label: "Rename a column",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">RENAME COLUMN</span> <span class="col">name</span> <span class="kw">TO</span> <span class="col">full_name</span>;`
+                        },
+                        {
+                            label: "Change column type",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">ALTER COLUMN</span> <span class="col">salary</span> <span class="kw">TYPE</span> <span class="type">NUMERIC(12,2)</span>;`
+                        },
+                        {
+                            label: "Add / Drop NOT NULL",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">ALTER COLUMN</span> <span class="col">email</span> <span class="kw">SET NOT NULL</span>;
+
+<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">ALTER COLUMN</span> <span class="col">email</span> <span class="kw">DROP NOT NULL</span>;`
+                        },
+                        {
+                            label: "Add constraint",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">ADD CONSTRAINT</span> <span class="col">chk_salary</span>
+    <span class="kw">CHECK</span> (<span class="col">salary</span> <span class="op">>=</span> <span class="num">0</span>);`
+                        },
+                        {
+                            label: "Rename table",
+                            code: `<span class="kw">ALTER TABLE</span> <span class="tbl">employees</span>
+    <span class="kw">RENAME TO</span> <span class="tbl">staff</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "⚠️ Warning",
+                    type: "warning",
+                    text: "Some ALTER TABLE operations (like changing column types) may require a full table rewrite and lock the table. Plan these during low-traffic periods."
+                }
+            ]
+        }
+    },
+    {
+        name: "DROP TABLE",
+        brief: "Remove a table from the database",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">DROP TABLE</span> [<span class="kw">IF EXISTS</span>] <span class="tbl">table_name</span> [<span class="kw">CASCADE</span> | <span class="kw">RESTRICT</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Drop table safely",
+                            code: `<span class="kw">DROP TABLE IF EXISTS</span> <span class="tbl">temp_data</span>;`
+                        },
+                        {
+                            label: "Drop with dependent objects",
+                            code: `<span class="cm">-- CASCADE drops dependent views, foreign keys, etc.</span>
+<span class="kw">DROP TABLE</span> <span class="tbl">departments</span> <span class="kw">CASCADE</span>;`
+                        },
+                        {
+                            label: "Drop multiple tables",
+                            code: `<span class="kw">DROP TABLE IF EXISTS</span> <span class="tbl">table1</span>, <span class="tbl">table2</span>, <span class="tbl">table3</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "⚠️ Warning",
+                    type: "warning",
+                    text: "DROP TABLE permanently removes the table and all its data. There is no undo. Always back up data before dropping tables in production."
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE INDEX",
+        brief: "Create an index to speed up queries",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE</span> [<span class="kw">UNIQUE</span>] <span class="kw">INDEX</span> [<span class="kw">CONCURRENTLY</span>] <span class="col">index_name</span>
+    <span class="kw">ON</span> <span class="tbl">table_name</span> [<span class="kw">USING</span> <span class="col">method</span>] (<span class="col">column</span> [<span class="kw">ASC</span>|<span class="kw">DESC</span>]);`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Basic B-tree index",
+                            code: `<span class="kw">CREATE INDEX</span> <span class="col">idx_emp_name</span>
+    <span class="kw">ON</span> <span class="tbl">employees</span> (<span class="col">name</span>);`
+                        },
+                        {
+                            label: "Unique index",
+                            code: `<span class="kw">CREATE UNIQUE INDEX</span> <span class="col">idx_emp_email</span>
+    <span class="kw">ON</span> <span class="tbl">employees</span> (<span class="col">email</span>);`
+                        },
+                        {
+                            label: "Multi-column index",
+                            code: `<span class="kw">CREATE INDEX</span> <span class="col">idx_emp_dept_salary</span>
+    <span class="kw">ON</span> <span class="tbl">employees</span> (<span class="col">dept_id</span>, <span class="col">salary</span> <span class="kw">DESC</span>);`
+                        },
+                        {
+                            label: "Partial index (filtered)",
+                            code: `<span class="kw">CREATE INDEX</span> <span class="col">idx_active_users</span>
+    <span class="kw">ON</span> <span class="tbl">users</span> (<span class="col">email</span>)
+    <span class="kw">WHERE</span> <span class="col">active</span> <span class="op">=</span> <span class="kw">true</span>;`
+                        },
+                        {
+                            label: "GIN index for JSONB / full-text search",
+                            code: `<span class="kw">CREATE INDEX</span> <span class="col">idx_data_gin</span>
+    <span class="kw">ON</span> <span class="tbl">documents</span> <span class="kw">USING GIN</span> (<span class="col">metadata</span>);
+
+<span class="kw">CREATE INDEX</span> <span class="col">idx_search</span>
+    <span class="kw">ON</span> <span class="tbl">articles</span> <span class="kw">USING GIN</span> (<span class="fn">to_tsvector</span>(<span class="str">'english'</span>, <span class="col">body</span>));`
+                        },
+                        {
+                            label: "Concurrently (no lock)",
+                            code: `<span class="cm">-- Does not lock writes during creation</span>
+<span class="kw">CREATE INDEX CONCURRENTLY</span> <span class="col">idx_orders_date</span>
+    <span class="kw">ON</span> <span class="tbl">orders</span> (<span class="col">order_date</span>);`
+                        }
+                    ]
+                },
+                {
+                    title: "📊 Index Types",
+                    type: "table",
+                    headers: ["Method", "Best For"],
+                    rows: [
+                        ["B-tree (default)", "Equality and range queries (=, <, >, BETWEEN)"],
+                        ["Hash", "Equality comparisons only"],
+                        ["GIN", "JSONB, arrays, full-text search"],
+                        ["GiST", "Geometric data, range types, full-text"],
+                        ["BRIN", "Very large naturally-ordered tables"]
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE VIEW",
+        brief: "Create a virtual table based on a query",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE</span> [<span class="kw">OR REPLACE</span>] <span class="kw">VIEW</span> <span class="tbl">view_name</span> <span class="kw">AS</span>
+    <span class="kw">SELECT</span> ...;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Simple view",
+                            code: `<span class="kw">CREATE VIEW</span> <span class="tbl">active_employees</span> <span class="kw">AS</span>
+    <span class="kw">SELECT</span> <span class="col">id</span>, <span class="col">name</span>, <span class="col">email</span>, <span class="col">salary</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span>
+    <span class="kw">WHERE</span> <span class="col">active</span> <span class="op">=</span> <span class="kw">true</span>;`
+                        },
+                        {
+                            label: "View with joins",
+                            code: `<span class="kw">CREATE OR REPLACE VIEW</span> <span class="tbl">emp_details</span> <span class="kw">AS</span>
+    <span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">e.salary</span>, <span class="col">d.dept_name</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+    <span class="kw">JOIN</span> <span class="tbl">departments</span> <span class="col">d</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d.id</span>;`
+                        },
+                        {
+                            label: "Materialized view",
+                            code: `<span class="kw">CREATE MATERIALIZED VIEW</span> <span class="tbl">monthly_stats</span> <span class="kw">AS</span>
+    <span class="kw">SELECT</span> <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>, <span class="col">order_date</span>) <span class="kw">AS</span> <span class="col">month</span>,
+           <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="col">total_orders</span>,
+           <span class="fn">SUM</span>(<span class="col">amount</span>) <span class="kw">AS</span> <span class="col">revenue</span>
+    <span class="kw">FROM</span> <span class="tbl">orders</span>
+    <span class="kw">GROUP BY</span> <span class="num">1</span>;
+
+<span class="cm">-- Refresh it periodically</span>
+<span class="kw">REFRESH MATERIALIZED VIEW</span> <span class="tbl">monthly_stats</span>;
+<span class="kw">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> <span class="tbl">monthly_stats</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "💡 Tips",
+                    type: "tip",
+                    text: "Materialized views store data physically and must be refreshed. Use CONCURRENTLY to refresh without locking reads (requires a unique index on the materialized view)."
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE SCHEMA",
+        brief: "Create a new schema (namespace)",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE SCHEMA</span> [<span class="kw">IF NOT EXISTS</span>] <span class="col">schema_name</span>
+    [<span class="kw">AUTHORIZATION</span> <span class="col">owner</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Create schema",
+                            code: `<span class="kw">CREATE SCHEMA</span> <span class="col">analytics</span>;`
+                        },
+                        {
+                            label: "Create with owner",
+                            code: `<span class="kw">CREATE SCHEMA</span> <span class="col">reporting</span> <span class="kw">AUTHORIZATION</span> <span class="col">report_user</span>;`
+                        },
+                        {
+                            label: "Using tables in a schema",
+                            code: `<span class="kw">CREATE TABLE</span> <span class="tbl">analytics.events</span> (
+    <span class="col">id</span> <span class="type">SERIAL PRIMARY KEY</span>,
+    <span class="col">event_type</span> <span class="type">TEXT</span>
+);
+
+<span class="kw">SET</span> <span class="col">search_path</span> <span class="kw">TO</span> <span class="col">analytics</span>, <span class="col">public</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "TRUNCATE",
+        brief: "Quickly remove all rows from a table",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">TRUNCATE</span> [<span class="kw">TABLE</span>] <span class="tbl">table_name</span> [, ...]
+    [<span class="kw">CASCADE</span> | <span class="kw">RESTRICT</span>]
+    [<span class="kw">RESTART IDENTITY</span> | <span class="kw">CONTINUE IDENTITY</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Basic truncate",
+                            code: `<span class="kw">TRUNCATE TABLE</span> <span class="tbl">logs</span>;`
+                        },
+                        {
+                            label: "Reset auto-increment sequences",
+                            code: `<span class="kw">TRUNCATE TABLE</span> <span class="tbl">orders</span> <span class="kw">RESTART IDENTITY</span>;`
+                        },
+                        {
+                            label: "Cascade to referencing tables",
+                            code: `<span class="kw">TRUNCATE TABLE</span> <span class="tbl">departments</span> <span class="kw">CASCADE</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "📌 Note",
+                    type: "note",
+                    text: "TRUNCATE is much faster than DELETE for removing all rows because it doesn't scan every row. It's not MVCC-safe in the same way DELETE is, and it cannot be used with WHERE."
+                }
+            ]
+        }
+    },
+    // ═══ DML ═══
+    {
+        name: "SELECT",
+        brief: "Retrieve data from one or more tables",
+        category: "dml",
+        content: {
+            sections: [
+                {
+                    title: "📝 Basic Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">SELECT</span> [<span class="kw">DISTINCT</span>] <span class="col">columns</span>
+<span class="kw">FROM</span> <span class="tbl">table</span>
+[<span class="kw">WHERE</span> <span class="col">condition</span>]
+[<span class="kw">GROUP BY</span> <span class="col">columns</span>]
+[<span class="kw">HAVING</span> <span class="col">condition</span>]
+[<span class="kw">ORDER BY</span> <span class="col">columns</span> [<span class="kw">ASC</span>|<span class="kw">DESC</span>]]
+[<span class="kw">LIMIT</span> <span class="num">n</span> <span class="kw">OFFSET</span> <span class="num">m</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Select all columns",
+                            code: `<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        },
+                        {
+                            label: "Filtering with WHERE",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">salary</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">salary</span> <span class="op">></span> <span class="num">50000</span>
+  <span class="kw">AND</span> <span class="col">dept_id</span> <span class="kw">IN</span> (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="kw">ORDER BY</span> <span class="col">salary</span> <span class="kw">DESC</span>;`
+                        },
+                        {
+                            label: "Aggregation",
+                            code: `<span class="kw">SELECT</span> <span class="col">dept_id</span>,
+       <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="col">emp_count</span>,
+       <span class="fn">AVG</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">avg_salary</span>,
+       <span class="fn">MAX</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">max_salary</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">GROUP BY</span> <span class="col">dept_id</span>
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="op">></span> <span class="num">5</span>;`
+                        },
+                        {
+                            label: "JOINs",
+                            code: `<span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">d.dept_name</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">INNER JOIN</span> <span class="tbl">departments</span> <span class="col">d</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d.id</span>;
+
+<span class="cm">-- LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN</span>
+<span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">d.dept_name</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">departments</span> <span class="col">d</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d.id</span>;`
+                        },
+                        {
+                            label: "Subquery",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">salary</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">salary</span> <span class="op">></span> (
+    <span class="kw">SELECT</span> <span class="fn">AVG</span>(<span class="col">salary</span>) <span class="kw">FROM</span> <span class="tbl">employees</span>
+);`
+                        },
+                        {
+                            label: "Window functions",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">dept_id</span>, <span class="col">salary</span>,
+       <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+           <span class="kw">PARTITION BY</span> <span class="col">dept_id</span>
+           <span class="kw">ORDER BY</span> <span class="col">salary</span> <span class="kw">DESC</span>
+       ) <span class="kw">AS</span> <span class="col">rank</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        },
+                        {
+                            label: "CTE (Common Table Expression)",
+                            code: `<span class="kw">WITH</span> <span class="tbl">dept_stats</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="col">dept_id</span>, <span class="fn">AVG</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">avg_sal</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span>
+    <span class="kw">GROUP BY</span> <span class="col">dept_id</span>
+)
+<span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">e.salary</span>, <span class="col">ds.avg_sal</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">JOIN</span> <span class="tbl">dept_stats</span> <span class="col">ds</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">ds.dept_id</span>;`
+                        },
+                        {
+                            label: "DISTINCT ON (PostgreSQL specific)",
+                            code: `<span class="kw">SELECT DISTINCT ON</span> (<span class="col">dept_id</span>)
+       <span class="col">dept_id</span>, <span class="col">name</span>, <span class="col">salary</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">ORDER BY</span> <span class="col">dept_id</span>, <span class="col">salary</span> <span class="kw">DESC</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "INSERT",
+        brief: "Add new rows to a table",
+        category: "dml",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">INSERT INTO</span> <span class="tbl">table_name</span> (<span class="col">columns</span>)
+<span class="kw">VALUES</span> (<span class="col">values</span>)
+[<span class="kw">ON CONFLICT</span> ... <span class="kw">DO</span> ...]
+[<span class="kw">RETURNING</span> <span class="col">columns</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Insert single row",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">employees</span> (<span class="col">name</span>, <span class="col">email</span>, <span class="col">salary</span>)
+<span class="kw">VALUES</span> (<span class="str">'Alice Johnson'</span>, <span class="str">'alice@example.com'</span>, <span class="num">75000</span>);`
+                        },
+                        {
+                            label: "Insert multiple rows",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">employees</span> (<span class="col">name</span>, <span class="col">email</span>, <span class="col">salary</span>)
+<span class="kw">VALUES</span>
+    (<span class="str">'Bob Smith'</span>, <span class="str">'bob@example.com'</span>, <span class="num">60000</span>),
+    (<span class="str">'Carol Lee'</span>, <span class="str">'carol@example.com'</span>, <span class="num">82000</span>),
+    (<span class="str">'Dan Brown'</span>, <span class="str">'dan@example.com'</span>, <span class="num">55000</span>);`
+                        },
+                        {
+                            label: "Insert with RETURNING",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">employees</span> (<span class="col">name</span>, <span class="col">email</span>)
+<span class="kw">VALUES</span> (<span class="str">'Eve Wilson'</span>, <span class="str">'eve@example.com'</span>)
+<span class="kw">RETURNING</span> <span class="col">id</span>, <span class="col">name</span>, <span class="col">created_at</span>;`
+                        },
+                        {
+                            label: "Upsert (INSERT ... ON CONFLICT)",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">employees</span> (<span class="col">email</span>, <span class="col">name</span>, <span class="col">salary</span>)
+<span class="kw">VALUES</span> (<span class="str">'alice@example.com'</span>, <span class="str">'Alice J.'</span>, <span class="num">80000</span>)
+<span class="kw">ON CONFLICT</span> (<span class="col">email</span>)
+<span class="kw">DO UPDATE SET</span>
+    <span class="col">name</span> <span class="op">=</span> <span class="kw">EXCLUDED</span>.<span class="col">name</span>,
+    <span class="col">salary</span> <span class="op">=</span> <span class="kw">EXCLUDED</span>.<span class="col">salary</span>;`
+                        },
+                        {
+                            label: "Insert from SELECT",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">employee_archive</span> (<span class="col">name</span>, <span class="col">email</span>)
+<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">email</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">active</span> <span class="op">=</span> <span class="kw">false</span>;`
+                        },
+                        {
+                            label: "ON CONFLICT DO NOTHING",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">tags</span> (<span class="col">name</span>)
+<span class="kw">VALUES</span> (<span class="str">'postgresql'</span>)
+<span class="kw">ON CONFLICT DO NOTHING</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "UPDATE",
+        brief: "Modify existing rows in a table",
+        category: "dml",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">UPDATE</span> <span class="tbl">table_name</span>
+<span class="kw">SET</span> <span class="col">column1</span> <span class="op">=</span> <span class="col">value1</span>, <span class="col">column2</span> <span class="op">=</span> <span class="col">value2</span>
+[<span class="kw">FROM</span> <span class="tbl">other_table</span>]
+[<span class="kw">WHERE</span> <span class="col">condition</span>]
+[<span class="kw">RETURNING</span> <span class="col">columns</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Simple update",
+                            code: `<span class="kw">UPDATE</span> <span class="tbl">employees</span>
+<span class="kw">SET</span> <span class="col">salary</span> <span class="op">=</span> <span class="num">85000</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">1</span>;`
+                        },
+                        {
+                            label: "Update multiple columns",
+                            code: `<span class="kw">UPDATE</span> <span class="tbl">employees</span>
+<span class="kw">SET</span> <span class="col">salary</span> <span class="op">=</span> <span class="col">salary</span> <span class="op">*</span> <span class="num">1.10</span>,
+    <span class="col">updated_at</span> <span class="op">=</span> <span class="fn">NOW</span>()
+<span class="kw">WHERE</span> <span class="col">dept_id</span> <span class="op">=</span> <span class="num">3</span>;`
+                        },
+                        {
+                            label: "Update with FROM (join-like)",
+                            code: `<span class="kw">UPDATE</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">SET</span> <span class="col">salary</span> <span class="op">=</span> <span class="col">e.salary</span> <span class="op">+</span> <span class="col">b.bonus</span>
+<span class="kw">FROM</span> <span class="tbl">bonuses</span> <span class="col">b</span>
+<span class="kw">WHERE</span> <span class="col">e.id</span> <span class="op">=</span> <span class="col">b.employee_id</span>;`
+                        },
+                        {
+                            label: "Update with RETURNING",
+                            code: `<span class="kw">UPDATE</span> <span class="tbl">employees</span>
+<span class="kw">SET</span> <span class="col">active</span> <span class="op">=</span> <span class="kw">false</span>
+<span class="kw">WHERE</span> <span class="col">last_login</span> <span class="op"><</span> <span class="fn">NOW</span>() <span class="op">-</span> <span class="kw">INTERVAL</span> <span class="str">'1 year'</span>
+<span class="kw">RETURNING</span> <span class="col">id</span>, <span class="col">name</span>, <span class="col">email</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "⚠️ Warning",
+                    type: "warning",
+                    text: "Always use a WHERE clause unless you intend to update ALL rows. An UPDATE without WHERE modifies every row in the table."
+                }
+            ]
+        }
+    },
+    {
+        name: "DELETE",
+        brief: "Remove rows from a table",
+        category: "dml",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">DELETE FROM</span> <span class="tbl">table_name</span>
+[<span class="kw">USING</span> <span class="tbl">other_table</span>]
+[<span class="kw">WHERE</span> <span class="col">condition</span>]
+[<span class="kw">RETURNING</span> <span class="col">columns</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Delete specific rows",
+                            code: `<span class="kw">DELETE FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">42</span>;`
+                        },
+                        {
+                            label: "Delete with condition",
+                            code: `<span class="kw">DELETE FROM</span> <span class="tbl">logs</span>
+<span class="kw">WHERE</span> <span class="col">log_time</span> <span class="op"><</span> <span class="fn">NOW</span>() <span class="op">-</span> <span class="kw">INTERVAL</span> <span class="str">'90 days'</span>;`
+                        },
+                        {
+                            label: "Delete with USING (join)",
+                            code: `<span class="kw">DELETE FROM</span> <span class="tbl">orders</span> <span class="col">o</span>
+<span class="kw">USING</span> <span class="tbl">customers</span> <span class="col">c</span>
+<span class="kw">WHERE</span> <span class="col">o.customer_id</span> <span class="op">=</span> <span class="col">c.id</span>
+  <span class="kw">AND</span> <span class="col">c.status</span> <span class="op">=</span> <span class="str">'banned'</span>;`
+                        },
+                        {
+                            label: "Delete with RETURNING",
+                            code: `<span class="kw">DELETE FROM</span> <span class="tbl">cart_items</span>
+<span class="kw">WHERE</span> <span class="col">user_id</span> <span class="op">=</span> <span class="num">5</span>
+<span class="kw">RETURNING</span> <span class="op">*</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "UPSERT",
+        brief: "INSERT or UPDATE on conflict (ON CONFLICT)",
+        category: "dml",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">INSERT INTO</span> <span class="tbl">table</span> (<span class="col">columns</span>)
+<span class="kw">VALUES</span> (<span class="col">values</span>)
+<span class="kw">ON CONFLICT</span> (<span class="col">conflict_column</span>)
+<span class="kw">DO UPDATE SET</span> <span class="col">col</span> <span class="op">=</span> <span class="kw">EXCLUDED</span>.<span class="col">col</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Upsert by unique column",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">settings</span> (<span class="col">key</span>, <span class="col">value</span>)
+<span class="kw">VALUES</span> (<span class="str">'theme'</span>, <span class="str">'dark'</span>)
+<span class="kw">ON CONFLICT</span> (<span class="col">key</span>)
+<span class="kw">DO UPDATE SET</span> <span class="col">value</span> <span class="op">=</span> <span class="kw">EXCLUDED</span>.<span class="col">value</span>;`
+                        },
+                        {
+                            label: "Upsert with condition",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">products</span> (<span class="col">sku</span>, <span class="col">price</span>, <span class="col">updated_at</span>)
+<span class="kw">VALUES</span> (<span class="str">'ABC123'</span>, <span class="num">29.99</span>, <span class="fn">NOW</span>())
+<span class="kw">ON CONFLICT</span> (<span class="col">sku</span>)
+<span class="kw">DO UPDATE SET</span>
+    <span class="col">price</span> <span class="op">=</span> <span class="kw">EXCLUDED</span>.<span class="col">price</span>,
+    <span class="col">updated_at</span> <span class="op">=</span> <span class="kw">EXCLUDED</span>.<span class="col">updated_at</span>
+<span class="kw">WHERE</span> <span class="tbl">products</span>.<span class="col">price</span> <span class="op">!=</span> <span class="kw">EXCLUDED</span>.<span class="col">price</span>;`
+                        },
+                        {
+                            label: "DO NOTHING on conflict",
+                            code: `<span class="kw">INSERT INTO</span> <span class="tbl">votes</span> (<span class="col">user_id</span>, <span class="col">post_id</span>)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">42</span>)
+<span class="kw">ON CONFLICT</span> (<span class="col">user_id</span>, <span class="col">post_id</span>)
+<span class="kw">DO NOTHING</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "📌 Note",
+                    type: "note",
+                    text: "EXCLUDED refers to the row that was proposed for insertion. The ON CONFLICT target must be a unique constraint or unique index."
+                }
+            ]
+        }
+    },
+    // ═══ QUERY / ADVANCED ═══
+    {
+        name: "JOIN",
+        brief: "Combine rows from multiple tables",
+        category: "query",
+        content: {
+            sections: [
+                {
+                    title: "📝 Join Types",
+                    type: "syntax",
+                    code: `<span class="kw">SELECT</span> ... <span class="kw">FROM</span> <span class="tbl">A</span>
+<span class="kw">INNER JOIN</span>       <span class="tbl">B</span> <span class="kw">ON</span> <span class="col">A.id</span> <span class="op">=</span> <span class="col">B.a_id</span>   <span class="cm">-- matching rows only</span>
+<span class="kw">LEFT JOIN</span>        <span class="tbl">B</span> <span class="kw">ON</span> ...              <span class="cm">-- all from A + matches from B</span>
+<span class="kw">RIGHT JOIN</span>       <span class="tbl">B</span> <span class="kw">ON</span> ...              <span class="cm">-- all from B + matches from A</span>
+<span class="kw">FULL OUTER JOIN</span>  <span class="tbl">B</span> <span class="kw">ON</span> ...              <span class="cm">-- all from both</span>
+<span class="kw">CROSS JOIN</span>       <span class="tbl">B</span>                     <span class="cm">-- cartesian product</span>
+<span class="kw">LATERAL JOIN</span>     ...                    <span class="cm">-- correlated subquery join</span>`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "INNER JOIN",
+                            code: `<span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">d.dept_name</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">INNER JOIN</span> <span class="tbl">departments</span> <span class="col">d</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d.id</span>;`
+                        },
+                        {
+                            label: "LEFT JOIN with NULL check",
+                            code: `<span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">d.dept_name</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">departments</span> <span class="col">d</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d.id</span>
+<span class="kw">WHERE</span> <span class="col">d.id</span> <span class="kw">IS NULL</span>;  <span class="cm">-- employees without a department</span>`
+                        },
+                        {
+                            label: "Self JOIN",
+                            code: `<span class="kw">SELECT</span> <span class="col">e.name</span> <span class="kw">AS</span> <span class="col">employee</span>,
+       <span class="col">m.name</span> <span class="kw">AS</span> <span class="col">manager</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">LEFT JOIN</span> <span class="tbl">employees</span> <span class="col">m</span> <span class="kw">ON</span> <span class="col">e.manager_id</span> <span class="op">=</span> <span class="col">m.id</span>;`
+                        },
+                        {
+                            label: "LATERAL JOIN",
+                            code: `<span class="kw">SELECT</span> <span class="col">d.dept_name</span>, <span class="col">top.name</span>, <span class="col">top.salary</span>
+<span class="kw">FROM</span> <span class="tbl">departments</span> <span class="col">d</span>
+<span class="kw">CROSS JOIN LATERAL</span> (
+    <span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">salary</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span>
+    <span class="kw">WHERE</span> <span class="col">dept_id</span> <span class="op">=</span> <span class="col">d.id</span>
+    <span class="kw">ORDER BY</span> <span class="col">salary</span> <span class="kw">DESC</span>
+    <span class="kw">LIMIT</span> <span class="num">3</span>
+) <span class="col">top</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "Window Functions",
+        brief: "Perform calculations across rows related to the current row",
+        category: "query",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="fn">function</span>() <span class="kw">OVER</span> (
+    [<span class="kw">PARTITION BY</span> <span class="col">column</span>]
+    [<span class="kw">ORDER BY</span> <span class="col">column</span>]
+    [<span class="kw">ROWS</span>/<span class="kw">RANGE BETWEEN</span> ... <span class="kw">AND</span> ...]
+)`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "ROW_NUMBER, RANK, DENSE_RANK",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">dept_id</span>, <span class="col">salary</span>,
+    <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> <span class="col">dept_id</span> <span class="kw">ORDER BY</span> <span class="col">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="col">rn</span>,
+    <span class="fn">RANK</span>()       <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> <span class="col">dept_id</span> <span class="kw">ORDER BY</span> <span class="col">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="col">rnk</span>,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> <span class="col">dept_id</span> <span class="kw">ORDER BY</span> <span class="col">salary</span> <span class="kw">DESC</span>) <span class="kw">AS</span> <span class="col">drnk</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        },
+                        {
+                            label: "Running total",
+                            code: `<span class="kw">SELECT</span> <span class="col">order_date</span>, <span class="col">amount</span>,
+    <span class="fn">SUM</span>(<span class="col">amount</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">order_date</span>) <span class="kw">AS</span> <span class="col">running_total</span>
+<span class="kw">FROM</span> <span class="tbl">orders</span>;`
+                        },
+                        {
+                            label: "LAG / LEAD",
+                            code: `<span class="kw">SELECT</span> <span class="col">month</span>, <span class="col">revenue</span>,
+    <span class="fn">LAG</span>(<span class="col">revenue</span>, <span class="num">1</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">month</span>) <span class="kw">AS</span> <span class="col">prev_month</span>,
+    <span class="col">revenue</span> <span class="op">-</span> <span class="fn">LAG</span>(<span class="col">revenue</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">month</span>) <span class="kw">AS</span> <span class="col">growth</span>
+<span class="kw">FROM</span> <span class="tbl">monthly_revenue</span>;`
+                        },
+                        {
+                            label: "NTILE (divide into buckets)",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">salary</span>,
+    <span class="fn">NTILE</span>(<span class="num">4</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> <span class="col">salary</span>) <span class="kw">AS</span> <span class="col">quartile</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "📊 Common Window Functions",
+                    type: "table",
+                    headers: ["Function", "Description"],
+                    rows: [
+                        ["ROW_NUMBER()", "Unique sequential number"],
+                        ["RANK()", "Rank with gaps"],
+                        ["DENSE_RANK()", "Rank without gaps"],
+                        ["NTILE(n)", "Divide into n buckets"],
+                        ["LAG(col, n)", "Value from n rows before"],
+                        ["LEAD(col, n)", "Value from n rows after"],
+                        ["FIRST_VALUE(col)", "First value in window"],
+                        ["LAST_VALUE(col)", "Last value in window"],
+                        ["SUM/AVG/COUNT/MIN/MAX", "Aggregate as window function"]
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "CTE / WITH",
+        brief: "Common Table Expressions for readable queries",
+        category: "query",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">WITH</span> [<span class="kw">RECURSIVE</span>] <span class="tbl">cte_name</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> ...
+)
+<span class="kw">SELECT</span> ... <span class="kw">FROM</span> <span class="tbl">cte_name</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Multiple CTEs",
+                            code: `<span class="kw">WITH</span> <span class="tbl">active_users</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">users</span> <span class="kw">WHERE</span> <span class="col">active</span> <span class="op">=</span> <span class="kw">true</span>
+),
+<span class="tbl">user_orders</span> <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="col">user_id</span>, <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="col">order_count</span>
+    <span class="kw">FROM</span> <span class="tbl">orders</span>
+    <span class="kw">GROUP BY</span> <span class="col">user_id</span>
+)
+<span class="kw">SELECT</span> <span class="col">u.name</span>, <span class="col">uo.order_count</span>
+<span class="kw">FROM</span> <span class="tbl">active_users</span> <span class="col">u</span>
+<span class="kw">JOIN</span> <span class="tbl">user_orders</span> <span class="col">uo</span> <span class="kw">ON</span> <span class="col">u.id</span> <span class="op">=</span> <span class="col">uo.user_id</span>;`
+                        },
+                        {
+                            label: "Recursive CTE (hierarchy)",
+                            code: `<span class="kw">WITH RECURSIVE</span> <span class="tbl">org_chart</span> <span class="kw">AS</span> (
+    <span class="cm">-- Base case: top-level managers</span>
+    <span class="kw">SELECT</span> <span class="col">id</span>, <span class="col">name</span>, <span class="col">manager_id</span>, <span class="num">1</span> <span class="kw">AS</span> <span class="col">level</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span>
+    <span class="kw">WHERE</span> <span class="col">manager_id</span> <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cm">-- Recursive case</span>
+    <span class="kw">SELECT</span> <span class="col">e.id</span>, <span class="col">e.name</span>, <span class="col">e.manager_id</span>, <span class="col">oc.level</span> <span class="op">+</span> <span class="num">1</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+    <span class="kw">JOIN</span> <span class="tbl">org_chart</span> <span class="col">oc</span> <span class="kw">ON</span> <span class="col">e.manager_id</span> <span class="op">=</span> <span class="col">oc.id</span>
+)
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">org_chart</span> <span class="kw">ORDER BY</span> <span class="col">level</span>;`
+                        },
+                        {
+                            label: "CTE with INSERT (data-modifying)",
+                            code: `<span class="kw">WITH</span> <span class="tbl">deleted</span> <span class="kw">AS</span> (
+    <span class="kw">DELETE FROM</span> <span class="tbl">orders</span>
+    <span class="kw">WHERE</span> <span class="col">status</span> <span class="op">=</span> <span class="str">'cancelled'</span>
+    <span class="kw">RETURNING</span> <span class="op">*</span>
+)
+<span class="kw">INSERT INTO</span> <span class="tbl">cancelled_orders</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">deleted</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "EXPLAIN / ANALYZE",
+        brief: "Show or execute the query plan",
+        category: "query",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">EXPLAIN</span> [<span class="kw">ANALYZE</span>] [<span class="kw">VERBOSE</span>] [<span class="kw">BUFFERS</span>] [<span class="kw">FORMAT</span> <span class="col">JSON</span>|<span class="col">TEXT</span>]
+    <span class="kw">SELECT</span> ...;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Basic explain",
+                            code: `<span class="kw">EXPLAIN</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="kw">WHERE</span> <span class="col">salary</span> <span class="op">></span> <span class="num">50000</span>;`
+                        },
+                        {
+                            label: "Explain with actual timing",
+                            code: `<span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">d.dept_name</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+<span class="kw">JOIN</span> <span class="tbl">departments</span> <span class="col">d</span> <span class="kw">ON</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d.id</span>;`
+                        },
+                        {
+                            label: "Full analysis with buffers",
+                            code: `<span class="kw">EXPLAIN</span> (<span class="kw">ANALYZE</span>, <span class="kw">BUFFERS</span>, <span class="kw">FORMAT TEXT</span>)
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">orders</span>
+<span class="kw">WHERE</span> <span class="col">order_date</span> <span class="kw">BETWEEN</span> <span class="str">'2024-01-01'</span> <span class="kw">AND</span> <span class="str">'2024-12-31'</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "💡 Tips",
+                    type: "tip",
+                    text: "EXPLAIN shows the estimated plan. EXPLAIN ANALYZE actually runs the query and shows real times. Look for Seq Scan on large tables — it usually means a missing index."
+                }
+            ]
+        }
+    },
+    // ═══ DCL ═══
+    {
+        name: "GRANT",
+        brief: "Give privileges to users or roles",
+        category: "dcl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">GRANT</span> <span class="col">privilege</span> [, ...]
+<span class="kw">ON</span> <span class="tbl">object</span>
+<span class="kw">TO</span> <span class="col">role_name</span> [<span class="kw">WITH GRANT OPTION</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Grant table privileges",
+                            code: `<span class="kw">GRANT</span> <span class="col">SELECT</span>, <span class="col">INSERT</span> <span class="kw">ON</span> <span class="tbl">employees</span> <span class="kw">TO</span> <span class="col">app_user</span>;
+<span class="kw">GRANT ALL PRIVILEGES ON</span> <span class="tbl">orders</span> <span class="kw">TO</span> <span class="col">admin_role</span>;`
+                        },
+                        {
+                            label: "Grant on all tables in schema",
+                            code: `<span class="kw">GRANT SELECT ON ALL TABLES IN SCHEMA</span> <span class="col">public</span> <span class="kw">TO</span> <span class="col">readonly_user</span>;`
+                        },
+                        {
+                            label: "Grant schema usage",
+                            code: `<span class="kw">GRANT USAGE ON SCHEMA</span> <span class="col">analytics</span> <span class="kw">TO</span> <span class="col">analyst</span>;`
+                        },
+                        {
+                            label: "Grant database connect",
+                            code: `<span class="kw">GRANT CONNECT ON DATABASE</span> <span class="col">mydb</span> <span class="kw">TO</span> <span class="col">new_user</span>;`
+                        },
+                        {
+                            label: "Grant role membership",
+                            code: `<span class="kw">GRANT</span> <span class="col">admin_role</span> <span class="kw">TO</span> <span class="col">john</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "REVOKE",
+        brief: "Remove privileges from users or roles",
+        category: "dcl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">REVOKE</span> <span class="col">privilege</span> [, ...]
+<span class="kw">ON</span> <span class="tbl">object</span>
+<span class="kw">FROM</span> <span class="col">role_name</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Revoke table privileges",
+                            code: `<span class="kw">REVOKE</span> <span class="col">INSERT</span>, <span class="col">UPDATE</span>, <span class="col">DELETE</span>
+<span class="kw">ON</span> <span class="tbl">employees</span>
+<span class="kw">FROM</span> <span class="col">readonly_user</span>;`
+                        },
+                        {
+                            label: "Revoke all privileges",
+                            code: `<span class="kw">REVOKE ALL PRIVILEGES ON</span> <span class="tbl">orders</span> <span class="kw">FROM</span> <span class="col">temp_user</span>;`
+                        },
+                        {
+                            label: "Revoke public access",
+                            code: `<span class="kw">REVOKE ALL ON SCHEMA</span> <span class="col">public</span> <span class="kw">FROM</span> <span class="col">PUBLIC</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE ROLE / USER",
+        brief: "Create database roles and users",
+        category: "dcl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE ROLE</span> <span class="col">role_name</span> [<span class="kw">WITH</span> <span class="col">options</span>];
+<span class="kw">CREATE USER</span> <span class="col">user_name</span> <span class="kw">WITH PASSWORD</span> <span class="str">'password'</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Create user with password",
+                            code: `<span class="kw">CREATE USER</span> <span class="col">app_user</span>
+<span class="kw">WITH PASSWORD</span> <span class="str">'secure_password_123'</span>;`
+                        },
+                        {
+                            label: "Create role with options",
+                            code: `<span class="kw">CREATE ROLE</span> <span class="col">admin_role</span> <span class="kw">WITH</span>
+    <span class="kw">LOGIN</span>
+    <span class="kw">CREATEDB</span>
+    <span class="kw">CREATEROLE</span>
+    <span class="kw">PASSWORD</span> <span class="str">'admin_pass'</span>;`
+                        },
+                        {
+                            label: "Create readonly role",
+                            code: `<span class="kw">CREATE ROLE</span> <span class="col">readonly</span>;
+<span class="kw">GRANT CONNECT ON DATABASE</span> <span class="col">mydb</span> <span class="kw">TO</span> <span class="col">readonly</span>;
+<span class="kw">GRANT USAGE ON SCHEMA</span> <span class="col">public</span> <span class="kw">TO</span> <span class="col">readonly</span>;
+<span class="kw">GRANT SELECT ON ALL TABLES IN SCHEMA</span> <span class="col">public</span> <span class="kw">TO</span> <span class="col">readonly</span>;`
+                        },
+                        {
+                            label: "Alter and drop roles",
+                            code: `<span class="kw">ALTER ROLE</span> <span class="col">app_user</span> <span class="kw">WITH PASSWORD</span> <span class="str">'new_password'</span>;
+<span class="kw">ALTER ROLE</span> <span class="col">app_user</span> <span class="kw">SET</span> <span class="col">statement_timeout</span> <span class="op">=</span> <span class="str">'30s'</span>;
+<span class="kw">DROP ROLE IF EXISTS</span> <span class="col">old_user</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "📌 Note",
+                    type: "note",
+                    text: "CREATE USER is an alias for CREATE ROLE WITH LOGIN. Roles without LOGIN cannot connect directly but can be granted to other roles."
+                }
+            ]
+        }
+    },
+    // ═══ TCL ═══
+    {
+        name: "BEGIN / COMMIT / ROLLBACK",
+        brief: "Transaction control statements",
+        category: "tcl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">BEGIN</span>;               <span class="cm">-- Start transaction</span>
+    <span class="cm">-- SQL statements</span>
+<span class="kw">COMMIT</span>;              <span class="cm">-- Save changes</span>
+<span class="kw">ROLLBACK</span>;            <span class="cm">-- Undo changes</span>
+
+<span class="kw">SAVEPOINT</span> <span class="col">name</span>;      <span class="cm">-- Create savepoint</span>
+<span class="kw">ROLLBACK TO</span> <span class="col">name</span>;   <span class="cm">-- Rollback to savepoint</span>
+<span class="kw">RELEASE</span> <span class="col">name</span>;       <span class="cm">-- Destroy savepoint</span>`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Basic transaction",
+                            code: `<span class="kw">BEGIN</span>;
+
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span> <span class="col">balance</span> <span class="op">=</span> <span class="col">balance</span> <span class="op">-</span> <span class="num">500</span> <span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">1</span>;
+<span class="kw">UPDATE</span> <span class="tbl">accounts</span> <span class="kw">SET</span> <span class="col">balance</span> <span class="op">=</span> <span class="col">balance</span> <span class="op">+</span> <span class="num">500</span> <span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">2</span>;
+
+<span class="kw">COMMIT</span>;</span>`
+                        },
+                        {
+                            label: "Transaction with savepoint",
+                            code: `<span class="kw">BEGIN</span>;
+
+<span class="kw">INSERT INTO</span> <span class="tbl">orders</span> (<span class="col">customer_id</span>, <span class="col">total</span>) <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">100</span>);
+
+<span class="kw">SAVEPOINT</span> <span class="col">before_items</span>;
+
+<span class="kw">INSERT INTO</span> <span class="tbl">order_items</span> (<span class="col">order_id</span>, <span class="col">product_id</span>) <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">999</span>);
+<span class="cm">-- Oops, product doesn't exist</span>
+<span class="kw">ROLLBACK TO</span> <span class="col">before_items</span>;
+
+<span class="kw">INSERT INTO</span> <span class="tbl">order_items</span> (<span class="col">order_id</span>, <span class="col">product_id</span>) <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">42</span>);
+
+<span class="kw">COMMIT</span>;`
+                        },
+                        {
+                            label: "Transaction isolation level",
+                            code: `<span class="kw">BEGIN TRANSACTION ISOLATION LEVEL</span> <span class="col">SERIALIZABLE</span>;
+<span class="cm">-- ... statements ...</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cm">-- Levels: READ COMMITTED (default), REPEATABLE READ, SERIALIZABLE</span>`
+                        }
+                    ]
+                },
+                {
+                    title: "📌 Note",
+                    type: "note",
+                    text: "PostgreSQL uses READ COMMITTED isolation by default. Each statement in a transaction sees a snapshot of the database. Savepoints allow partial rollback within a transaction."
+                }
+            ]
+        }
+    },
+    // ═══ ADMIN ═══
+    {
+        name: "CREATE DATABASE",
+        brief: "Create a new database",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE DATABASE</span> <span class="col">db_name</span>
+    [<span class="kw">OWNER</span> <span class="col">role</span>]
+    [<span class="kw">ENCODING</span> <span class="str">'UTF8'</span>]
+    [<span class="kw">LC_COLLATE</span> <span class="str">'en_US.UTF-8'</span>]
+    [<span class="kw">TEMPLATE</span> <span class="col">template0</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Basic creation",
+                            code: `<span class="kw">CREATE DATABASE</span> <span class="col">myapp_production</span>;`
+                        },
+                        {
+                            label: "With options",
+                            code: `<span class="kw">CREATE DATABASE</span> <span class="col">analytics_db</span>
+    <span class="kw">OWNER</span> <span class="col">admin_user</span>
+    <span class="kw">ENCODING</span> <span class="str">'UTF8'</span>
+    <span class="kw">LC_COLLATE</span> <span class="str">'en_US.UTF-8'</span>
+    <span class="kw">TEMPLATE</span> <span class="col">template0</span>;`
+                        },
+                        {
+                            label: "Drop database",
+                            code: `<span class="kw">DROP DATABASE IF EXISTS</span> <span class="col">test_db</span>;
+
+<span class="cm">-- Force drop (PG 13+)</span>
+<span class="kw">DROP DATABASE</span> <span class="col">test_db</span> <span class="kw">WITH</span> (<span class="col">FORCE</span>);`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "VACUUM / ANALYZE",
+        brief: "Reclaim storage and update statistics",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">VACUUM</span> [<span class="kw">FULL</span>] [<span class="kw">VERBOSE</span>] [<span class="kw">ANALYZE</span>] [<span class="tbl">table_name</span>];
+<span class="kw">ANALYZE</span> [<span class="kw">VERBOSE</span>] [<span class="tbl">table_name</span> [(<span class="col">column</span>, ...)]];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Standard vacuum",
+                            code: `<span class="kw">VACUUM</span> <span class="tbl">employees</span>;              <span class="cm">-- reclaim dead tuples</span>
+<span class="kw">VACUUM VERBOSE</span> <span class="tbl">employees</span>;      <span class="cm">-- with progress info</span>
+<span class="kw">VACUUM</span>;                          <span class="cm">-- all tables in current db</span>`
+                        },
+                        {
+                            label: "Full vacuum (reclaims disk space)",
+                            code: `<span class="cm">-- Warning: locks the table exclusively</span>
+<span class="kw">VACUUM FULL</span> <span class="tbl">large_table</span>;`
+                        },
+                        {
+                            label: "Vacuum and analyze together",
+                            code: `<span class="kw">VACUUM ANALYZE</span> <span class="tbl">orders</span>;`
+                        },
+                        {
+                            label: "Update statistics only",
+                            code: `<span class="kw">ANALYZE</span> <span class="tbl">employees</span>;
+<span class="kw">ANALYZE</span> <span class="tbl">employees</span> (<span class="col">salary</span>, <span class="col">dept_id</span>);`
+                        }
+                    ]
+                },
+                {
+                    title: "💡 Tips",
+                    type: "tip",
+                    text: "Autovacuum handles this automatically in most cases. Run ANALYZE manually after bulk loads. VACUUM FULL rewrites the entire table and requires exclusive lock — prefer regular VACUUM."
+                }
+            ]
+        }
+    },
+    {
+        name: "COPY",
+        brief: "Import/export data between table and file",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="cm">-- Export to file</span>
+<span class="kw">COPY</span> <span class="tbl">table_name</span> <span class="kw">TO</span> <span class="str">'/path/to/file.csv'</span> <span class="kw">WITH CSV HEADER</span>;
+
+<span class="cm">-- Import from file</span>
+<span class="kw">COPY</span> <span class="tbl">table_name</span> <span class="kw">FROM</span> <span class="str">'/path/to/file.csv'</span> <span class="kw">WITH CSV HEADER</span>;
+
+<span class="cm">-- Client-side (psql)</span>
+<span class="kw">\\copy</span> <span class="tbl">table_name</span> <span class="kw">TO</span> <span class="str">'file.csv'</span> <span class="kw">WITH CSV HEADER</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Export to CSV",
+                            code: `<span class="kw">COPY</span> <span class="tbl">employees</span> <span class="kw">TO</span> <span class="str">'/tmp/employees.csv'</span>
+<span class="kw">WITH</span> (<span class="col">FORMAT CSV</span>, <span class="col">HEADER true</span>, <span class="col">DELIMITER</span> <span class="str">','</span>);`
+                        },
+                        {
+                            label: "Export query result",
+                            code: `<span class="kw">COPY</span> (
+    <span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">email</span>, <span class="col">salary</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span>
+    <span class="kw">WHERE</span> <span class="col">salary</span> <span class="op">></span> <span class="num">60000</span>
+) <span class="kw">TO</span> <span class="str">'/tmp/high_earners.csv'</span> <span class="kw">WITH CSV HEADER</span>;`
+                        },
+                        {
+                            label: "Import from CSV",
+                            code: `<span class="kw">COPY</span> <span class="tbl">employees</span> (<span class="col">name</span>, <span class="col">email</span>, <span class="col">salary</span>)
+<span class="kw">FROM</span> <span class="str">'/tmp/new_employees.csv'</span>
+<span class="kw">WITH</span> (<span class="col">FORMAT CSV</span>, <span class="col">HEADER true</span>);`
+                        },
+                        {
+                            label: "Import from STDIN (psql)",
+                            code: `<span class="kw">COPY</span> <span class="tbl">employees</span> (<span class="col">name</span>, <span class="col">salary</span>) <span class="kw">FROM STDIN</span> <span class="kw">WITH CSV</span>;
+<span class="str">Alice,70000</span>
+<span class="str">Bob,60000</span>
+<span class="str">\\.</span>`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "pg_dump / pg_restore",
+        brief: "Backup and restore databases",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax (Shell Commands)",
+                    type: "syntax",
+                    code: `<span class="cm"># Dump entire database</span>
+<span class="fn">pg_dump</span> <span class="col">dbname</span> <span class="op">></span> <span class="str">backup.sql</span>
+
+<span class="cm"># Restore from SQL file</span>
+<span class="fn">psql</span> <span class="col">dbname</span> <span class="op"><</span> <span class="str">backup.sql</span>
+
+<span class="cm"># Custom format (compressed)</span>
+<span class="fn">pg_dump</span> <span class="op">-Fc</span> <span class="col">dbname</span> <span class="op">></span> <span class="str">backup.dump</span>
+<span class="fn">pg_restore</span> <span class="op">-d</span> <span class="col">dbname</span> <span class="str">backup.dump</span>`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Full database backup",
+                            code: `<span class="fn">pg_dump</span> <span class="op">-h</span> <span class="col">localhost</span> <span class="op">-U</span> <span class="col">postgres</span> <span class="op">-Fc</span> <span class="col">mydb</span> <span class="op">></span> <span class="str">mydb.dump</span>`
+                        },
+                        {
+                            label: "Dump specific tables",
+                            code: `<span class="fn">pg_dump</span> <span class="op">-t</span> <span class="tbl">employees</span> <span class="op">-t</span> <span class="tbl">departments</span> <span class="col">mydb</span> <span class="op">></span> <span class="str">tables.sql</span>`
+                        },
+                        {
+                            label: "Schema only (no data)",
+                            code: `<span class="fn">pg_dump</span> <span class="op">--schema-only</span> <span class="col">mydb</span> <span class="op">></span> <span class="str">schema.sql</span>`
+                        },
+                        {
+                            label: "Data only",
+                            code: `<span class="fn">pg_dump</span> <span class="op">--data-only</span> <span class="col">mydb</span> <span class="op">></span> <span class="str">data.sql</span>`
+                        },
+                        {
+                            label: "Restore with options",
+                            code: `<span class="fn">pg_restore</span> <span class="op">-h</span> <span class="col">localhost</span> <span class="op">-U</span> <span class="col">postgres</span> \\
+    <span class="op">-d</span> <span class="col">new_db</span> <span class="op">--clean --if-exists</span> <span class="str">mydb.dump</span>`
+                        },
+                        {
+                            label: "Dump all databases",
+                            code: `<span class="fn">pg_dumpall</span> <span class="op">-U</span> <span class="col">postgres</span> <span class="op">></span> <span class="str">all_databases.sql</span>`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    // ═══ UTILITY ═══
+    {
+        name: "CREATE FUNCTION",
+        brief: "Create a stored function (PL/pgSQL)",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE</span> [<span class="kw">OR REPLACE</span>] <span class="kw">FUNCTION</span> <span class="fn">func_name</span>(<span class="col">params</span>)
+<span class="kw">RETURNS</span> <span class="type">return_type</span> <span class="kw">AS</span> <span class="str">$$</span>
+<span class="kw">BEGIN</span>
+    <span class="cm">-- function body</span>
+<span class="kw">END</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE</span> <span class="col">plpgsql</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Simple function",
+                            code: `<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">get_full_name</span>(
+    <span class="col">first_name</span> <span class="type">TEXT</span>,
+    <span class="col">last_name</span> <span class="type">TEXT</span>
+) <span class="kw">RETURNS</span> <span class="type">TEXT</span> <span class="kw">AS</span> <span class="str">$$</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">RETURN</span> <span class="col">first_name</span> <span class="op">||</span> <span class="str">' '</span> <span class="op">||</span> <span class="col">last_name</span>;
+<span class="kw">END</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE</span> <span class="col">plpgsql</span>;
+
+<span class="cm">-- Usage</span>
+<span class="kw">SELECT</span> <span class="fn">get_full_name</span>(<span class="str">'John'</span>, <span class="str">'Doe'</span>);`
+                        },
+                        {
+                            label: "Function returning a table",
+                            code: `<span class="kw">CREATE FUNCTION</span> <span class="fn">get_employees_by_dept</span>(<span class="col">d_id</span> <span class="type">INTEGER</span>)
+<span class="kw">RETURNS TABLE</span> (<span class="col">name</span> <span class="type">VARCHAR</span>, <span class="col">salary</span> <span class="type">NUMERIC</span>) <span class="kw">AS</span> <span class="str">$$</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">RETURN QUERY</span>
+    <span class="kw">SELECT</span> <span class="col">e.name</span>, <span class="col">e.salary</span>
+    <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="col">e</span>
+    <span class="kw">WHERE</span> <span class="col">e.dept_id</span> <span class="op">=</span> <span class="col">d_id</span>;
+<span class="kw">END</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE</span> <span class="col">plpgsql</span>;
+
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="fn">get_employees_by_dept</span>(<span class="num">3</span>);`
+                        },
+                        {
+                            label: "SQL language function (simpler)",
+                            code: `<span class="kw">CREATE FUNCTION</span> <span class="fn">double_it</span>(<span class="col">x</span> <span class="type">INTEGER</span>)
+<span class="kw">RETURNS</span> <span class="type">INTEGER</span> <span class="kw">AS</span> <span class="str">$$</span>
+    <span class="kw">SELECT</span> <span class="col">x</span> <span class="op">*</span> <span class="num">2</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE SQL IMMUTABLE</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE TRIGGER",
+        brief: "Automatically execute a function on table events",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE TRIGGER</span> <span class="col">trigger_name</span>
+<span class="kw">BEFORE</span>|<span class="kw">AFTER</span>|<span class="kw">INSTEAD OF</span>  <span class="kw">INSERT</span>|<span class="kw">UPDATE</span>|<span class="kw">DELETE</span>
+<span class="kw">ON</span> <span class="tbl">table_name</span>
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">EXECUTE FUNCTION</span> <span class="fn">trigger_function</span>();`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Auto-update timestamp trigger",
+                            code: `<span class="cm">-- 1. Create the trigger function</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">update_modified</span>()
+<span class="kw">RETURNS TRIGGER AS</span> <span class="str">$$</span>
+<span class="kw">BEGIN</span>
+    <span class="col">NEW.updated_at</span> <span class="op">=</span> <span class="fn">NOW</span>();
+    <span class="kw">RETURN NEW</span>;
+<span class="kw">END</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE</span> <span class="col">plpgsql</span>;
+
+<span class="cm">-- 2. Attach to table</span>
+<span class="kw">CREATE TRIGGER</span> <span class="col">set_updated_at</span>
+<span class="kw">BEFORE UPDATE ON</span> <span class="tbl">employees</span>
+<span class="kw">FOR EACH ROW</span>
+<span class="kw">EXECUTE FUNCTION</span> <span class="fn">update_modified</span>();`
+                        },
+                        {
+                            label: "Audit log trigger",
+                            code: `<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">audit_log</span>()
+<span class="kw">RETURNS TRIGGER AS</span> <span class="str">$$</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">INSERT INTO</span> <span class="tbl">audit_trail</span> (<span class="col">table_name</span>, <span class="col">action</span>, <span class="col">old_data</span>, <span class="col">new_data</span>)
+    <span class="kw">VALUES</span> (<span class="col">TG_TABLE_NAME</span>, <span class="col">TG_OP</span>,
+            <span class="fn">row_to_json</span>(<span class="col">OLD</span>), <span class="fn">row_to_json</span>(<span class="col">NEW</span>));
+    <span class="kw">RETURN NEW</span>;
+<span class="kw">END</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE</span> <span class="col">plpgsql</span>;
+
+<span class="kw">CREATE TRIGGER</span> <span class="col">emp_audit</span>
+<span class="kw">AFTER INSERT OR UPDATE OR DELETE ON</span> <span class="tbl">employees</span>
+<span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> <span class="fn">audit_log</span>();`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "JSONB Operations",
+        brief: "Query and manipulate JSON data",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📝 Operators",
+                    type: "table",
+                    headers: ["Operator", "Description", "Example"],
+                    rows: [
+                        ["->", "Get JSON object by key (as JSON)", "data -> 'key'"],
+                        ["->>", "Get JSON object by key (as text)", "data ->> 'key'"],
+                        ["#>", "Get nested value (as JSON)", "data #> '{a,b}'"],
+                        ["#>>", "Get nested value (as text)", "data #>> '{a,b}'"],
+                        ["@>", "Contains", "data @> '{\"key\": \"val\"}'"],
+                        ["?", "Key exists", "data ? 'key'"],
+                        ["||", "Concatenate JSONB", "data || '{\"new\": 1}'"],
+                        ["- 'key'", "Delete key", "data - 'key'"]
+                    ]
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Query JSONB fields",
+                            code: `<span class="kw">SELECT</span>
+    <span class="col">data</span> <span class="op">->></span> <span class="str">'name'</span> <span class="kw">AS</span> <span class="col">name</span>,
+    <span class="col">data</span> <span class="op">-></span> <span class="str">'address'</span> <span class="op">->></span> <span class="str">'city'</span> <span class="kw">AS</span> <span class="col">city</span>,
+    (<span class="col">data</span> <span class="op">->></span> <span class="str">'age'</span>)::<span class="type">INTEGER</span> <span class="kw">AS</span> <span class="col">age</span>
+<span class="kw">FROM</span> <span class="tbl">profiles</span>
+<span class="kw">WHERE</span> <span class="col">data</span> <span class="op">@></span> <span class="str">'{"active": true}'</span>::<span class="type">jsonb</span>;`
+                        },
+                        {
+                            label: "Update JSONB",
+                            code: `<span class="cm">-- Set a key</span>
+<span class="kw">UPDATE</span> <span class="tbl">profiles</span>
+<span class="kw">SET</span> <span class="col">data</span> <span class="op">=</span> <span class="fn">jsonb_set</span>(<span class="col">data</span>, <span class="str">'{address,city}'</span>, <span class="str">'"New York"'</span>)
+<span class="kw">WHERE</span> <span class="col">id</span> <span class="op">=</span> <span class="num">1</span>;
+
+<span class="cm">-- Remove a key</span>
+<span class="kw">UPDATE</span> <span class="tbl">profiles</span>
+<span class="kw">SET</span> <span class="col">data</span> <span class="op">=</span> <span class="col">data</span> <span class="op">-</span> <span class="str">'temp_field'</span>;`
+                        },
+                        {
+                            label: "Expand JSONB arrays",
+                            code: `<span class="kw">SELECT</span> <span class="col">id</span>, <span class="fn">jsonb_array_elements</span>(<span class="col">data</span> <span class="op">-></span> <span class="str">'tags'</span>) <span class="kw">AS</span> <span class="col">tag</span>
+<span class="kw">FROM</span> <span class="tbl">articles</span>;`
+                        },
+                        {
+                            label: "Aggregate to JSONB",
+                            code: `<span class="kw">SELECT</span> <span class="fn">jsonb_agg</span>(<span class="fn">jsonb_build_object</span>(
+    <span class="str">'name'</span>, <span class="col">name</span>,
+    <span class="str">'salary'</span>, <span class="col">salary</span>
+)) <span class="kw">AS</span> <span class="col">employees_json</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "String Functions",
+        brief: "Common string manipulation functions",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📊 Function Reference",
+                    type: "table",
+                    headers: ["Function", "Example", "Result"],
+                    rows: [
+                        ["LENGTH(s)", "LENGTH('hello')", "5"],
+                        ["UPPER(s) / LOWER(s)", "UPPER('hello')", "'HELLO'"],
+                        ["TRIM(s)", "TRIM('  hi  ')", "'hi'"],
+                        ["SUBSTRING(s FROM n FOR m)", "SUBSTRING('hello' FROM 2 FOR 3)", "'ell'"],
+                        ["REPLACE(s, from, to)", "REPLACE('abc', 'b', 'x')", "'axc'"],
+                        ["CONCAT(a, b, ...)", "CONCAT('a', 'b', 'c')", "'abc'"],
+                        ["|| (concatenation)", "'hello' || ' world'", "'hello world'"],
+                        ["LEFT(s, n) / RIGHT(s, n)", "LEFT('hello', 3)", "'hel'"],
+                        ["SPLIT_PART(s, delim, n)", "SPLIT_PART('a-b-c', '-', 2)", "'b'"],
+                        ["REGEXP_REPLACE(s, pat, rep)", "REGEXP_REPLACE('abc123', '[0-9]', '', 'g')", "'abc'"],
+                        ["FORMAT(fmt, ...)", "FORMAT('Hello, %s!', 'World')", "'Hello, World!'"]
+                    ]
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Pattern matching",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span> <span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">name</span> <span class="kw">LIKE</span> <span class="str">'%son'</span>;           <span class="cm">-- ends with 'son'</span>
+
+<span class="kw">SELECT</span> <span class="col">name</span> <span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">name</span> <span class="op">~</span> <span class="str">'^[A-Z].*son$'</span>;     <span class="cm">-- regex match</span>
+
+<span class="kw">SELECT</span> <span class="col">name</span> <span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">WHERE</span> <span class="col">name</span> <span class="kw">ILIKE</span> <span class="str">'%john%'</span>;        <span class="cm">-- case-insensitive</span>`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "Date/Time Functions",
+        brief: "Work with dates, times, and intervals",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📊 Function Reference",
+                    type: "table",
+                    headers: ["Function", "Description"],
+                    rows: [
+                        ["NOW() / CURRENT_TIMESTAMP", "Current date and time with TZ"],
+                        ["CURRENT_DATE", "Current date"],
+                        ["CURRENT_TIME", "Current time"],
+                        ["DATE_TRUNC('unit', ts)", "Truncate to specified precision"],
+                        ["EXTRACT(field FROM ts)", "Extract year, month, day, etc."],
+                        ["AGE(ts1, ts2)", "Interval between two timestamps"],
+                        ["ts + INTERVAL '1 day'", "Add interval to timestamp"],
+                        ["TO_CHAR(ts, fmt)", "Format timestamp as string"],
+                        ["TO_TIMESTAMP(s, fmt)", "Parse string to timestamp"],
+                        ["GENERATE_SERIES(start, end, step)", "Generate time series"]
+                    ]
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Date arithmetic",
+                            code: `<span class="kw">SELECT</span>
+    <span class="fn">NOW</span>() <span class="kw">AS</span> <span class="col">current_time</span>,
+    <span class="fn">NOW</span>() <span class="op">-</span> <span class="kw">INTERVAL</span> <span class="str">'7 days'</span> <span class="kw">AS</span> <span class="col">week_ago</span>,
+    <span class="fn">NOW</span>() <span class="op">+</span> <span class="kw">INTERVAL</span> <span class="str">'3 months'</span> <span class="kw">AS</span> <span class="col">in_3_months</span>,
+    <span class="fn">DATE_TRUNC</span>(<span class="str">'month'</span>, <span class="fn">NOW</span>()) <span class="kw">AS</span> <span class="col">month_start</span>,
+    <span class="fn">EXTRACT</span>(<span class="col">DOW</span> <span class="kw">FROM</span> <span class="fn">NOW</span>()) <span class="kw">AS</span> <span class="col">day_of_week</span>;`
+                        },
+                        {
+                            label: "Format dates",
+                            code: `<span class="kw">SELECT</span> <span class="fn">TO_CHAR</span>(<span class="fn">NOW</span>(), <span class="str">'YYYY-MM-DD HH24:MI:SS'</span>);
+<span class="kw">SELECT</span> <span class="fn">TO_CHAR</span>(<span class="fn">NOW</span>(), <span class="str">'Day, DD Month YYYY'</span>);`
+                        },
+                        {
+                            label: "Generate date series",
+                            code: `<span class="kw">SELECT</span> <span class="col">d</span>::<span class="type">DATE</span>
+<span class="kw">FROM</span> <span class="fn">generate_series</span>(
+    <span class="str">'2024-01-01'</span>::<span class="type">DATE</span>,
+    <span class="str">'2024-12-31'</span>::<span class="type">DATE</span>,
+    <span class="str">'1 month'</span>::<span class="type">INTERVAL</span>
+) <span class="col">d</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "Aggregate Functions",
+        brief: "COUNT, SUM, AVG, MIN, MAX and more",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📊 Common Aggregates",
+                    type: "table",
+                    headers: ["Function", "Description"],
+                    rows: [
+                        ["COUNT(*)", "Number of rows"],
+                        ["COUNT(DISTINCT col)", "Number of distinct values"],
+                        ["SUM(col)", "Sum of values"],
+                        ["AVG(col)", "Average value"],
+                        ["MIN(col) / MAX(col)", "Minimum / Maximum"],
+                        ["ARRAY_AGG(col)", "Aggregate into array"],
+                        ["STRING_AGG(col, delim)", "Concatenate strings"],
+                        ["JSONB_AGG(col)", "Aggregate into JSONB array"],
+                        ["BOOL_AND(col) / BOOL_OR(col)", "Logical AND / OR"],
+                        ["PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY col)", "Median (continuous)"]
+                    ]
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Basic aggregation",
+                            code: `<span class="kw">SELECT</span>
+    <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="col">total</span>,
+    <span class="fn">SUM</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">total_salary</span>,
+    <span class="fn">AVG</span>(<span class="col">salary</span>)::<span class="type">NUMERIC(10,2)</span> <span class="kw">AS</span> <span class="col">avg_salary</span>,
+    <span class="fn">MIN</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">min_salary</span>,
+    <span class="fn">MAX</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">max_salary</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        },
+                        {
+                            label: "STRING_AGG and ARRAY_AGG",
+                            code: `<span class="kw">SELECT</span> <span class="col">dept_id</span>,
+    <span class="fn">STRING_AGG</span>(<span class="col">name</span>, <span class="str">', '</span> <span class="kw">ORDER BY</span> <span class="col">name</span>) <span class="kw">AS</span> <span class="col">names</span>,
+    <span class="fn">ARRAY_AGG</span>(<span class="col">salary</span>) <span class="kw">AS</span> <span class="col">salaries</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>
+<span class="kw">GROUP BY</span> <span class="col">dept_id</span>;`
+                        },
+                        {
+                            label: "FILTER clause",
+                            code: `<span class="kw">SELECT</span>
+    <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">AS</span> <span class="col">total</span>,
+    <span class="fn">COUNT</span>(<span class="op">*</span>) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> <span class="col">salary</span> <span class="op">></span> <span class="num">60000</span>) <span class="kw">AS</span> <span class="col">high_earners</span>,
+    <span class="fn">AVG</span>(<span class="col">salary</span>) <span class="kw">FILTER</span> (<span class="kw">WHERE</span> <span class="col">active</span>) <span class="kw">AS</span> <span class="col">avg_active_salary</span>
+<span class="kw">FROM</span> <span class="tbl">employees</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    // ═══ PSQL ═══
+    {
+        name: "\\d (psql Meta-Commands)",
+        brief: "Describe tables, list objects in psql",
+        category: "psql",
+        content: {
+            sections: [
+                {
+                    title: "📊 Common Meta-Commands",
+                    type: "table",
+                    headers: ["Command", "Description"],
+                    rows: [
+                        ["\\l", "List all databases"],
+                        ["\\c dbname", "Connect to database"],
+                        ["\\dt", "List tables"],
+                        ["\\dt+", "List tables with sizes"],
+                        ["\\d tablename", "Describe table structure"],
+                        ["\\d+ tablename", "Detailed table info"],
+                        ["\\di", "List indexes"],
+                        ["\\dv", "List views"],
+                        ["\\df", "List functions"],
+                        ["\\du", "List roles/users"],
+                        ["\\dn", "List schemas"],
+                        ["\\ds", "List sequences"],
+                        ["\\dp", "List privileges (access)"],
+                        ["\\x", "Toggle expanded display"],
+                        ["\\timing", "Toggle timing of queries"],
+                        ["\\i file.sql", "Execute SQL file"],
+                        ["\\o file.txt", "Send output to file"],
+                        ["\\q", "Quit psql"]
+                    ]
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Common workflow",
+                            code: `<span class="fn">psql</span> <span class="op">-h</span> <span class="col">localhost</span> <span class="op">-U</span> <span class="col">postgres</span> <span class="op">-d</span> <span class="col">mydb</span>
+
+<span class="kw">\\dt</span>                      <span class="cm">-- list tables</span>
+<span class="kw">\\d</span> <span class="tbl">employees</span>            <span class="cm">-- describe table</span>
+<span class="kw">\\x</span>                       <span class="cm">-- expanded display on</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="kw">LIMIT</span> <span class="num">5</span>;
+<span class="kw">\\timing</span>                  <span class="cm">-- show query time</span>`
+                        },
+                        {
+                            label: "Search for objects",
+                            code: `<span class="kw">\\dt</span> <span class="str">*emp*</span>               <span class="cm">-- tables matching pattern</span>
+<span class="kw">\\df</span> <span class="str">*salary*</span>             <span class="cm">-- functions matching pattern</span>`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "\\set / \\pset (psql)",
+        brief: "Set variables and formatting in psql",
+        category: "psql",
+        content: {
+            sections: [
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Set variables",
+                            code: `<span class="kw">\\set</span> <span class="col">AUTOCOMMIT</span> <span class="col">off</span>
+<span class="kw">\\set</span> <span class="col">myvar</span> <span class="str">'some_value'</span>
+
+<span class="cm">-- Use variable in query</span>
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">employees</span> <span class="kw">WHERE</span> <span class="col">name</span> <span class="op">=</span> <span class="str">:'myvar'</span>;`
+                        },
+                        {
+                            label: "Formatting options",
+                            code: `<span class="kw">\\pset</span> <span class="col">format</span> <span class="col">aligned</span>     <span class="cm">-- default table format</span>
+<span class="kw">\\pset</span> <span class="col">format</span> <span class="col">csv</span>         <span class="cm">-- CSV output</span>
+<span class="kw">\\pset</span> <span class="col">format</span> <span class="col">html</span>        <span class="cm">-- HTML table output</span>
+<span class="kw">\\pset</span> <span class="col">null</span> <span class="str">'(null)'</span>       <span class="cm">-- display for NULL values</span>
+<span class="kw">\\pset</span> <span class="col">border</span> <span class="num">2</span>           <span class="cm">-- border style</span>
+<span class="kw">\\pset</span> <span class="col">pager</span> <span class="col">off</span>          <span class="cm">-- disable pager</span>`
+                        },
+                        {
+                            label: "Useful psql startup settings (~/.psqlrc)",
+                            code: `<span class="kw">\\set</span> <span class="col">HISTSIZE</span> <span class="num">10000</span>
+<span class="kw">\\set</span> <span class="col">COMP_KEYWORD_CASE</span> <span class="col">upper</span>
+<span class="kw">\\pset</span> <span class="col">null</span> <span class="str">'¤'</span>
+<span class="kw">\\timing</span>
+<span class="kw">\\x auto</span>`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    // More DDL/Admin
+    {
+        name: "CREATE EXTENSION",
+        brief: "Install PostgreSQL extensions",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE EXTENSION</span> [<span class="kw">IF NOT EXISTS</span>] <span class="col">extension_name</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Popular extensions",
+                            code: `<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">uuid-ossp</span>;      <span class="cm">-- UUID generation</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">pgcrypto</span>;       <span class="cm">-- Cryptographic functions</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">pg_trgm</span>;        <span class="cm">-- Trigram similarity</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">hstore</span>;         <span class="cm">-- Key-value store</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">citext</span>;         <span class="cm">-- Case-insensitive text</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">pg_stat_statements</span>; <span class="cm">-- Query stats</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="col">postgis</span>;        <span class="cm">-- Geospatial</span>`
+                        },
+                        {
+                            label: "Using uuid-ossp",
+                            code: `<span class="kw">CREATE TABLE</span> <span class="tbl">sessions</span> (
+    <span class="col">id</span> <span class="type">UUID</span> <span class="kw">DEFAULT</span> <span class="fn">uuid_generate_v4</span>() <span class="kw">PRIMARY KEY</span>,
+    <span class="col">user_id</span> <span class="type">INTEGER</span>,
+    <span class="col">token</span> <span class="type">TEXT</span>
+);`
+                        },
+                        {
+                            label: "List installed extensions",
+                            code: `<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">pg_extension</span>;
+<span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="tbl">pg_available_extensions</span> <span class="kw">ORDER BY</span> <span class="col">name</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE SEQUENCE",
+        brief: "Create auto-incrementing number generators",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">CREATE SEQUENCE</span> <span class="col">seq_name</span>
+    [<span class="kw">INCREMENT BY</span> <span class="num">n</span>]
+    [<span class="kw">START WITH</span> <span class="num">n</span>]
+    [<span class="kw">MINVALUE</span> <span class="num">n</span>] [<span class="kw">MAXVALUE</span> <span class="num">n</span>]
+    [<span class="kw">CACHE</span> <span class="num">n</span>]
+    [<span class="kw">CYCLE</span> | <span class="kw">NO CYCLE</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Create and use a sequence",
+                            code: `<span class="kw">CREATE SEQUENCE</span> <span class="col">order_number_seq</span>
+    <span class="kw">START WITH</span> <span class="num">1000</span>
+    <span class="kw">INCREMENT BY</span> <span class="num">1</span>;
+
+<span class="kw">SELECT</span> <span class="fn">nextval</span>(<span class="str">'order_number_seq'</span>);  <span class="cm">-- 1000</span>
+<span class="kw">SELECT</span> <span class="fn">nextval</span>(<span class="str">'order_number_seq'</span>);  <span class="cm">-- 1001</span>
+<span class="kw">SELECT</span> <span class="fn">currval</span>(<span class="str">'order_number_seq'</span>);  <span class="cm">-- 1001</span>
+<span class="kw">SELECT</span> <span class="fn">setval</span>(<span class="str">'order_number_seq'</span>, <span class="num">5000</span>); <span class="cm">-- reset to 5000</span>`
+                        },
+                        {
+                            label: "Use with table column",
+                            code: `<span class="kw">CREATE TABLE</span> <span class="tbl">orders</span> (
+    <span class="col">id</span> <span class="type">INTEGER</span> <span class="kw">DEFAULT</span> <span class="fn">nextval</span>(<span class="str">'order_number_seq'</span>),
+    <span class="col">description</span> <span class="type">TEXT</span>
+);
+
+<span class="cm">-- Or simply use SERIAL / GENERATED</span>
+<span class="kw">CREATE TABLE</span> <span class="tbl">items</span> (
+    <span class="col">id</span> <span class="type">INTEGER</span> <span class="kw">GENERATED ALWAYS AS IDENTITY</span>,
+    <span class="col">name</span> <span class="type">TEXT</span>
+);`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "LISTEN / NOTIFY",
+        brief: "Pub/Sub messaging between sessions",
+        category: "utility",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">LISTEN</span> <span class="col">channel_name</span>;
+<span class="kw">NOTIFY</span> <span class="col">channel_name</span>, <span class="str">'optional payload'</span>;
+<span class="kw">UNLISTEN</span> <span class="col">channel_name</span>;`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Session 1 (Listener)",
+                            code: `<span class="kw">LISTEN</span> <span class="col">new_orders</span>;
+<span class="cm">-- Wait for notifications...</span>
+<span class="cm">-- Received: payload = '{"order_id": 42}'</span>`
+                        },
+                        {
+                            label: "Session 2 (Notifier)",
+                            code: `<span class="kw">NOTIFY</span> <span class="col">new_orders</span>, <span class="str">'{"order_id": 42}'</span>;
+
+<span class="cm">-- Or via pg_notify function</span>
+<span class="kw">SELECT</span> <span class="fn">pg_notify</span>(<span class="str">'new_orders'</span>, <span class="str">'{"order_id": 43}'</span>);`
+                        },
+                        {
+                            label: "Trigger-based notification",
+                            code: `<span class="kw">CREATE FUNCTION</span> <span class="fn">notify_new_order</span>()
+<span class="kw">RETURNS TRIGGER AS</span> <span class="str">$$</span>
+<span class="kw">BEGIN</span>
+    <span class="kw">PERFORM</span> <span class="fn">pg_notify</span>(<span class="str">'new_orders'</span>,
+        <span class="fn">json_build_object</span>(<span class="str">'id'</span>, <span class="col">NEW.id</span>)::<span class="type">TEXT</span>);
+    <span class="kw">RETURN NEW</span>;
+<span class="kw">END</span>;
+<span class="str">$$</span> <span class="kw">LANGUAGE</span> <span class="col">plpgsql</span>;`
+                        }
+                    ]
+                },
+                {
+                    title: "💡 Tips",
+                    type: "tip",
+                    text: "LISTEN/NOTIFY is great for real-time features in web apps. The payload is limited to 8000 bytes. Notifications are only sent when the transaction commits."
+                }
+            ]
+        }
+    },
+    {
+        name: "LOCK",
+        brief: "Explicitly lock tables",
+        category: "tcl",
+        content: {
+            sections: [
+                {
+                    title: "📝 Syntax",
+                    type: "syntax",
+                    code: `<span class="kw">LOCK TABLE</span> <span class="tbl">table_name</span>
+<span class="kw">IN</span> <span class="col">lock_mode</span> <span class="kw">MODE</span>
+[<span class="kw">NOWAIT</span>];`
+                },
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Exclusive lock",
+                            code: `<span class="kw">BEGIN</span>;
+<span class="kw">LOCK TABLE</span> <span class="tbl">accounts</span> <span class="kw">IN EXCLUSIVE MODE</span>;
+<span class="cm">-- ... critical operations ...</span>
+<span class="kw">COMMIT</span>; <span class="cm">-- lock is released</span>`
+                        },
+                        {
+                            label: "Advisory locks (application-level)",
+                            code: `<span class="cm">-- Session lock (released at end of session)</span>
+<span class="kw">SELECT</span> <span class="fn">pg_advisory_lock</span>(<span class="num">12345</span>);
+<span class="cm">-- ... do work ...</span>
+<span class="kw">SELECT</span> <span class="fn">pg_advisory_unlock</span>(<span class="num">12345</span>);
+
+<span class="cm">-- Try lock (non-blocking)</span>
+<span class="kw">SELECT</span> <span class="fn">pg_try_advisory_lock</span>(<span class="num">12345</span>);`
+                        }
+                    ]
+                },
+                {
+                    title: "📊 Lock Modes",
+                    type: "table",
+                    headers: ["Mode", "Conflicts With"],
+                    rows: [
+                        ["ACCESS SHARE", "ACCESS EXCLUSIVE"],
+                        ["ROW SHARE", "EXCLUSIVE, ACCESS EXCLUSIVE"],
+                        ["ROW EXCLUSIVE", "SHARE, SHARE ROW EXCLUSIVE, EXCLUSIVE, ACCESS EXCLUSIVE"],
+                        ["SHARE", "ROW EXCLUSIVE, SHARE UPDATE EXCLUSIVE, SHARE ROW EXCLUSIVE, EXCLUSIVE, ACCESS EXCLUSIVE"],
+                        ["ACCESS EXCLUSIVE", "All modes"]
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "System Catalog Queries",
+        brief: "Query metadata about your database",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "🔧 Useful Queries",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Table sizes",
+                            code: `<span class="kw">SELECT</span>
+    <span class="col">schemaname</span>,
+    <span class="col">tablename</span>,
+    <span class="fn">pg_size_pretty</span>(<span class="fn">pg_total_relation_size</span>(
+        <span class="col">schemaname</span> <span class="op">||</span> <span class="str">'.'</span> <span class="op">||</span> <span class="col">tablename</span>
+    )) <span class="kw">AS</span> <span class="col">total_size</span>
+<span class="kw">FROM</span> <span class="tbl">pg_tables</span>
+<span class="kw">WHERE</span> <span class="col">schemaname</span> <span class="op">=</span> <span class="str">'public'</span>
+<span class="kw">ORDER BY</span> <span class="fn">pg_total_relation_size</span>(
+    <span class="col">schemaname</span> <span class="op">||</span> <span class="str">'.'</span> <span class="op">||</span> <span class="col">tablename</span>
+) <span class="kw">DESC</span>;`
+                        },
+                        {
+                            label: "Active connections",
+                            code: `<span class="kw">SELECT</span>
+    <span class="col">pid</span>, <span class="col">usename</span>, <span class="col">datname</span>,
+    <span class="col">state</span>, <span class="col">query</span>,
+    <span class="fn">NOW</span>() <span class="op">-</span> <span class="col">query_start</span> <span class="kw">AS</span> <span class="col">duration</span>
+<span class="kw">FROM</span> <span class="tbl">pg_stat_activity</span>
+<span class="kw">WHERE</span> <span class="col">state</span> <span class="op">!=</span> <span class="str">'idle'</span>
+<span class="kw">ORDER BY</span> <span class="col">duration</span> <span class="kw">DESC</span>;`
+                        },
+                        {
+                            label: "Index usage stats",
+                            code: `<span class="kw">SELECT</span>
+    <span class="col">relname</span> <span class="kw">AS</span> <span class="col">table</span>,
+    <span class="col">indexrelname</span> <span class="kw">AS</span> <span class="col">index</span>,
+    <span class="col">idx_scan</span> <span class="kw">AS</span> <span class="col">times_used</span>,
+    <span class="fn">pg_size_pretty</span>(<span class="fn">pg_relation_size</span>(<span class="col">indexrelid</span>)) <span class="kw">AS</span> <span class="col">size</span>
+<span class="kw">FROM</span> <span class="tbl">pg_stat_user_indexes</span>
+<span class="kw">ORDER BY</span> <span class="col">idx_scan</span> <span class="kw">ASC</span>;`
+                        },
+                        {
+                            label: "Kill a long-running query",
+                            code: `<span class="cm">-- Cancel query (graceful)</span>
+<span class="kw">SELECT</span> <span class="fn">pg_cancel_backend</span>(<span class="num">pid</span>);
+
+<span class="cm">-- Terminate connection (force)</span>
+<span class="kw">SELECT</span> <span class="fn">pg_terminate_backend</span>(<span class="num">pid</span>);`
+                        },
+                        {
+                            label: "Database size",
+                            code: `<span class="kw">SELECT</span>
+    <span class="col">datname</span>,
+    <span class="fn">pg_size_pretty</span>(<span class="fn">pg_database_size</span>(<span class="col">datname</span>)) <span class="kw">AS</span> <span class="col">size</span>
+<span class="kw">FROM</span> <span class="tbl">pg_database</span>
+<span class="kw">ORDER BY</span> <span class="fn">pg_database_size</span>(<span class="col">datname</span>) <span class="kw">DESC</span>;`
+                        },
+                        {
+                            label: "Table row counts (estimate)",
+                            code: `<span class="kw">SELECT</span>
+    <span class="col">schemaname</span>,
+    <span class="col">relname</span>,
+    <span class="col">n_live_tup</span> <span class="kw">AS</span> <span class="col">estimated_rows</span>
+<span class="kw">FROM</span> <span class="tbl">pg_stat_user_tables</span>
+<span class="kw">ORDER BY</span> <span class="col">n_live_tup</span> <span class="kw">DESC</span>;`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "ALTER / SET (Configuration)",
+        brief: "Change runtime configuration parameters",
+        category: "admin",
+        content: {
+            sections: [
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Session-level settings",
+                            code: `<span class="kw">SET</span> <span class="col">work_mem</span> <span class="op">=</span> <span class="str">'256MB'</span>;
+<span class="kw">SET</span> <span class="col">statement_timeout</span> <span class="op">=</span> <span class="str">'30s'</span>;
+<span class="kw">SET</span> <span class="col">search_path</span> <span class="kw">TO</span> <span class="col">myschema</span>, <span class="col">public</span>;
+<span class="kw">SET</span> <span class="col">timezone</span> <span class="op">=</span> <span class="str">'America/New_York'</span>;
+
+<span class="cm">-- Show current value</span>
+<span class="kw">SHOW</span> <span class="col">work_mem</span>;
+<span class="kw">SHOW</span> <span class="col">ALL</span>;`
+                        },
+                        {
+                            label: "Role-level settings (persistent)",
+                            code: `<span class="kw">ALTER ROLE</span> <span class="col">app_user</span> <span class="kw">SET</span> <span class="col">work_mem</span> <span class="op">=</span> <span class="str">'128MB'</span>;
+<span class="kw">ALTER ROLE</span> <span class="col">app_user</span> <span class="kw">SET</span> <span class="col">statement_timeout</span> <span class="op">=</span> <span class="str">'60s'</span>;`
+                        },
+                        {
+                            label: "Database-level settings",
+                            code: `<span class="kw">ALTER DATABASE</span> <span class="col">mydb</span> <span class="kw">SET</span> <span class="col">timezone</span> <span class="op">=</span> <span class="str">'UTC'</span>;`
+                        },
+                        {
+                            label: "View configuration",
+                            code: `<span class="kw">SELECT</span> <span class="col">name</span>, <span class="col">setting</span>, <span class="col">unit</span>, <span class="col">short_desc</span>
+<span class="kw">FROM</span> <span class="tbl">pg_settings</span>
+<span class="kw">WHERE</span> <span class="col">name</span> <span class="kw">IN</span> (<span class="str">'work_mem'</span>, <span class="str">'shared_buffers'</span>,
+    <span class="str">'effective_cache_size'</span>, <span class="str">'max_connections'</span>);`
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        name: "CREATE TYPE",
+        brief: "Create custom data types (enum, composite)",
+        category: "ddl",
+        content: {
+            sections: [
+                {
+                    title: "🔧 Examples",
+                    type: "examples",
+                    items: [
+                        {
+                            label: "Enum type",
+                            code: `<span class="kw">CREATE TYPE</span> <span class="col">status</span> <span class="kw">AS ENUM</span> (
+    <span class="str">'pending'</span>, <span class="str">'active'</span>, <span class="str">'suspended'</span>, <span class="str">'deleted'</span>
+);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">accounts</span> (
+    <span class="col">id</span> <span class="type">SERIAL PRIMARY KEY</span>,
+    <span class="col">status</span> <span class="type">status</span> <span class="kw">DEFAULT</span> <span class="str">'pending'</span>
+);
+
+<span class="cm">-- Add a value to existing enum</span>
+<span class="kw">ALTER TYPE</span> <span class="col">status</span> <span class="kw">ADD VALUE</span> <span class="str">'archived'</span> <span class="kw">AFTER</span> <span class="str">'suspended'</span>;`
+                        },
+                        {
+                            label: "Composite type",
+                            code: `<span class="kw">CREATE TYPE</span> <span class="col">address</span> <span class="kw">AS</span> (
+    <span class="col">street</span>  <span class="type">TEXT</span>,
+    <span class="col">city</span>    <span class="type">TEXT</span>,
+    <span class="col">state</span>   <span class="type">VARCHAR(2)</span>,
+    <span class="col">zip</span>     <span class="type">VARCHAR(10)</span>
+);
+
+<span class="kw">CREATE TABLE</span> <span class="tbl">customers</span> (
+    <span class="col">id</span> <span class="type">SERIAL PRIMARY KEY</span>,
+    <span class="col">name</span> <span class="type">TEXT</span>,
+    <span class="col">home_address</span> <span class="type">address</span>
+);`
+                        },
+                        {
+                            label: "Domain type (type with constraint)",
+                            code: `<span class="kw">CREATE DOMAIN</span> <span class="col">email_address</span> <span class="kw">AS</span> <span class="type">TEXT</span>
+<span class="kw">CHECK</span> (<span class="col">VALUE</span> <span class="op">~</span> <span class="str">'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z]{2,}$'</span>);
+
+<span class="kw">CREATE DOMAIN</span> <span class="col">positive_int</span> <span class="kw">AS</span> <span class="type">INTEGER</span>
+<span class="kw">CHECK</span> (<span class="col">VALUE</span> <span class="op">></span> <span class="num">0</span>);`
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+];
+
+// ─── Render Cards ────────────────────────────────────────────────────────────
+const grid = document.getElementById('commandsGrid');
+const searchInput = document.getElementById('searchInput');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const resultCount = document.getElementById('resultCount');
+const categoryLabel = document.getElementById('categoryLabel');
+const modalOverlay = document.getElementById('modalOverlay');
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalBrief = document.getElementById('modalBrief');
+const modalBody = document.getElementById('modalBody');
+const modalClose = document.getElementById('modalClose');
+const backToTop = document.getElementById('backToTop');
+
+let activeFilter = 'all';
+
+function getCategoryLabel(cat) {
+    const labels = {
+        ddl: 'DDL', dml: 'DML', dcl: 'DCL', tcl: 'TCL',
+        query: 'Query', admin: 'Admin', utility: 'Utility', psql: 'psql'
+    };
+    return labels[cat] || cat;
+}
+
+function renderCards() {
+    const search = searchInput.value.toLowerCase().trim();
+    const filtered = commands.filter(cmd => {
+        const matchFilter = activeFilter === 'all' || cmd.category === activeFilter;
+        const matchSearch = !search ||
+            cmd.name.toLowerCase().includes(search) ||
+            cmd.brief.toLowerCase().includes(search);
+        return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `
+            <div class="no-results">
+                <div class="big-icon">🔍</div>
+                <p>No commands found matching your search.</p>
+            </div>`;
+    } else {
+        grid.innerHTML = filtered.map((cmd, idx) => `
+            <div class="command-card" data-index="${commands.indexOf(cmd)}" tabindex="0">
+                <div class="command-name">${cmd.name}</div>
+                <div class="command-brief">${cmd.brief}</div>
+                <span class="command-category cat-${cmd.category}">${getCategoryLabel(cmd.category)}</span>
+            </div>
+        `).join('');
+    }
+
+    resultCount.textContent = `${filtered.length} command${filtered.length !== 1 ? 's' : ''}`;
+    categoryLabel.textContent = activeFilter === 'all' ? 'All Categories' : getCategoryLabel(activeFilter).toUpperCase();
+}
+
+// ─── Event Listeners ─────────────────────────────────────────────────────────
+searchInput.addEventListener('input', renderCards);
+
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = btn.dataset.filter;
+        renderCards();
+    });
+});
+
+grid.addEventListener('click', e => {
+    const card = e.target.closest('.command-card');
+    if (!card) return;
+    const idx = parseInt(card.dataset.index);
+    openModal(commands[idx]);
+});
+
+grid.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        const card = e.target.closest('.command-card');
+        if (card) {
+            const idx = parseInt(card.dataset.index);
+            openModal(commands[idx]);
+        }
+    }
+});
+
+function openModal(cmd) {
+    modalTitle.textContent = cmd.name;
+    modalBrief.textContent = cmd.brief;
+
+    let html = '';
+    cmd.content.sections.forEach(section => {
+        html += `<div class="usage-section">`;
+
+        if (section.title) {
+            html += `<h3>${section.title}</h3>`;
+        }
+
+        if (section.type === 'syntax') {
+            html += `
+                <div class="syntax-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <code>${section.code}</code>
+                </div>`;
+        }
+
+        if (section.type === 'examples') {
+            section.items.forEach(item => {
+                html += `
+                    <div class="example-item">
+                        <div class="example-label">${item.label}</div>
+                        <div class="syntax-block">
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            <code>${item.code}</code>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        if (section.type === 'table') {
+            html += `<table class="options-table">
+                <thead><tr>${section.headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                <tbody>
+                    ${section.rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('')}
+                </tbody>
+            </table>`;
+        }
+
+        if (section.type === 'note') {
+            html += `<div class="note-box"><p>📌 ${section.text}</p></div>`;
+        }
+
+        if (section.type === 'tip') {
+            html += `<div class="tip-box"><p>💡 ${section.text}</p></div>`;
+        }
+
+        if (section.type === 'warning') {
+            html += `<div class="warning-box"><p>⚠️ ${section.text}</p></div>`;
+        }
+
+        html += `</div>`;
+    });
+
+    modalBody.innerHTML = html;
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', e => {
+    if (e.target === modalOverlay) closeModal();
+});
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+
+// ─── Copy Code ───────────────────────────────────────────────────────────────
+function copyCode(btn) {
+    const codeEl = btn.parentElement.querySelector('code');
+    const text = codeEl.textContent || codeEl.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}
+
+// ─── Back to Top ─────────────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('visible', window.scrollY > 400);
+});
+
+backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ─── Keyboard shortcut: focus search ─────────────────────────────────────────
+document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInput.focus();
+    }
+});
+
+// ─── Initial Render ──────────────────────────────────────────────────────────
+renderCards();
+</script>
+
+</body>
+</html>

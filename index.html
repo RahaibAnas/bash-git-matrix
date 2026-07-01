@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -113,10 +114,25 @@
         }
 
         /* Module Theme Accents */
-        .card-commands::before { background: var(--accent-blue); }
-        .card-scripting::before { background: var(--accent-purple); }
-        .card-automation::before { background: var(--accent-orange); }
-        .card-git::before { background: var(--accent-green); }
+        .card-commands::before {
+            background: var(--accent-blue);
+        }
+
+        .card-scripting::before {
+            background: var(--accent-purple);
+        }
+
+        .card-automation::before {
+            background: var(--accent-orange);
+        }
+
+        .card-git::before {
+            background: var(--accent-green);
+        }
+
+        .card-postgres::before {
+            background: var(--accent-orange);
+        }
 
         .matrix-card:hover {
             transform: translateY(-4px);
@@ -195,13 +211,15 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="hub-container">
         <header>
             <div class="terminal-badge">$ initialization completed</div>
             <h1>Developer Workspace Hub</h1>
-            <p>Interconnected client-side reference engines for Linux Systems, Automation, and Version Control Platforms.</p>
+            <p>Interconnected client-side reference engines for Linux Systems, Automation, and Version Control
+                Platforms.</p>
         </header>
 
         <main class="matrix-grid">
@@ -209,7 +227,8 @@
                 <div class="card-header-area">
                     <span class="card-icon">📁</span>
                     <h2 class="card-title">Core Commands</h2>
-                    <p class="card-description">Fuzzy searchable catalog for OS manipulation, navigation, file management, and core processes.</p>
+                    <p class="card-description">Fuzzy searchable catalog for OS manipulation, navigation, file
+                        management, and core processes.</p>
                 </div>
                 <div class="card-footer">
                     <span class="status-dot">Ready</span>
@@ -221,7 +240,8 @@
                 <div class="card-header-area">
                     <span class="card-icon">📜</span>
                     <h2 class="card-title">Scripting & Theory</h2>
-                    <p class="card-description">Structural blueprints, condition handling frameworks, code syntaxes, stream manipulators, and expansions.</p>
+                    <p class="card-description">Structural blueprints, condition handling frameworks, code syntaxes,
+                        stream manipulators, and expansions.</p>
                 </div>
                 <div class="card-footer">
                     <span class="status-dot">Ready</span>
@@ -233,7 +253,8 @@
                 <div class="card-header-area">
                     <span class="card-icon">⏰</span>
                     <h2 class="card-title">Automation & Cron</h2>
-                    <p class="card-description">Background tracking rules, syntax schedules, visual scheduling patterns, and cron builders.</p>
+                    <p class="card-description">Background tracking rules, syntax schedules, visual scheduling patterns,
+                        and cron builders.</p>
                 </div>
                 <div class="card-footer">
                     <span class="status-dot">Ready</span>
@@ -245,13 +266,29 @@
                 <div class="card-header-area">
                     <span class="card-icon">🔀</span>
                     <h2 class="card-title">Git & Version Control</h2>
-                    <p class="card-description">Branch management strategies, merge pipelines, clean state tracking, and remote origin deployment.</p>
+                    <p class="card-description">Branch management strategies, merge pipelines, clean state tracking, and
+                        remote origin deployment.</p>
                 </div>
                 <div class="card-footer">
                     <span class="status-dot">Ready</span>
                     <span class="action-link">Launch Module &rarr;</span>
                 </div>
             </a>
+
+            <div class="card">
+    
+            <a href="PostgreSQL.html" class="matrix-card card-postgres">
+                <div class="card-header-area">
+                    <span class="card-icon">🐘</span>
+                    <h2 class="card-title">PostgreSQL Reference</h2>
+                    <p class="card-description">Database schema blueprints, query engines, administration commands, and performance optimization guides.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="status-dot">Ready</span>
+                    <span class="action-link">Launch Module &rarr;</span>
+                </div>
+            </a>
+            
         </main>
     </div>
 
@@ -260,4 +297,5 @@
     </footer>
 
 </body>
+
 </html>
