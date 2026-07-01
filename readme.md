@@ -1,14 +1,14 @@
 # 🐧 Dev Workspace Hub
 
-A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, system automation, shell scripting, and Git version control systems.
+A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, system automation, shell scripting, database management, and Git version control systems.
 
-This repository features a **central landing dashboard (`index.html`)** connecting **four distinct, fully responsive frontend environments**. Built with a highly cohesive, GitHub-inspired dark aesthetic, these reference engines leverage high-performance client-side logic to query, analyze, and master essential DevOps and development paradigms.
+This repository features a **central landing dashboard (`index.html`)** connecting **five distinct, fully responsive frontend environments**. Built with a highly cohesive, GitHub-inspired dark aesthetic, these reference engines leverage high-performance client-side logic to query, analyze, and master essential DevOps, backend, and development paradigms.
 
 ---
 
 ## 🗺️ Hub Ecosystem Structure
 
-The toolkit is organized around a core entry point that routes into four functional technical modules:
+The toolkit is organized around a core entry point that routes into five functional technical modules:
 
 ### 🎛️ The Central Gateway (`index.html`)
 * **Role:** The primary interactive landing page. It provides an immediate visual status overview of all sub-modules, featuring a terminal-style interface designed for clean visibility, quick multi-module onboarding, and seamless deployment onto platforms like **GitHub Pages**.
@@ -29,13 +29,15 @@ The toolkit is organized around a core entry point that routes into four functio
 * **Focus:** Distributed version control engineering, commit staging architectures, advanced branch merging/rebasing pipelines, remote configuration patterns, stash management, and GitHub collaboration strategies.
 * **Key Features:** Visual staging lifecycle walkthroughs, instant snippet copy states, and dynamic status query parameters.
 
+### 5. 🐘 PostgreSQL Reference (`postgres.html`)
+* **Focus:** Relational database architecture, advanced SQL querying, index strategies, transaction isolation levels, user role management, schema migrations, and backup/restore administration workflows.
+* **Key Features:** Comprehensive database syntax blueprints, interactive query reference patterns, performance optimization checklists, and instant copy states for complex administration commands.
+
 ---
 
 ## ✨ System Architecture & Visual Design
 
-* **🎨 Theme Paradigm:** Tailored dark mode dashboard layouts using unified professional custom palette properties (`#0d1117`, `#161b22`, `#30363d`, and vivid responsive color accents `#58a6ff`).
+* **🎨 Theme Paradigm:** Tailored dark mode dashboard layouts using unified professional custom palette properties (`#0d1117`, `#161b22`, `#30363d`, and vivid responsive color accents `#58a6ff`, `#f0883e`).
 * **⚡ Ultra-Low Latency Interactions:** Powered purely by modern raw client-side Vanilla ES6 JavaScript, resulting in instantaneous, hardware-accelerated text filtering and modal transitions without external framework overloads.
-* **🌐 Interconnected Layout Matrix:** Each sub-module embeds an active global navigational top bar that provides immediate cross-file routing while tracking the client's current operational scope back to the index or sister hubs.
+* **🌐 Interconnected Layout Matrix:** Each sub-module embeds an active global navigational element that provides immediate cross-file routing while tracking the client's current operational scope back to the index or sister hubs.
 * **📱 Clean Media Adaptability:** Explicitly uses responsive CSS design boundaries that automatically refactor complex table schemas, filters, and modal overlays into single-column layouts for mobile viewports and tablet screens.
-
----
