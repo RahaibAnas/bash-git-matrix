@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redis Command Cheatsheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* === Redis-themed minimal cheatsheet === */
+        :root {
+            --bg: #0b0b0e;
+            --surface: #12121a;
+            --surface-2: #181822;
+            --border: #22222e;
+            --border-hover: #e63946;
+            --text: #eae6e1;
+            --text-muted: #a09e98;
+            --accent: #e63946;
+            /* Redis red */
+            --accent-soft: rgba(230, 57, 70, 0.12);
+            --green: #2ecc71;
+            --green-soft: rgba(46, 204, 113, 0.12);
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+            --sans: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            line-height: 1.35;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .site-header {
+            background: linear-gradient(180deg, #140506 0%, var(--bg) 100%);
+            border-bottom: 1px solid #2a0a0a;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-icon {
+            color: var(--accent);
+            font-size: 1.6rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 6px rgba(230, 57, 70, 0.5));
+        }
+
+        .brand h1 {
+            font-family: var(--mono);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #fff;
+            margin: 0;
+        }
+
+        .brand h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            max-width: 720px;
+            margin: 0 auto;
+            color: var(--text-muted);
+            font-weight: 300;
+            font-size: 0.95rem;
+        }
+
+        /* Controls */
+        .controls {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(11, 11, 14, 0.92);
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 1.25rem;
+        }
+
+        .search-wrap {
+            max-width: 680px;
+            margin: 0 auto 0.9rem;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 0.65rem 0.9rem 0.65rem 2.4rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        #searchInput:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        /* Filter buttons */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .filter-btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text-muted);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-family: var(--sans);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background .15s, color .15s, border-color .15s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text);
+        }
+
+        .filter-btn.active,
+        .filter-btn.active:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+            gap: 1.25rem;
+            padding: 2rem 1.25rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem 1.35rem 1.35rem;
+            transition: transform .08s ease, border-color .18s ease, box-shadow .2s ease;
+            position: relative;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #ff8a8a);
+            opacity: 0.8;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(230, 57, 70, 0.08);
+        }
+
+        /* Card header */
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .card-title {
+            font-family: var(--mono);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin: 0;
+        }
+
+        .card-badge {
+            flex-shrink: 0;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid rgba(230, 57, 70, 0.2);
+        }
+
+        /* Sections */
+        .block-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        /* Syntax box */
+        .syntax-box {
+            background: #0d0d11;
+            border-left: 3px solid var(--accent);
+            padding: 0.7rem 0.9rem;
+            border-radius: 0 10px 10px 0;
+            font-family: var(--mono);
+            font-size: 0.88rem;
+            color: #f2f0ec;
+            line-height: 1.45;
+            overflow-x: auto;
+            margin-bottom: 0.6rem;
+            word-break: break-word;
+        }
+
+        .syntax-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.15rem;
+            display: block;
+        }
+
+        /* Example box */
+        .example-box {
+            background: #0e1f12;
+            border-left: 3px solid var(--green);
+            padding: 0.7rem 0.9rem;
+            border-radius: 0 10px 10px 0;
+            font-family: var(--mono);
+            font-size: 0.88rem;
+            color: #a3f5c5;
+            line-height: 1.45;
+            overflow-x: auto;
+            word-break: break-word;
+        }
+
+        .example-label {
+            font-size: 0.7rem;
+            color: #8abfa3;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.15rem;
+            display: block;
+        }
+
+        /* No results */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state h2 {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #555;
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 520px) {
+            .controls {
+                padding: 0.9rem 1rem;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .grid {
+                padding: 1.25rem 1rem 3rem;
+            }
+        }
+
+        /* === Redis Custom Scrollbar - Add this at bottom of style.css === */
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #22222e #0b0b0e;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #22222e #0b0b0e;
+}
+
+/* For Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22222e;
+  border-radius: 100px;
+  border: 2px solid #0b0b0e;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e63946; /* Redis Red */
+}
+
+/* Remove the arrow buttons you see in your screenshot */
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Code blocks get an even slimmer scrollbar */
+.syntax-box::-webkit-scrollbar,
+.example-box::-webkit-scrollbar {
+  height: 6px;
+}
+
+.syntax-box::-webkit-scrollbar-thumb {
+  background: #2a2a36;
+}
+
+.example-box::-webkit-scrollbar-thumb {
+  background: #1a3d25;
+}
+
+.example-box::-webkit-scrollbar-thumb:hover {
+  background: #2ecc71;
+}
+
+/* Fix accidental page-wide horizontal scroll */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+.syntax-box, .example-box {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="brand">
+                <span class="brand-icon" aria-hidden="true">●</span>
+                <h1>Redis <span>Cheatsheet</span></h1>
+            </div>
+            <p class="subtitle">Syntax + one usage example for server, keys, strings, hashes, lists, sets, sorted sets,
+                streams, pub/sub, transactions, Lua, bitmaps, HyperLogLog, geo, cluster, ACL, and common backend
+                patterns.</p>
+        </div>
+    </header>
+
+    <section class="controls" aria-label="Search and filters">
+        <div class="search-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search command, syntax, or example…" autocomplete="off" />
+        </div>
+
+        <div class="filters" id="filterNav" role="group" aria-label="Category filters">
+            <button class="filter-btn active" data-filter="All">All</button>
+            <!-- Other buttons injected by JS -->
+        </div>
+    </section>
+
+    <main id="grid" class="grid" aria-live="polite">
+        <!-- Cards injected by JS -->
+    </main>
+
+    <footer class="site-footer">
+        Built for Redis CLI / Server reference. Commands shown with minimal syntax + one practical example.
+    </footer>
+
+    <script >
+        /* === Redis Command Data === */
+        // Each item: category (for buttons), command name, syntax, one-line info, example
+        const commands = [
+            // 1. CLI & Server
+            { cat: "CLI & Server", cmd: "redis-server", syntax: "redis-server [config-file]", info: "Start Redis server", ex: "redis-server /etc/redis/redis.conf" },
+            { cat: "CLI & Server", cmd: "redis-server --version", syntax: "redis-server --version", info: "Server version", ex: "redis-server --version" },
+            { cat: "CLI & Server", cmd: "redis-cli", syntax: "redis-cli [-h host] [-p port]", info: "Interactive CLI", ex: "redis-cli -h 127.0.0.1 -p 6380" },
+            { cat: "CLI & Server", cmd: "PING", syntax: "PING [message]", info: "Test connectivity", ex: "PING -> PONG" },
+            { cat: "CLI & Server", cmd: "AUTH", syntax: "AUTH [username] password", info: "Authenticate", ex: "AUTH default secret" },
+            { cat: "CLI & Server", cmd: "SELECT", syntax: "SELECT db-index", info: "Switch DB", ex: "SELECT 1" },
+            { cat: "CLI & Server", cmd: "INFO", syntax: "INFO [section]", info: "Server info", ex: "INFO memory" },
+            { cat: "CLI & Server", cmd: "HELLO", syntax: "HELLO protover [AUTH ...] [SETNAME ...]", info: "Handshake / auth", ex: "HELLO 3 AUTH default pass SETNAME api-1" },
+            { cat: "CLI & Server", cmd: "QUIT", syntax: "QUIT", info: "Close connection", ex: "QUIT" },
+
+            // 2. Key Commands
+            { cat: "Keys", cmd: "SET", syntax: "SET key value [NX|XX] [GET] [EX sec] [PX ms]", info: "Set string value", ex: "SET user:1:name Alice EX 3600" },
+            { cat: "Keys", cmd: "GET", syntax: "GET key", info: "Get string", ex: "GET user:1:name" },
+            { cat: "Keys", cmd: "EXISTS", syntax: "EXISTS key [key ...]", info: "Check keys exist", ex: "EXISTS user:1" },
+            { cat: "Keys", cmd: "DEL", syntax: "DEL key [key ...]", info: "Delete key(s)", ex: "DEL temp:log" },
+            { cat: "Keys", cmd: "UNLINK", syntax: "UNLINK key [key ...]", info: "Async delete", ex: "UNLINK big:data" },
+            { cat: "Keys", cmd: "TYPE", syntax: "TYPE key", info: "Key data type", ex: "TYPE user:1" },
+            { cat: "Keys", cmd: "RENAME", syntax: "RENAME key newkey", info: "Rename key", ex: "RENAME temp:name user:name" },
+            { cat: "Keys", cmd: "KEYS", syntax: "KEYS pattern", info: "Find keys (use in dev only)", ex: "KEYS user:*" },
+            { cat: "Keys", cmd: "SCAN", syntax: "SCAN cursor [MATCH p] [COUNT n]", info: "Iterate keys safely", ex: "SCAN 0 MATCH user:* COUNT 100" },
+            { cat: "Keys", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire (-1 never, -2 missing)", ex: "TTL session:abc" },
+            { cat: "Keys", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Memory of a key", ex: "MEMORY USAGE big:key" },
+            { cat: "Keys", cmd: "OBJECT", syntax: "OBJECT subcommand key", info: "Internal encoding info", ex: "OBJECT ENCODING user:1" },
+
+            // 3. Expiration & TTL
+            { cat: "Expiration", cmd: "EXPIRE", syntax: "EXPIRE key seconds [NX|XX|GT|LT]", info: "Set expire in sec", ex: "EXPIRE session:abc 1800" },
+            { cat: "Expiration", cmd: "PEXPIRE", syntax: "PEXPIRE key ms [NX|XX]", info: "Set expire in ms", ex: "PEXPIRE otp:123 120000" },
+            { cat: "Expiration", cmd: "PERSIST", syntax: "PERSIST key", info: "Remove expiration", ex: "PERSIST user:1" },
+            { cat: "Expiration", cmd: "PTTL", syntax: "PTTL key", info: "Ms until expire", ex: "PTTL token:xyz" },
+
+            // 4. Strings
+            { cat: "Strings", cmd: "MSET", syntax: "MSET k v [k v ...]", info: "Multi-set", ex: "MSET a 1 b 2" },
+            { cat: "Strings", cmd: "MGET", syntax: "MGET k [k ...]", info: "Multi-get", ex: "MGET a b" },
+            { cat: "Strings", cmd: "SETNX", syntax: "SETNX key value", info: "Set if not exists", ex: "SETNX lock:job token123" },
+            { cat: "Strings", cmd: "GETSET", syntax: "GETSET key value", info: "Set and return old", ex: "GETSET counter 0" },
+            { cat: "Strings", cmd: "APPEND", syntax: "APPEND key value", info: "Append to string", ex: "APPEND log ' started'" },
+            { cat: "Strings", cmd: "STRLEN", syntax: "STRLEN key", info: "String length", ex: "STRLEN name" },
+            { cat: "Strings", cmd: "INCR", syntax: "INCR key", info: "Increment by 1", ex: "INCR page:views" },
+            { cat: "Strings", cmd: "INCRBY", syntax: "INCRBY key increment", info: "Increment by N", ex: "INCRBY cart:1 5" },
+            { cat: "Strings", cmd: "INCRBYFLOAT", syntax: "INCRBYFLOAT key increment", info: "Float increment", ex: "INCRBYFLOAT price 1.99" },
+            { cat: "Strings", cmd: "DECR", syntax: "DECR key", info: "Decrement by 1", ex: "DECR stock:1" },
+            { cat: "Strings", cmd: "DECRBY", syntax: "DECRBY key decrement", info: "Decrement by N", ex: "DECRBY stock:1 3" },
+            { cat: "Strings", cmd: "SET NX EX (lock)", syntax: "SET lock:1 token NX EX 30", info: "Atomic lock", ex: "SET lock:payment token NX EX 30" },
+
+            // 5. Hashes
+            { cat: "Hashes", cmd: "HSET", syntax: "HSET key f v [f v ...]", info: "Set hash fields", ex: "HSET user:1 name Alice age 30" },
+            { cat: "Hashes", cmd: "HGET", syntax: "HGET key field", info: "Get hash field", ex: "HGET user:1 name" },
+            { cat: "Hashes", cmd: "HMGET", syntax: "HMGET key f [f ...]", info: "Multi-get fields", ex: "HMGET user:1 name email" },
+            { cat: "Hashes", cmd: "HGETALL", syntax: "HGETALL key", info: "Get all fields/values", ex: "HGETALL user:1" },
+            { cat: "Hashes", cmd: "HDEL", syntax: "HDEL key f [f ...]", info: "Delete fields", ex: "HDEL user:1 age" },
+            { cat: "Hashes", cmd: "HEXISTS", syntax: "HEXISTS key field", info: "Check field exists", ex: "HEXISTS user:1 email" },
+            { cat: "Hashes", cmd: "HLEN", syntax: "HLEN key", info: "Count fields", ex: "HLEN user:1" },
+            { cat: "Hashes", cmd: "HINCRBY", syntax: "HINCRBY key f inc", info: "Increment field", ex: "HINCRBY user:1 logins 1" },
+            { cat: "Hashes", cmd: "HINCRBYFLOAT", syntax: "HINCRBYFLOAT key f inc", info: "Float increment", ex: "HINCRBYFLOAT product:1 rating 0.5" },
+            { cat: "Hashes", cmd: "HRANDFIELD", syntax: "HRANDFIELD key [count [WITHVALUES]]", info: "Random fields", ex: "HRANDFIELD user:1 1 WITHVALUES" },
+
+            // 6. Lists
+            { cat: "Lists", cmd: "LPUSH", syntax: "LPUSH key e [e ...]", info: "Prepend element(s)", ex: "LPUSH tasks taskA" },
+            { cat: "Lists", cmd: "RPUSH", syntax: "RPUSH key e [e ...]", info: "Append element(s)", ex: "RPUSH tasks taskB" },
+            { cat: "Lists", cmd: "LPOP", syntax: "LPOP key [count]", info: "Pop left", ex: "LPOP queue" },
+            { cat: "Lists", cmd: "RPOP", syntax: "RPOP key [count]", info: "Pop right", ex: "RPOP queue" },
+            { cat: "Lists", cmd: "LRANGE", syntax: "LRANGE key start stop", info: "Range read", ex: "LRANGE tasks 0 -1" },
+            { cat: "Lists", cmd: "LINDEX", syntax: "LINDEX key index", info: "Index read", ex: "LINDEX tasks 0" },
+            { cat: "Lists", cmd: "LLEN", syntax: "LLEN key", info: "List length", ex: "LLEN tasks" },
+            { cat: "Lists", cmd: "LREM", syntax: "LREM key count elem", info: "Remove by value", ex: "LREM tasks 0 old" },
+            { cat: "Lists", cmd: "LTRIM", syntax: "LTRIM key start stop", info: "Trim range", ex: "LTRIM log 0 99" },
+            { cat: "Lists", cmd: "LSET", syntax: "LSET key index elem", info: "Set index", ex: "LSET tasks 0 fix" },
+            { cat: "Lists", cmd: "BLPOP", syntax: "BLPOP key [key ...] timeout", info: "Blocking left pop", ex: "BLPOP queue 0" },
+            { cat: "Lists", cmd: "BRPOP", syntax: "BRPOP key [key ...] timeout", info: "Blocking right pop", ex: "BRPOP tasks 5" },
+            { cat: "Lists", cmd: "BLMOVE", syntax: "BLMOVE src dest LEFT/RIGHT LEFT/RIGHT timeout", info: "Blocking move", ex: "BLMOVE pending done RIGHT LEFT 0" },
+
+            // 7. Sets
+            { cat: "Sets", cmd: "SADD", syntax: "SADD key m [m ...]", info: "Add members", ex: "SADD users:online alice" },
+            { cat: "Sets", cmd: "SREM", syntax: "SREM key m [m ...]", info: "Remove members", ex: "SREM users:online alice" },
+            { cat: "Sets", cmd: "SMEMBERS", syntax: "SMEMBERS key", info: "All members", ex: "SMEMBERS tags:redis" },
+            { cat: "Sets", cmd: "SISMEMBER", syntax: "SISMEMBER key m", info: "Check member", ex: "SISMEMBER admins bob" },
+            { cat: "Sets", cmd: "SMISMEMBER", syntax: "SMISMEMBER key m [m ...]", info: "Check many", ex: "SMISMEMBER group a b" },
+            { cat: "Sets", cmd: "SCARD", syntax: "SCARD key", info: "Member count", ex: "SCARD users:online" },
+            { cat: "Sets", cmd: "SRANDMEMBER", syntax: "SRANDMEMBER key [count]", info: "Random members", ex: "SRANDMEMBER raffle 2" },
+            { cat: "Sets", cmd: "SINTER", syntax: "SINTER k [k ...]", info: "Intersection", ex: "SINTER group:a group:b" },
+            { cat: "Sets", cmd: "SINTERSTORE", syntax: "SINTERSTORE dest k [k ...]", info: "Store intersection", ex: "SINTERSTORE common a b" },
+            { cat: "Sets", cmd: "SUNION", syntax: "SUNION k [k ...]", info: "Union", ex: "SUNION staff managers" },
+            { cat: "Sets", cmd: "SUNIONSTORE", syntax: "SUNIONSTORE dest k [k ...]", info: "Store union", ex: "SUNIONSTORE all staff managers" },
+            { cat: "Sets", cmd: "SDIFF", syntax: "SDIFF k [k ...]", info: "Difference", ex: "SDIFF all banned" },
+            { cat: "Sets", cmd: "SDIFFSTORE", syntax: "SDIFFSTORE dest k [k ...]", info: "Store diff", ex: "SDIFFSTORE active all banned" },
+            { cat: "Sets", cmd: "SMOVE", syntax: "SMOVE src dest m", info: "Move member", ex: "SMOVE pending done alice" },
+
+            // 8. Sorted Sets
+            { cat: "Sorted Sets", cmd: "ZADD", syntax: "ZADD key [NX|XX] score member [s m ...]", info: "Add/update scored", ex: "ZADD leaderboard 100 alice 95 bob" },
+            { cat: "Sorted Sets", cmd: "ZINCRBY", syntax: "ZINCRBY key inc member", info: "Increment score", ex: "ZINCRBY leaderboard 10 alice" },
+            { cat: "Sorted Sets", cmd: "ZRANGE", syntax: "ZRANGE key start stop [WITHSCORES]", info: "By rank asc", ex: "ZRANGE leaderboard 0 4 WITHSCORES" },
+            { cat: "Sorted Sets", cmd: "ZREVRANGE", syntax: "ZREVRANGE key start stop [WITHSCORES]", info: "By rank desc", ex: "ZREVRANGE leaderboard 0 4" },
+            { cat: "Sorted Sets", cmd: "ZRANK", syntax: "ZRANK key member", info: "Rank asc (0-based)", ex: "ZRANK leaderboard bob" },
+            { cat: "Sorted Sets", cmd: "ZREVRANK", syntax: "ZREVRANK key member", info: "Rank desc", ex: "ZREVRANK leaderboard bob" },
+            { cat: "Sorted Sets", cmd: "ZSCORE", syntax: "ZSCORE key member", info: "Score of member", ex: "ZSCORE leaderboard alice" },
+            { cat: "Sorted Sets", cmd: "ZCARD", syntax: "ZCARD key", info: "Count members", ex: "ZCARD leaderboard" },
+            { cat: "Sorted Sets", cmd: "ZREM", syntax: "ZREM key m [m ...]", info: "Remove members", ex: "ZREM leaderboard bob" },
+            { cat: "Sorted Sets", cmd: "ZREMRANGEBYRANK", syntax: "ZREMRANGEBYRANK key start stop", info: "Pop by rank", ex: "ZREMRANGEBYRANK leaderboard 0 2" },
+            { cat: "Sorted Sets", cmd: "ZREMRANGEBYSCORE", syntax: "ZREMRANGEBYSCORE key min max", info: "Pop by score", ex: "ZREMRANGEBYSCORE leaderboard 0 50" },
+            { cat: "Sorted Sets", cmd: "ZRANGEBYSCORE", syntax: "ZRANGEBYSCORE key min max [WITHSCORES]", info: "Range by score", ex: "ZRANGEBYSCORE leaderboard 90 100" },
+            { cat: "Sorted Sets", cmd: "ZCOUNT", syntax: "ZCOUNT key min max", info: "Count by score range", ex: "ZCOUNT leaderboard 50 100" },
+
+            // 9. Streams
+            { cat: "Streams", cmd: "XADD", syntax: "XADD key [MAXLEN ~ n] ID f v [f v ...]", info: "Append entry", ex: "XADD events * type login user 1" },
+            { cat: "Streams", cmd: "XREAD", syntax: "XREAD [COUNT c] [BLOCK ms] STREAMS k id [k id ...]", info: "Read entries", ex: "XREAD COUNT 2 STREAMS events 0" },
+            { cat: "Streams", cmd: "XRANGE", syntax: "XRANGE key start end [COUNT c]", info: "Range forward", ex: "XRANGE events - + COUNT 10" },
+            { cat: "Streams", cmd: "XREVRANGE", syntax: "XREVRANGE key end start [COUNT c]", info: "Range reverse", ex: "XREVRANGE events + - COUNT 5" },
+            { cat: "Streams", cmd: "XLEN", syntax: "XLEN key", info: "Entry count", ex: "XLEN events" },
+            { cat: "Streams", cmd: "XINFO STREAM", syntax: "XINFO STREAM key [FULL]", info: "Stream info", ex: "XINFO STREAM events" },
+            { cat: "Streams", cmd: "XDEL", syntax: "XDEL key id [id ...]", info: "Delete entry", ex: "XDEL events 1700000000000-0" },
+            { cat: "Streams", cmd: "XTRIM", syntax: "XTRIM key MAXLEN [=|~] count", info: "Trim stream", ex: "XTRIM events MAXLEN ~ 1000" },
+            { cat: "Streams", cmd: "XGROUP", syntax: "XGROUP CREATE k g id [MKSTREAM]", info: "Create consumer group", ex: "XGROUP CREATE events workers $ MKSTREAM" },
+            { cat: "Streams", cmd: "XREADGROUP", syntax: "XREADGROUP GROUP g c [COUNT c] [BLOCK ms] STREAMS k id", info: "Group read", ex: "XREADGROUP GROUP workers c1 COUNT 1 STREAMS events >" },
+            { cat: "Streams", cmd: "XACK", syntax: "XACK key group id [id ...]", info: "Acknowledge", ex: "XACK events workers 1700000000000-0" },
+            { cat: "Streams", cmd: "XPENDING", syntax: "XPENDING key group [start end count [consumer]]", info: "Pending entries", ex: "XPENDING events workers" },
+            { cat: "Streams", cmd: "XCLAIM", syntax: "XCLAIM key group consumer min-idle-ms id ...", info: "Claim old entries", ex: "XCLAIM events workers c2 60000 1700000000000-0" },
+            { cat: "Streams", cmd: "XAUTOCLAIM", syntax: "XAUTOCLAIM key group consumer min-idle-ms start [COUNT c]", info: "Auto claim", ex: "XAUTOCLAIM events workers c2 60000 0-0 COUNT 10" },
+
+            // 10. Pub/Sub
+            { cat: "Pub/Sub", cmd: "PUBLISH", syntax: "PUBLISH channel message", info: "Publish message", ex: "PUBLISH news 'Hello subscribers'" },
+            { cat: "Pub/Sub", cmd: "SUBSCRIBE", syntax: "SUBSCRIBE channel [channel ...]", info: "Subscribe to channels", ex: "SUBSCRIBE notifications" },
+            { cat: "Pub/Sub", cmd: "UNSUBSCRIBE", syntax: "UNSUBSCRIBE [channel ...]", info: "Unsubscribe", ex: "UNSUBSCRIBE notifications" },
+            { cat: "Pub/Sub", cmd: "PSUBSCRIBE", syntax: "PSUBSCRIBE pattern [pattern ...]", info: "Pattern subscribe", ex: "PSUBSCRIBE news:*" },
+            { cat: "Pub/Sub", cmd: "PUBSUB", syntax: "PUBSUB subcommand [arg ...]", info: "Inspect pub/sub", ex: "PUBSUB CHANNELS news:*" },
+
+            // 11. Transactions
+            { cat: "Transactions", cmd: "MULTI", syntax: "MULTI", info: "Start transaction", ex: "MULTI" },
+            { cat: "Transactions", cmd: "EXEC", syntax: "EXEC", info: "Execute queued", ex: "EXEC" },
+            { cat: "Transactions", cmd: "DISCARD", syntax: "DISCARD", info: "Cancel transaction", ex: "DISCARD" },
+            { cat: "Transactions", cmd: "WATCH", syntax: "WATCH key [key ...]", info: "Optimistic lock key", ex: "WATCH account:1" },
+            { cat: "Transactions", cmd: "UNWATCH", syntax: "UNWATCH", info: "Unwatch all", ex: "UNWATCH" },
+
+            // 12. Lua / Functions
+            { cat: "Lua / Functions", cmd: "EVAL", syntax: "EVAL script numkeys k [k ...] arg [arg ...]", info: "Run Lua script", ex: "EVAL \"return redis.call('GET', KEYS[1])\" 1 name" },
+            { cat: "Lua / Functions", cmd: "EVALSHA", syntax: "EVALSHA sha1 numkeys k ... arg ...", info: "Run cached script", ex: "EVALSHA abc123 1 name" },
+            { cat: "Lua / Functions", cmd: "SCRIPT LOAD", syntax: "SCRIPT LOAD script", info: "Load script to cache", ex: "SCRIPT LOAD \"return redis.call('PING')\"" },
+            { cat: "Lua / Functions", cmd: "FUNCTION LOAD", syntax: "FUNCTION LOAD [REPLACE] code", info: "Load Redis function", ex: "FUNCTION LOAD '#!lua ...'" },
+            { cat: "Lua / Functions", cmd: "FCALL", syntax: "FCALL function numkeys k ... arg ...", info: "Call function", ex: "FCALL hello 0" },
+
+            // 13. Bitmaps
+            { cat: "Bitmaps", cmd: "SETBIT", syntax: "SETBIT key offset value", info: "Set bit at offset", ex: "SETBIT active:2025 1001 1" },
+            { cat: "Bitmaps", cmd: "GETBIT", syntax: "GETBIT key offset", info: "Get bit value", ex: "GETBIT active:2025 1001" },
+            { cat: "Bitmaps", cmd: "BITCOUNT", syntax: "BITCOUNT key [start end [BYTE|BIT]]", info: "Count 1-bits", ex: "BITCOUNT active:2025" },
+            { cat: "Bitmaps", cmd: "BITOP", syntax: "BITOP op dest k [k ...]", info: "Bitwise operation", ex: "BITOP AND result day1 day2" },
+            { cat: "Bitmaps", cmd: "BITFIELD", syntax: "BITFIELD key [GET ...] [INCRBY ...]", info: "Bitfield command", ex: "BITFIELD counters INCRBY u8 0 1" },
+
+            // 14. HyperLogLog
+            { cat: "HyperLogLog", cmd: "PFADD", syntax: "PFADD key elem [elem ...]", info: "Add elements (approx)", ex: "PFADD visitors user1 user2" },
+            { cat: "HyperLogLog", cmd: "PFCOUNT", syntax: "PFCOUNT key [key ...]", info: "Approx count", ex: "PFCOUNT visitors" },
+            { cat: "HyperLogLog", cmd: "PFMERGE", syntax: "PFMERGE dest source [source ...]", info: "Merge HLLs", ex: "PFMERGE all mon tue" },
+
+            // 15. Geospatial
+            { cat: "Geospatial", cmd: "GEOADD", syntax: "GEOADD key [NX|XX] lon lat member ...", info: "Add location", ex: "GEOADD stores -73.9857 40.7484 nyc" },
+            { cat: "Geospatial", cmd: "GEOSEARCH", syntax: "GEOSEARCH key FROMMEMBER m BYRADIUS r unit ...", info: "Search near point", ex: "GEOSEARCH stores FROMMEMBER nyc BYRADIUS 10 km" },
+            { cat: "Geospatial", cmd: "GEOPOS", syntax: "GEOPOS key member [m ...]", info: "Get positions", ex: "GEOPOS stores nyc" },
+            { cat: "Geospatial", cmd: "GEODIST", syntax: "GEODIST key m1 m2 [M|KM|FT|MI]", info: "Distance", ex: "GEODIST stores nyc boston km" },
+            { cat: "Geospatial", cmd: "GEOHASH", syntax: "GEOHASH key member [m ...]", info: "Geohash string", ex: "GEOHASH stores nyc" },
+
+            // 16. Server & DB
+            { cat: "Server / DB", cmd: "FLUSHDB", syntax: "FLUSHDB [ASYNC|SYNC]", info: "Clear current DB", ex: "FLUSHDB" },
+            { cat: "Server / DB", cmd: "FLUSHALL", syntax: "FLUSHALL [ASYNC|SYNC]", info: "Clear all DBs", ex: "FLUSHALL" },
+            { cat: "Server / DB", cmd: "DBSIZE", syntax: "DBSIZE", info: "Key count in DB", ex: "DBSIZE" },
+            { cat: "Server / DB", cmd: "TIME", syntax: "TIME", info: "Server time", ex: "TIME" },
+            { cat: "Server / DB", cmd: "COMMAND COUNT", syntax: "COMMAND COUNT", info: "Total commands", ex: "COMMAND COUNT" },
+            { cat: "Server / DB", cmd: "SHUTDOWN", syntax: "SHUTDOWN [NOSAVE|SAVE] [NOW]", info: "Stop server", ex: "SHUTDOWN SAVE" },
+
+            // 17. Client
+            { cat: "Client", cmd: "CLIENT LIST", syntax: "CLIENT LIST [TYPE ...]", info: "List connections", ex: "CLIENT LIST" },
+            { cat: "Client", cmd: "CLIENT SETNAME", syntax: "CLIENT SETNAME name", info: "Name this connection", ex: "CLIENT SETNAME api-1" },
+            { cat: "Client", cmd: "CLIENT KILL", syntax: "CLIENT KILL [ID id ...]", info: "Kill connection", ex: "CLIENT KILL ID 42" },
+            { cat: "Client", cmd: "CLIENT PAUSE", syntax: "CLIENT PAUSE timeout-ms [WRITE|ALL]", info: "Pause clients", ex: "CLIENT PAUSE 1000 WRITE" },
+
+            // 18. Connection / Config
+            { cat: "Config / Conn", cmd: "CONFIG GET", syntax: "CONFIG GET param", info: "Read config", ex: "CONFIG GET maxmemory" },
+            { cat: "Config / Conn", cmd: "CONFIG SET", syntax: "CONFIG SET param value", info: "Set config", ex: "CONFIG SET maxmemory 512mb" },
+            { cat: "Config / Conn", cmd: "CONFIG REWRITE", syntax: "CONFIG REWRITE", info: "Write to file", ex: "CONFIG REWRITE" },
+            { cat: "Config / Conn", cmd: "HELLO (repeated)", syntax: "HELLO 3 AUTH default pass", info: "Handshake", ex: "HELLO 3 AUTH default secret" },
+
+            // 19. Memory
+            { cat: "Memory", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Key memory", ex: "MEMORY USAGE big:key" },
+            { cat: "Memory", cmd: "MEMORY STATS", syntax: "MEMORY STATS", info: "Memory stats", ex: "MEMORY STATS" },
+            { cat: "Memory", cmd: "MEMORY DOCTOR", syntax: "MEMORY DOCTOR", info: "Diagnose", ex: "MEMORY DOCTOR" },
+
+            // 20. Monitor / Debug
+            { cat: "Monitor / Debug", cmd: "MONITOR", syntax: "MONITOR", info: "Watch all commands", ex: "MONITOR" },
+            { cat: "Monitor / Debug", cmd: "SLOWLOG GET", syntax: "SLOWLOG GET [count]", info: "Slow queries", ex: "SLOWLOG GET 10" },
+            { cat: "Monitor / Debug", cmd: "LATENCY DOCTOR", syntax: "LATENCY DOCTOR", info: "Latency report", ex: "LATENCY DOCTOR" },
+            { cat: "Monitor / Debug", cmd: "INFO stats", syntax: "INFO stats", info: "Stats section", ex: "INFO stats" },
+
+            // 21. Persistence
+            { cat: "Persistence", cmd: "SAVE", syntax: "SAVE", info: "Blocking RDB save", ex: "SAVE" },
+            { cat: "Persistence", cmd: "BGSAVE", syntax: "BGSAVE [SCHEDULE]", info: "Background RDB", ex: "BGSAVE" },
+            { cat: "Persistence", cmd: "LASTSAVE", syntax: "LASTSAVE", info: "Last save timestamp", ex: "LASTSAVE" },
+            { cat: "Persistence", cmd: "BGREWRITEAOF", syntax: "BGREWRITEAOF", info: "Rewrite AOF", ex: "BGREWRITEAOF" },
+
+            // 22. Replication
+            { cat: "Replication", cmd: "REPLICAOF", syntax: "REPLICAOF host port", info: "Become replica", ex: "REPLICAOF 10.0.0.5 6379" },
+            { cat: "Replication", cmd: "ROLE", syntax: "ROLE", info: "Role info", ex: "ROLE" },
+            { cat: "Replication", cmd: "SLAVEOF (legacy)", syntax: "SLAVEOF host port", info: "Legacy replica command", ex: "SLAVEOF 10.0.0.5 6379" },
+            { cat: "Replication", cmd: "INFO replication", syntax: "INFO replication", info: "Repl stats", ex: "INFO replication" },
+
+            // 23. Sentinel
+            { cat: "Sentinel", cmd: "SENTINEL masters", syntax: "SENTINEL masters", info: "List master names", ex: "redis-cli -p 26379 SENTINEL masters" },
+            { cat: "Sentinel", cmd: "SENTINEL get-master-addr-by-name", syntax: "SENTINEL get-master-addr-by-name name", info: "Get master address", ex: "SENTINEL get-master-addr-by-name mymaster" },
+            { cat: "Sentinel", cmd: "SENTINEL failover", syntax: "SENTINEL failover name", info: "Force failover", ex: "SENTINEL failover mymaster" },
+
+            // 24. Cluster
+            { cat: "Cluster", cmd: "CLUSTER INFO", syntax: "CLUSTER INFO", info: "Cluster state", ex: "CLUSTER INFO" },
+            { cat: "Cluster", cmd: "CLUSTER NODES", syntax: "CLUSTER NODES", info: "Node list", ex: "CLUSTER NODES" },
+            { cat: "Cluster", cmd: "CLUSTER MEET", syntax: "CLUSTER MEET ip port", info: "Join node", ex: "CLUSTER MEET 10.0.0.2 6379" },
+            { cat: "Cluster", cmd: "CLUSTER ADDSLOTS", syntax: "CLUSTER ADDSLOTS slot [slot ...]", info: "Assign slots", ex: "CLUSTER ADDSLOTS 0 1 2" },
+
+            // 25. ACL / Security
+            { cat: "ACL / Security", cmd: "ACL LIST", syntax: "ACL LIST", info: "List users", ex: "ACL LIST" },
+            { cat: "ACL / Security", cmd: "ACL SETUSER", syntax: "ACL SETUSER u rules...", info: "Create/update user", ex: "ACL SETUSER app on >pass ~app:* +@all" },
+            { cat: "ACL / Security", cmd: "ACL GETUSER", syntax: "ACL GETUSER username", info: "Show user rules", ex: "ACL GETUSER default" },
+            { cat: "ACL / Security", cmd: "AUTH (ACL)", syntax: "AUTH [user] pass", info: "Auth with user", ex: "AUTH app secret" },
+
+            // 26. Common Backend Patterns
+            { cat: "Patterns", cmd: "Cache (SET/GET/DEL/EXPIRE/TTL)", syntax: "SET k v EX sec / GET k / DEL k / TTL k", info: "Cache pattern", ex: "SET cache:user:1 '{...}' EX 300" },
+            { cat: "Patterns", cmd: "Counter (INCR/DECR)", syntax: "INCR / INCRBY / DECR / DECRBY", info: "Counter pattern", ex: "INCR api:hits" },
+            { cat: "Patterns", cmd: "Rate Limiter (INCR + EXPIRE)", syntax: "INCR k; EXPIRE k sec", info: "Fixed-window rate limit", ex: "INCR rate:u1; EXPIRE rate:u1 60" },
+            { cat: "Patterns", cmd: "Distributed Lock (SET NX EX)", syntax: "SET lock:id token NX EX sec / DEL via Lua", info: "Lock pattern", ex: "SET lock:pay token NX EX 30" },
+            { cat: "Patterns", cmd: "Queue (LPUSH/RPOP/BLPOP)", syntax: "LPUSH q j / RPOP q / BLPOP q 0", info: "FIFO queue pattern", ex: "LPUSH tasks job1; BRPOP tasks 0" },
+            { cat: "Patterns", cmd: "Leaderboard (ZADD/ZRANGE)", syntax: "ZADD lb s m / ZREVRANGE lb 0 -1", info: "Leaderboard pattern", ex: "ZADD game 100 alice; ZREVRANGE game 0 2" },
+            { cat: "Patterns", cmd: "User Profile (HSET/HGETALL)", syntax: "HSET u:1 f v / HGETALL u:1", info: "Profile object", ex: "HSET user:1 name Alice; HGETALL user:1" },
+            { cat: "Patterns", cmd: "Unique Membership (SADD/SISMEMBER)", syntax: "SADD set m / SISMEMBER set m", info: "Set membership", ex: "SADD group:admins u1; SISMEMBER group:admins u1" },
+            { cat: "Patterns", cmd: "Event Stream (XADD/XREADGROUP)", syntax: "XADD s * ... / XREADGROUP GROUP ...", info: "Event / message queue", ex: "XADD events * type login; XREADGROUP GROUP w c1 STREAMS events >" },
+        ];
+
+        const grid = document.getElementById('grid');
+        const searchInput = document.getElementById('searchInput');
+        const filterNav = document.getElementById('filterNav');
+
+        // Build category buttons from data
+        function buildFilters() {
+            const cats = ["All", ...new Set(commands.map(c => c.cat))];
+            // Sort by common order roughly; for simplicity keep insertion/add 'All' first
+            const html = cats.map(c => `<button class="filter-btn ${c === 'All' ? 'active' : ''}" data-filter="${c}">${c}</button>`).join('');
+            filterNav.innerHTML = html;
+
+            filterNav.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterNav.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    render();
+                });
+            });
+        }
+
+        // Render cards
+        function render() {
+            const term = searchInput.value.trim().toLowerCase();
+            const activeBtn = filterNav.querySelector('.filter-btn.active');
+            const cat = activeBtn ? activeBtn.dataset.filter : 'All';
+
+            const filtered = commands.filter(item => {
+                const matchesCat = (cat === 'All' || item.cat === cat);
+                if (!term) return matchesCat;
+                const hay = (item.cmd + ' ' + item.syntax + ' ' + item.info + ' ' + item.ex + ' ' + item.cat).toLowerCase();
+                return matchesCat && hay.includes(term);
+            });
+
+            if (!filtered.length) {
+                grid.innerHTML = `<div class="empty-state"><h2>No results</h2><p>Try a different search or category.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => `
+    <article class="card" data-cat="${item.cat}">
+      <div class="card-header">
+        <h3 class="card-title">${item.cmd}</h3>
+        <span class="card-badge">${item.cat}</span>
+      </div>
+      <div class="block-label">Syntax</div>
+      <pre class="syntax-box" aria-label="Syntax for ${item.cmd}"><code>${escapeHtml(item.syntax)}</code></pre>
+
+      <div class="block-label">Usage Example</div>
+      <pre class="example-box" aria-label="Example for ${item.cmd}"><code>${escapeHtml(item.ex)}</code></pre>
+    </article>
+  `).join('');
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Search listener
+        searchInput.addEventListener('input', render);
+
+        // Init
+        buildFilters();
+        render();
+    </script>
+</body>
+
+</html>
