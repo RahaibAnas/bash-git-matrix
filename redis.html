@@ -317,6 +317,74 @@
             border-top: 1px solid var(--border);
         }
 
+        .card-description,
+        .card-desc {
+            margin: 0 0 10px 0;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .card-description {
+            background: rgba(230, 57, 70, 0.08);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .card-desc {
+            background: rgba(46, 204, 113, 0.06);
+            border-left: 3px solid var(--green);
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 14px;
+        }
+
+        /* Text content */
+        .info-text,
+        .desc-text {
+            color: var(--text);
+            font-size: 0.88rem;
+            font-weight: 400;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .info-text {
+            color: #e8e0db;
+        }
+
+        .desc-text {
+            color: #d4e8d4;
+        }
+
+        @media (max-width: 600px) {
+
+            .card-description,
+            .card-desc {
+                flex-direction: column;
+                gap: 4px;
+                padding: 10px 12px;
+            }
+
+
+
+            .info-text,
+            .desc-text {
+                font-size: 0.82rem;
+                padding-left: 4px;
+            }
+
+
+        }
+
+
+
+
         @media (max-width: 520px) {
             .controls {
                 padding: 0.9rem 1rem;
@@ -331,78 +399,83 @@
             }
         }
 
+
         /* === Redis Custom Scrollbar - Add this at bottom of style.css === */
 
-/* For Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #22222e #0b0b0e;
-}
+        /* For Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #22222e #0b0b0e;
+        }
 
-html {
-  scrollbar-width: thin;
-  scrollbar-color: #22222e #0b0b0e;
-}
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: #22222e #0b0b0e;
+        }
 
-/* For Chrome / Edge / Safari */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+        /* For Chrome / Edge / Safari */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
 
-::-webkit-scrollbar-track {
-  background: #0b0b0e;
-}
+        ::-webkit-scrollbar-track {
+            background: #0b0b0e;
+        }
 
-::-webkit-scrollbar-thumb {
-  background: #22222e;
-  border-radius: 100px;
-  border: 2px solid #0b0b0e;
-  transition: background 0.2s;
-}
+        ::-webkit-scrollbar-thumb {
+            background: #22222e;
+            border-radius: 100px;
+            border: 2px solid #0b0b0e;
+            transition: background 0.2s;
+        }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #e63946; /* Redis Red */
-}
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e63946;
+            /* Redis Red */
+        }
 
-/* Remove the arrow buttons you see in your screenshot */
-::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
-}
+        /* Remove the arrow buttons you see in your screenshot */
+        ::-webkit-scrollbar-button {
+            display: none;
+            width: 0;
+            height: 0;
+        }
 
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
+        ::-webkit-scrollbar-corner {
+            background: transparent;
+        }
 
-/* Code blocks get an even slimmer scrollbar */
-.syntax-box::-webkit-scrollbar,
-.example-box::-webkit-scrollbar {
-  height: 6px;
-}
+        /* Code blocks get an even slimmer scrollbar */
+        .syntax-box::-webkit-scrollbar,
+        .example-box::-webkit-scrollbar {
+            height: 6px;
+        }
 
-.syntax-box::-webkit-scrollbar-thumb {
-  background: #2a2a36;
-}
+        .syntax-box::-webkit-scrollbar-thumb {
+            background: #2a2a36;
+        }
 
-.example-box::-webkit-scrollbar-thumb {
-  background: #1a3d25;
-}
+        .example-box::-webkit-scrollbar-thumb {
+            background: #1a3d25;
+        }
 
-.example-box::-webkit-scrollbar-thumb:hover {
-  background: #2ecc71;
-}
+        .example-box::-webkit-scrollbar-thumb:hover {
+            background: #2ecc71;
+        }
 
-/* Fix accidental page-wide horizontal scroll */
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-.syntax-box, .example-box {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
+        /* Fix accidental page-wide horizontal scroll */
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .syntax-box,
+        .example-box {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
     </style>
 </head>
 
@@ -444,324 +517,324 @@ html, body {
         Built for Redis CLI / Server reference. Commands shown with minimal syntax + one practical example.
     </footer>
 
-    <script >
+    <script>
         /* === Redis Command Data === */
         // Each item: category (for buttons), command name, syntax, one-line info, example
         const commands = [
-                // ==================== SERVER & CLI ====================
-                { cat: "CLI & Server", cmd: "redis-server", syntax: "redis-server [options]", info: "Start Redis server", ex: "redis-server --port 6379" },
-                { cat: "CLI & Server", cmd: "redis-server --version", syntax: "redis-server --version", info: "Server version", ex: "redis-server --version" },
-                { cat: "CLI & Server", cmd: "redis-cli", syntax: "redis-cli [options]", info: "Interactive CLI", ex: "redis-cli -h 127.0.0.1 -p 6379" },
-                { cat: "CLI & Server", cmd: "redis-cli -h", syntax: "redis-cli -h <host>", info: "Specify host", ex: "redis-cli -h localhost" },
-                { cat: "CLI & Server", cmd: "redis-cli -p", syntax: "redis-cli -p <port>", info: "Specify port", ex: "redis-cli -p 6380" },
-                { cat: "CLI & Server", cmd: "redis-cli -a", syntax: "redis-cli -a <password>", info: "Authenticate with password", ex: "redis-cli -a mysecret" },
-                { cat: "CLI & Server", cmd: "PING", syntax: "PING [message]", info: "Test connectivity", ex: "PING → PONG" },
-                { cat: "CLI & Server", cmd: "AUTH", syntax: "AUTH [username] password", info: "Authenticate", ex: "AUTH default secret" },
-                { cat: "CLI & Server", cmd: "SELECT", syntax: "SELECT db-index", info: "Switch DB", ex: "SELECT 1" },
-                { cat: "CLI & Server", cmd: "QUIT", syntax: "QUIT", info: "Close connection", ex: "QUIT" },
-                { cat: "CLI & Server", cmd: "HELLO", syntax: "HELLO [proto] [AUTH ...] [SETNAME ...]", info: "Handshake / auth", ex: "HELLO 3 AUTH default pass SETNAME api-1" },
-                { cat: "CLI & Server", cmd: "INFO", syntax: "INFO [section]", info: "Server info", ex: "INFO memory" },
-                { cat: "CLI & Server", cmd: "INFO server", syntax: "INFO server", info: "Server section", ex: "INFO server" },
-                { cat: "CLI & Server", cmd: "INFO memory", syntax: "INFO memory", info: "Memory section", ex: "INFO memory" },
-                { cat: "CLI & Server", cmd: "INFO clients", syntax: "INFO clients", info: "Clients section", ex: "INFO clients" },
-                { cat: "CLI & Server", cmd: "INFO stats", syntax: "INFO stats", info: "Stats section", ex: "INFO stats" },
-                { cat: "CLI & Server", cmd: "INFO replication", syntax: "INFO replication", info: "Replication section", ex: "INFO replication" },
+            // ==================== SERVER & CLI ====================
+            { cat: "CLI & Server", cmd: "redis-server", syntax: "redis-server [options]", info: "Start Redis server", desc: "Launch Redis database server daemon", ex: "redis-server --port 6379" },
+            { cat: "CLI & Server", cmd: "redis-server --version", syntax: "redis-server --version", info: "Server version", desc: "Display installed Redis version info", ex: "redis-server --version" },
+            { cat: "CLI & Server", cmd: "redis-cli", syntax: "redis-cli [options]", info: "Interactive CLI", desc: "Connect and interact with Redis", ex: "redis-cli -h 127.0.0.1 -p 6379" },
+            { cat: "CLI & Server", cmd: "redis-cli -h", syntax: "redis-cli -h <host>", info: "Specify host", desc: "Connect to Redis on specific host", ex: "redis-cli -h localhost" },
+            { cat: "CLI & Server", cmd: "redis-cli -p", syntax: "redis-cli -p <port>", info: "Specify port", desc: "Connect to Redis on custom port", ex: "redis-cli -p 6380" },
+            { cat: "CLI & Server", cmd: "redis-cli -a", syntax: "redis-cli -a <password>", info: "Authenticate with password", desc: "Authenticate using password via CLI", ex: "redis-cli -a mysecret" },
+            { cat: "CLI & Server", cmd: "PING", syntax: "PING [message]", info: "Test connectivity", desc: "Check if Redis server is alive", ex: "PING → PONG" },
+            { cat: "CLI & Server", cmd: "AUTH", syntax: "AUTH [username] password", info: "Authenticate", desc: "Authenticate user with password credential", ex: "AUTH default secret" },
+            { cat: "CLI & Server", cmd: "SELECT", syntax: "SELECT db-index", info: "Switch DB", desc: "Switch to another logical database index", ex: "SELECT 1" },
+            { cat: "CLI & Server", cmd: "QUIT", syntax: "QUIT", info: "Close connection", desc: "Close connection to Redis server", ex: "QUIT" },
+            { cat: "CLI & Server", cmd: "HELLO", syntax: "HELLO [proto] [AUTH ...] [SETNAME ...]", info: "Handshake / auth", desc: "Protocol handshake with optional authentication", ex: "HELLO 3 AUTH default pass SETNAME api-1" },
+            { cat: "CLI & Server", cmd: "INFO", syntax: "INFO [section]", info: "Server info", desc: "View detailed server statistics and info", ex: "INFO memory" },
+            { cat: "CLI & Server", cmd: "INFO server", syntax: "INFO server", info: "Server section", desc: "View Redis server version and details", ex: "INFO server" },
+            { cat: "CLI & Server", cmd: "INFO memory", syntax: "INFO memory", info: "Memory section", desc: "View memory usage and allocation stats", ex: "INFO memory" },
+            { cat: "CLI & Server", cmd: "INFO clients", syntax: "INFO clients", info: "Clients section", desc: "View connected client connection statistics", ex: "INFO clients" },
+            { cat: "CLI & Server", cmd: "INFO stats", syntax: "INFO stats", info: "Stats section", desc: "View command and operations statistics", ex: "INFO stats" },
+            { cat: "CLI & Server", cmd: "INFO replication", syntax: "INFO replication", info: "Replication section", desc: "View replication status and configuration", ex: "INFO replication" },
 
-                // ==================== KEYS ====================
-                { cat: "Keys", cmd: "SET", syntax: "SET key value [NX|XX] [GET] [EX sec] [PX ms] [KEEPTTL]", info: "Set string value", ex: "SET user:1 \"Alice\"" },
-                { cat: "Keys", cmd: "GET", syntax: "GET key", info: "Get string", ex: "GET user:1" },
-                { cat: "Keys", cmd: "EXISTS", syntax: "EXISTS key [key ...]", info: "Check keys exist", ex: "EXISTS user:1" },
-                { cat: "Keys", cmd: "DEL", syntax: "DEL key [key ...]", info: "Delete key(s)", ex: "DEL user:1" },
-                { cat: "Keys", cmd: "UNLINK", syntax: "UNLINK key [key ...]", info: "Async delete", ex: "UNLINK cache:large" },
-                { cat: "Keys", cmd: "TYPE", syntax: "TYPE key", info: "Key data type", ex: "TYPE user:1" },
-                { cat: "Keys", cmd: "RENAME", syntax: "RENAME key newkey", info: "Rename key", ex: "RENAME old:name new:name" },
-                { cat: "Keys", cmd: "RENAMENX", syntax: "RENAMENX key newkey", info: "Rename if not exists", ex: "RENAMENX temp:data final:data" },
-                { cat: "Keys", cmd: "RANDOMKEY", syntax: "RANDOMKEY", info: "Get random key", ex: "RANDOMKEY" },
-                { cat: "Keys", cmd: "KEYS", syntax: "KEYS pattern", info: "Find keys (use in dev only)", ex: "KEYS user:*" },
-                { cat: "Keys", cmd: "SCAN", syntax: "SCAN cursor [MATCH pattern] [COUNT count]", info: "Iterate keys safely", ex: "SCAN 0 MATCH user:* COUNT 100" },
-                { cat: "Keys", cmd: "OBJECT", syntax: "OBJECT subcommand key", info: "Internal encoding info", ex: "OBJECT ENCODING user:1" },
-                { cat: "Keys", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Memory of a key", ex: "MEMORY USAGE user:1" },
-                { cat: "Keys", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire (-1 never, -2 missing)", ex: "TTL session:123" },
-                { cat: "Keys", cmd: "PTTL", syntax: "PTTL key", info: "Milliseconds until expire", ex: "PTTL session:123" },
+            // ==================== KEYS ====================
+            { cat: "Keys", cmd: "SET", syntax: "SET key value [NX|XX] [GET] [EX sec] [PX ms] [KEEPTTL]", info: "Set string value", desc: "Store a string value with options", ex: "SET user:1 \"Alice\"" },
+            { cat: "Keys", cmd: "GET", syntax: "GET key", info: "Get string", desc: "Retrieve value stored at key", ex: "GET user:1" },
+            { cat: "Keys", cmd: "EXISTS", syntax: "EXISTS key [key ...]", info: "Check keys exist", desc: "Check if one or more keys exist", ex: "EXISTS user:1" },
+            { cat: "Keys", cmd: "DEL", syntax: "DEL key [key ...]", info: "Delete key(s)", desc: "Delete one or more specified keys", ex: "DEL user:1" },
+            { cat: "Keys", cmd: "UNLINK", syntax: "UNLINK key [key ...]", info: "Async delete", desc: "Non-blocking asynchronous key deletion", ex: "UNLINK cache:large" },
+            { cat: "Keys", cmd: "TYPE", syntax: "TYPE key", info: "Key data type", desc: "Determine the data type of key", ex: "TYPE user:1" },
+            { cat: "Keys", cmd: "RENAME", syntax: "RENAME key newkey", info: "Rename key", desc: "Rename key to a new name", ex: "RENAME old:name new:name" },
+            { cat: "Keys", cmd: "RENAMENX", syntax: "RENAMENX key newkey", info: "Rename if not exists", desc: "Rename key only if newkey doesn't exist", ex: "RENAMENX temp:data final:data" },
+            { cat: "Keys", cmd: "RANDOMKEY", syntax: "RANDOMKEY", info: "Get random key", desc: "Return a random key from database", ex: "RANDOMKEY" },
+            { cat: "Keys", cmd: "KEYS", syntax: "KEYS pattern", info: "Find keys (use in dev only)", desc: "Find keys matching glob pattern", ex: "KEYS user:*" },
+            { cat: "Keys", cmd: "SCAN", syntax: "SCAN cursor [MATCH pattern] [COUNT count]", info: "Iterate keys safely", desc: "Iterate keys incrementally without blocking", ex: "SCAN 0 MATCH user:* COUNT 100" },
+            { cat: "Keys", cmd: "OBJECT", syntax: "OBJECT subcommand key", info: "Internal encoding info", desc: "Inspect internal encoding and metadata", ex: "OBJECT ENCODING user:1" },
+            { cat: "Keys", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Memory of a key", desc: "Estimate memory usage of a key", ex: "MEMORY USAGE user:1" },
+            { cat: "Keys", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire (-1 never, -2 missing)", desc: "Get remaining time-to-live in seconds", ex: "TTL session:123" },
+            { cat: "Keys", cmd: "PTTL", syntax: "PTTL key", info: "Milliseconds until expire", desc: "Get remaining time-to-live in milliseconds", ex: "PTTL session:123" },
 
-                // ==================== EXPIRATION ====================
-                { cat: "Expiration", cmd: "EXPIRE", syntax: "EXPIRE key seconds [NX|XX|GT|LT]", info: "Set expire in seconds", ex: "EXPIRE session:123 3600" },
-                { cat: "Expiration", cmd: "PEXPIRE", syntax: "PEXPIRE key milliseconds [NX|XX]", info: "Set expire in ms", ex: "PEXPIRE temp 5000" },
-                { cat: "Expiration", cmd: "EXPIREAT", syntax: "EXPIREAT key timestamp", info: "Set expire at Unix timestamp", ex: "EXPIREAT otp 1672531200" },
-                { cat: "Expiration", cmd: "PEXPIREAT", syntax: "PEXPIREAT key timestamp_ms", info: "Set expire at Unix ms timestamp", ex: "PEXPIREAT cache 1672531200000" },
-                { cat: "Expiration", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire", ex: "TTL session:123" },
-                { cat: "Expiration", cmd: "PTTL", syntax: "PTTL key", info: "Milliseconds until expire", ex: "PTTL session:123" },
-                { cat: "Expiration", cmd: "PERSIST", syntax: "PERSIST key", info: "Remove expiration", ex: "PERSIST session:123" },
+            // ==================== EXPIRATION ====================
+            { cat: "Expiration", cmd: "EXPIRE", syntax: "EXPIRE key seconds [NX|XX|GT|LT]", info: "Set expire in seconds", desc: "Set key expiration in seconds", ex: "EXPIRE session:123 3600" },
+            { cat: "Expiration", cmd: "PEXPIRE", syntax: "PEXPIRE key milliseconds [NX|XX]", info: "Set expire in ms", desc: "Set key expiration in milliseconds", ex: "PEXPIRE temp 5000" },
+            { cat: "Expiration", cmd: "EXPIREAT", syntax: "EXPIREAT key timestamp", info: "Set expire at Unix timestamp", desc: "Set key expiration using Unix timestamp", ex: "EXPIREAT otp 1672531200" },
+            { cat: "Expiration", cmd: "PEXPIREAT", syntax: "PEXPIREAT key timestamp_ms", info: "Set expire at Unix ms timestamp", desc: "Set key expiration using Unix millisecond", ex: "PEXPIREAT cache 1672531200000" },
+            { cat: "Expiration", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire", desc: "Get time-to-live in remaining seconds", ex: "TTL session:123" },
+            { cat: "Expiration", cmd: "PTTL", syntax: "PTTL key", info: "Milliseconds until expire", desc: "Get time-to-live in remaining milliseconds", ex: "PTTL session:123" },
+            { cat: "Expiration", cmd: "PERSIST", syntax: "PERSIST key", info: "Remove expiration", desc: "Remove expiration from key permanently", ex: "PERSIST session:123" },
 
-                // ==================== STRINGS ====================
-                { cat: "Strings", cmd: "SET", syntax: "SET key value [NX|XX] [EX|PX|EXAT|PXAT] [KEEPTTL]", info: "Set string value", ex: "SET counter 0 EX 10" },
-                { cat: "Strings", cmd: "GET", syntax: "GET key", info: "Get string", ex: "GET counter" },
-                { cat: "Strings", cmd: "MSET", syntax: "MSET key value [key value ...]", info: "Multi-set", ex: "MSET a 1 b 2" },
-                { cat: "Strings", cmd: "MGET", syntax: "MGET key [key ...]", info: "Multi-get", ex: "MGET a b" },
-                { cat: "Strings", cmd: "SETNX", syntax: "SETNX key value", info: "Set if not exists", ex: "SETNX lock \"acquired\"" },
-                { cat: "Strings", cmd: "GETSET", syntax: "GETSET key value", info: "Set and return old", ex: "GETSET counter 0" },
-                { cat: "Strings", cmd: "APPEND", syntax: "APPEND key value", info: "Append to string", ex: "APPEND log \"new line\"" },
-                { cat: "Strings", cmd: "STRLEN", syntax: "STRLEN key", info: "String length", ex: "STRLEN user:name" },
-                { cat: "Strings", cmd: "INCR", syntax: "INCR key", info: "Increment by 1", ex: "INCR counter" },
-                { cat: "Strings", cmd: "INCRBY", syntax: "INCRBY key increment", info: "Increment by N", ex: "INCRBY counter 5" },
-                { cat: "Strings", cmd: "INCRBYFLOAT", syntax: "INCRBYFLOAT key increment", info: "Float increment", ex: "INCRBYFLOAT price 0.99" },
-                { cat: "Strings", cmd: "DECR", syntax: "DECR key", info: "Decrement by 1", ex: "DECR counter" },
-                { cat: "Strings", cmd: "DECRBY", syntax: "DECRBY key decrement", info: "Decrement by N", ex: "DECRBY counter 3" },
-                { cat: "Strings", cmd: "MSETNX", syntax: "MSETNX key value [key value ...]", info: "Multi-set if none exists", ex: "MSETNX a 1 b 2" },
+            // ==================== STRINGS ====================
+            { cat: "Strings", cmd: "SET", syntax: "SET key value [NX|XX] [EX|PX|EXAT|PXAT] [KEEPTTL]", info: "Set string value", desc: "Store string with expiration options", ex: "SET counter 0 EX 10" },
+            { cat: "Strings", cmd: "GET", syntax: "GET key", info: "Get string", desc: "Retrieve string value from key", ex: "GET counter" },
+            { cat: "Strings", cmd: "MSET", syntax: "MSET key value [key value ...]", info: "Multi-set", desc: "Set multiple key-value pairs atomically", ex: "MSET a 1 b 2" },
+            { cat: "Strings", cmd: "MGET", syntax: "MGET key [key ...]", info: "Multi-get", desc: "Retrieve multiple string values at once", ex: "MGET a b" },
+            { cat: "Strings", cmd: "SETNX", syntax: "SETNX key value", info: "Set if not exists", desc: "Set key only if it doesn't exist", ex: "SETNX lock \"acquired\"" },
+            { cat: "Strings", cmd: "GETSET", syntax: "GETSET key value", info: "Set and return old", desc: "Set new value and return old value", ex: "GETSET counter 0" },
+            { cat: "Strings", cmd: "APPEND", syntax: "APPEND key value", info: "Append to string", desc: "Append string to existing value", ex: "APPEND log \"new line\"" },
+            { cat: "Strings", cmd: "STRLEN", syntax: "STRLEN key", info: "String length", desc: "Get the length of string value", ex: "STRLEN user:name" },
+            { cat: "Strings", cmd: "INCR", syntax: "INCR key", info: "Increment by 1", desc: "Increment integer value by one", ex: "INCR counter" },
+            { cat: "Strings", cmd: "INCRBY", syntax: "INCRBY key increment", info: "Increment by N", desc: "Increment integer by specified amount", ex: "INCRBY counter 5" },
+            { cat: "Strings", cmd: "INCRBYFLOAT", syntax: "INCRBYFLOAT key increment", info: "Float increment", desc: "Increment float value by amount", ex: "INCRBYFLOAT price 0.99" },
+            { cat: "Strings", cmd: "DECR", syntax: "DECR key", info: "Decrement by 1", desc: "Decrement integer value by one", ex: "DECR counter" },
+            { cat: "Strings", cmd: "DECRBY", syntax: "DECRBY key decrement", info: "Decrement by N", desc: "Decrement integer by specified amount", ex: "DECRBY counter 3" },
+            { cat: "Strings", cmd: "MSETNX", syntax: "MSETNX key value [key value ...]", info: "Multi-set if none exists", desc: "Set multiple keys if none exist", ex: "MSETNX a 1 b 2" },
 
-                // ==================== HASHES ====================
-                { cat: "Hashes", cmd: "HSET", syntax: "HSET key field value [field value ...]", info: "Set hash fields", ex: "HSET user:2 name \"Bob\" age 30" },
-                { cat: "Hashes", cmd: "HMSET", syntax: "HMSET key field value [field value ...]", info: "Multi-set fields", ex: "HMSET user:3 name \"Charlie\" age 25" },
-                { cat: "Hashes", cmd: "HGET", syntax: "HGET key field", info: "Get hash field", ex: "HGET user:2 name" },
-                { cat: "Hashes", cmd: "HMGET", syntax: "HMGET key field [field ...]", info: "Multi-get fields", ex: "HMGET user:2 name age" },
-                { cat: "Hashes", cmd: "HGETALL", syntax: "HGETALL key", info: "Get all fields/values", ex: "HGETALL user:2" },
-                { cat: "Hashes", cmd: "HKEYS", syntax: "HKEYS key", info: "Get all field names", ex: "HKEYS user:2" },
-                { cat: "Hashes", cmd: "HVALS", syntax: "HVALS key", info: "Get all values", ex: "HVALS user:2" },
-                { cat: "Hashes", cmd: "HLEN", syntax: "HLEN key", info: "Count fields", ex: "HLEN user:2" },
-                { cat: "Hashes", cmd: "HEXISTS", syntax: "HEXISTS key field", info: "Check field exists", ex: "HEXISTS user:2 age" },
-                { cat: "Hashes", cmd: "HDEL", syntax: "HDEL key field [field ...]", info: "Delete fields", ex: "HDEL user:2 age" },
-                { cat: "Hashes", cmd: "HINCRBY", syntax: "HINCRBY key field increment", info: "Increment field", ex: "HINCRBY user:2 score 5" },
-                { cat: "Hashes", cmd: "HINCRBYFLOAT", syntax: "HINCRBYFLOAT key field increment", info: "Float increment field", ex: "HINCRBYFLOAT user:2 balance 10.50" },
-                { cat: "Hashes", cmd: "HRANDFIELD", syntax: "HRANDFIELD key [count] [WITHVALUES]", info: "Random fields", ex: "HRANDFIELD user:2 2 WITHVALUES" },
+            // ==================== HASHES ====================
+            { cat: "Hashes", cmd: "HSET", syntax: "HSET key field value [field value ...]", info: "Set hash fields", desc: "Set hash fields with multiple values", ex: "HSET user:2 name \"Bob\" age 30" },
+            { cat: "Hashes", cmd: "HMSET", syntax: "HMSET key field value [field value ...]", info: "Multi-set fields", desc: "Set multiple fields in hash", ex: "HMSET user:3 name \"Charlie\" age 25" },
+            { cat: "Hashes", cmd: "HGET", syntax: "HGET key field", info: "Get hash field", desc: "Get value of specific hash field", ex: "HGET user:2 name" },
+            { cat: "Hashes", cmd: "HMGET", syntax: "HMGET key field [field ...]", info: "Multi-get fields", desc: "Get values of multiple hash fields", ex: "HMGET user:2 name age" },
+            { cat: "Hashes", cmd: "HGETALL", syntax: "HGETALL key", info: "Get all fields/values", desc: "Get all fields and values from hash", ex: "HGETALL user:2" },
+            { cat: "Hashes", cmd: "HKEYS", syntax: "HKEYS key", info: "Get all field names", desc: "Get all field names from hash", ex: "HKEYS user:2" },
+            { cat: "Hashes", cmd: "HVALS", syntax: "HVALS key", info: "Get all values", desc: "Get all field values from hash", ex: "HVALS user:2" },
+            { cat: "Hashes", cmd: "HLEN", syntax: "HLEN key", info: "Count fields", desc: "Count number of fields in hash", ex: "HLEN user:2" },
+            { cat: "Hashes", cmd: "HEXISTS", syntax: "HEXISTS key field", info: "Check field exists", desc: "Check if specific field exists", ex: "HEXISTS user:2 age" },
+            { cat: "Hashes", cmd: "HDEL", syntax: "HDEL key field [field ...]", info: "Delete fields", desc: "Remove one or more hash fields", ex: "HDEL user:2 age" },
+            { cat: "Hashes", cmd: "HINCRBY", syntax: "HINCRBY key field increment", info: "Increment field", desc: "Increment integer hash field", ex: "HINCRBY user:2 score 5" },
+            { cat: "Hashes", cmd: "HINCRBYFLOAT", syntax: "HINCRBYFLOAT key field increment", info: "Float increment field", desc: "Increment float hash field", ex: "HINCRBYFLOAT user:2 balance 10.50" },
+            { cat: "Hashes", cmd: "HRANDFIELD", syntax: "HRANDFIELD key [count] [WITHVALUES]", info: "Random fields", desc: "Get random fields with optional values", ex: "HRANDFIELD user:2 2 WITHVALUES" },
 
-                // ==================== LISTS ====================
-                { cat: "Lists", cmd: "LPUSH", syntax: "LPUSH key value [value ...]", info: "Prepend element(s)", ex: "LPUSH tasks \"task1\"" },
-                { cat: "Lists", cmd: "RPUSH", syntax: "RPUSH key value [value ...]", info: "Append element(s)", ex: "RPUSH tasks \"task2\"" },
-                { cat: "Lists", cmd: "LPUSHX", syntax: "LPUSHX key value", info: "Prepend if exists", ex: "LPUSHX existing-list \"new\"" },
-                { cat: "Lists", cmd: "RPUSHX", syntax: "RPUSHX key value", info: "Append if exists", ex: "RPUSHX existing-list \"new\"" },
-                { cat: "Lists", cmd: "LPOP", syntax: "LPOP key [count]", info: "Pop left", ex: "LPOP tasks" },
-                { cat: "Lists", cmd: "RPOP", syntax: "RPOP key [count]", info: "Pop right", ex: "RPOP tasks" },
-                { cat: "Lists", cmd: "LREM", syntax: "LREM key count element", info: "Remove by value", ex: "LREM tasks 2 \"old-task\"" },
-                { cat: "Lists", cmd: "LTRIM", syntax: "LTRIM key start stop", info: "Trim range", ex: "LTRIM tasks 0 99" },
-                { cat: "Lists", cmd: "LRANGE", syntax: "LRANGE key start stop", info: "Range read", ex: "LRANGE tasks 0 -1" },
-                { cat: "Lists", cmd: "LINDEX", syntax: "LINDEX key index", info: "Index read", ex: "LINDEX tasks 0" },
-                { cat: "Lists", cmd: "LLEN", syntax: "LLEN key", info: "List length", ex: "LLEN tasks" },
-                { cat: "Lists", cmd: "LSET", syntax: "LSET key index element", info: "Set index", ex: "LSET tasks 0 \"new-task\"" },
-                { cat: "Lists", cmd: "BLPOP", syntax: "BLPOP key [key ...] timeout", info: "Blocking left pop", ex: "BLPOP tasks 5" },
-                { cat: "Lists", cmd: "BRPOP", syntax: "BRPOP key [key ...] timeout", info: "Blocking right pop", ex: "BRPOP tasks 5" },
-                { cat: "Lists", cmd: "BLMOVE", syntax: "BLMOVE source dest LEFT|RIGHT LEFT|RIGHT timeout", info: "Blocking move", ex: "BLMOVE list1 list2 LEFT RIGHT 10" },
+            // ==================== LISTS ====================
+            { cat: "Lists", cmd: "LPUSH", syntax: "LPUSH key value [value ...]", info: "Prepend element(s)", desc: "Insert elements at head of list", ex: "LPUSH tasks \"task1\"" },
+            { cat: "Lists", cmd: "RPUSH", syntax: "RPUSH key value [value ...]", info: "Append element(s)", desc: "Insert elements at tail of list", ex: "RPUSH tasks \"task2\"" },
+            { cat: "Lists", cmd: "LPUSHX", syntax: "LPUSHX key value", info: "Prepend if exists", desc: "Insert at head only if list exists", ex: "LPUSHX existing-list \"new\"" },
+            { cat: "Lists", cmd: "RPUSHX", syntax: "RPUSHX key value", info: "Append if exists", desc: "Insert at tail only if list exists", ex: "RPUSHX existing-list \"new\"" },
+            { cat: "Lists", cmd: "LPOP", syntax: "LPOP key [count]", info: "Pop left", desc: "Remove and return head element(s)", ex: "LPOP tasks" },
+            { cat: "Lists", cmd: "RPOP", syntax: "RPOP key [count]", info: "Pop right", desc: "Remove and return tail element(s)", ex: "RPOP tasks" },
+            { cat: "Lists", cmd: "LREM", syntax: "LREM key count element", info: "Remove by value", desc: "Remove elements by matching value", ex: "LREM tasks 2 \"old-task\"" },
+            { cat: "Lists", cmd: "LTRIM", syntax: "LTRIM key start stop", info: "Trim range", desc: "Trim list to specific index range", ex: "LTRIM tasks 0 99" },
+            { cat: "Lists", cmd: "LRANGE", syntax: "LRANGE key start stop", info: "Range read", desc: "Get elements from start to stop", ex: "LRANGE tasks 0 -1" },
+            { cat: "Lists", cmd: "LINDEX", syntax: "LINDEX key index", info: "Index read", desc: "Get element at specific index", ex: "LINDEX tasks 0" },
+            { cat: "Lists", cmd: "LLEN", syntax: "LLEN key", info: "List length", desc: "Get number of elements in list", ex: "LLEN tasks" },
+            { cat: "Lists", cmd: "LSET", syntax: "LSET key index element", info: "Set index", desc: "Set element at specific index", ex: "LSET tasks 0 \"new-task\"" },
+            { cat: "Lists", cmd: "BLPOP", syntax: "BLPOP key [key ...] timeout", info: "Blocking left pop", desc: "Block until element available from head", ex: "BLPOP tasks 5" },
+            { cat: "Lists", cmd: "BRPOP", syntax: "BRPOP key [key ...] timeout", info: "Blocking right pop", desc: "Block until element available from tail", ex: "BRPOP tasks 5" },
+            { cat: "Lists", cmd: "BLMOVE", syntax: "BLMOVE source dest LEFT|RIGHT LEFT|RIGHT timeout", info: "Blocking move", desc: "Blocking move element between lists", ex: "BLMOVE list1 list2 LEFT RIGHT 10" },
 
-                // ==================== SETS ====================
-                { cat: "Sets", cmd: "SADD", syntax: "SADD key member [member ...]", info: "Add members", ex: "SADD tags \"redis\"" },
-                { cat: "Sets", cmd: "SREM", syntax: "SREM key member [member ...]", info: "Remove members", ex: "SREM tags \"redis\"" },
-                { cat: "Sets", cmd: "SPOP", syntax: "SPOP key [count]", info: "Pop random members", ex: "SPOP tags 1" },
-                { cat: "Sets", cmd: "SMEMBERS", syntax: "SMEMBERS key", info: "All members", ex: "SMEMBERS tags" },
-                { cat: "Sets", cmd: "SISMEMBER", syntax: "SISMEMBER key member", info: "Check member", ex: "SISMEMBER tags \"redis\"" },
-                { cat: "Sets", cmd: "SMISMEMBER", syntax: "SMISMEMBER key member [member ...]", info: "Check many", ex: "SMISMEMBER tags \"redis\" \"node\"" },
-                { cat: "Sets", cmd: "SCARD", syntax: "SCARD key", info: "Member count", ex: "SCARD tags" },
-                { cat: "Sets", cmd: "SRANDMEMBER", syntax: "SRANDMEMBER key [count]", info: "Random members", ex: "SRANDMEMBER tags 2" },
-                { cat: "Sets", cmd: "SINTER", syntax: "SINTER key [key ...]", info: "Intersection", ex: "SINTER setA setB" },
-                { cat: "Sets", cmd: "SINTERSTORE", syntax: "SINTERSTORE dest key [key ...]", info: "Store intersection", ex: "SINTERSTORE common setA setB" },
-                { cat: "Sets", cmd: "SUNION", syntax: "SUNION key [key ...]", info: "Union", ex: "SUNION setA setB" },
-                { cat: "Sets", cmd: "SUNIONSTORE", syntax: "SUNIONSTORE dest key [key ...]", info: "Store union", ex: "SUNIONSTORE all setA setB" },
-                { cat: "Sets", cmd: "SDIFF", syntax: "SDIFF key [key ...]", info: "Difference", ex: "SDIFF setA setB" },
-                { cat: "Sets", cmd: "SDIFFSTORE", syntax: "SDIFFSTORE dest key [key ...]", info: "Store difference", ex: "SDIFFSTORE diff setA setB" },
-                { cat: "Sets", cmd: "SMOVE", syntax: "SMOVE source dest member", info: "Move member", ex: "SMOVE setA setB \"item\"" },
+            // ==================== SETS ====================
+            { cat: "Sets", cmd: "SADD", syntax: "SADD key member [member ...]", info: "Add members", desc: "Add members to a set", ex: "SADD tags \"redis\"" },
+            { cat: "Sets", cmd: "SREM", syntax: "SREM key member [member ...]", info: "Remove members", desc: "Remove members from a set", ex: "SREM tags \"redis\"" },
+            { cat: "Sets", cmd: "SPOP", syntax: "SPOP key [count]", info: "Pop random members", desc: "Remove and return random members", ex: "SPOP tags 1" },
+            { cat: "Sets", cmd: "SMEMBERS", syntax: "SMEMBERS key", info: "All members", desc: "Get all members of the set", ex: "SMEMBERS tags" },
+            { cat: "Sets", cmd: "SISMEMBER", syntax: "SISMEMBER key member", info: "Check member", desc: "Check if member exists in set", ex: "SISMEMBER tags \"redis\"" },
+            { cat: "Sets", cmd: "SMISMEMBER", syntax: "SMISMEMBER key member [member ...]", info: "Check many", desc: "Check multiple members in set", ex: "SMISMEMBER tags \"redis\" \"node\"" },
+            { cat: "Sets", cmd: "SCARD", syntax: "SCARD key", info: "Member count", desc: "Get number of members in set", ex: "SCARD tags" },
+            { cat: "Sets", cmd: "SRANDMEMBER", syntax: "SRANDMEMBER key [count]", info: "Random members", desc: "Get random member(s) without removal", ex: "SRANDMEMBER tags 2" },
+            { cat: "Sets", cmd: "SINTER", syntax: "SINTER key [key ...]", info: "Intersection", desc: "Intersection of multiple sets", ex: "SINTER setA setB" },
+            { cat: "Sets", cmd: "SINTERSTORE", syntax: "SINTERSTORE dest key [key ...]", info: "Store intersection", desc: "Store set intersection to destination", ex: "SINTERSTORE common setA setB" },
+            { cat: "Sets", cmd: "SUNION", syntax: "SUNION key [key ...]", info: "Union", desc: "Union of multiple sets", ex: "SUNION setA setB" },
+            { cat: "Sets", cmd: "SUNIONSTORE", syntax: "SUNIONSTORE dest key [key ...]", info: "Store union", desc: "Store set union to destination", ex: "SUNIONSTORE all setA setB" },
+            { cat: "Sets", cmd: "SDIFF", syntax: "SDIFF key [key ...]", info: "Difference", desc: "Difference of first set minus others", ex: "SDIFF setA setB" },
+            { cat: "Sets", cmd: "SDIFFSTORE", syntax: "SDIFFSTORE dest key [key ...]", info: "Store difference", desc: "Store set difference to destination", ex: "SDIFFSTORE diff setA setB" },
+            { cat: "Sets", cmd: "SMOVE", syntax: "SMOVE source dest member", info: "Move member", desc: "Move member from one set to another", ex: "SMOVE setA setB \"item\"" },
 
-                // ==================== SORTED SETS ====================
-                { cat: "Sorted Sets", cmd: "ZADD", syntax: "ZADD key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]", info: "Add/update scored members", ex: "ZADD leaderboard 100 \"alice\"" },
-                { cat: "Sorted Sets", cmd: "ZINCRBY", syntax: "ZINCRBY key increment member", info: "Increment score", ex: "ZINCRBY leaderboard 5 \"alice\"" },
-                { cat: "Sorted Sets", cmd: "ZRANGE", syntax: "ZRANGE key start stop [WITHSCORES]", info: "By rank ascending", ex: "ZRANGE leaderboard 0 -1 WITHSCORES" },
-                { cat: "Sorted Sets", cmd: "ZREVRANGE", syntax: "ZREVRANGE key start stop [WITHSCORES]", info: "By rank descending", ex: "ZREVRANGE leaderboard 0 9" },
-                { cat: "Sorted Sets", cmd: "ZRANK", syntax: "ZRANK key member", info: "Rank ascending", ex: "ZRANK leaderboard \"alice\"" },
-                { cat: "Sorted Sets", cmd: "ZREVRANK", syntax: "ZREVRANK key member", info: "Rank descending", ex: "ZREVRANK leaderboard \"alice\"" },
-                { cat: "Sorted Sets", cmd: "ZRANGEBYSCORE", syntax: "ZRANGEBYSCORE key min max [WITHSCORES]", info: "Range by score", ex: "ZRANGEBYSCORE leaderboard 50 100" },
-                { cat: "Sorted Sets", cmd: "ZREVRANGEBYSCORE", syntax: "ZREVRANGEBYSCORE key max min [WITHSCORES]", info: "Reverse range by score", ex: "ZREVRANGEBYSCORE leaderboard 100 50" },
-                { cat: "Sorted Sets", cmd: "ZCOUNT", syntax: "ZCOUNT key min max", info: "Count by score range", ex: "ZCOUNT leaderboard 50 100" },
-                { cat: "Sorted Sets", cmd: "ZREM", syntax: "ZREM key member [member ...]", info: "Remove members", ex: "ZREM leaderboard \"alice\"" },
-                { cat: "Sorted Sets", cmd: "ZREMRANGEBYRANK", syntax: "ZREMRANGEBYRANK key start stop", info: "Remove by rank range", ex: "ZREMRANGEBYRANK leaderboard 0 9" },
-                { cat: "Sorted Sets", cmd: "ZREMRANGEBYSCORE", syntax: "ZREMRANGEBYSCORE key min max", info: "Remove by score range", ex: "ZREMRANGEBYSCORE leaderboard 0 10" },
-                { cat: "Sorted Sets", cmd: "ZSCORE", syntax: "ZSCORE key member", info: "Score of member", ex: "ZSCORE leaderboard \"alice\"" },
-                { cat: "Sorted Sets", cmd: "ZCARD", syntax: "ZCARD key", info: "Count members", ex: "ZCARD leaderboard" },
+            // ==================== SORTED SETS ====================
+            { cat: "Sorted Sets", cmd: "ZADD", syntax: "ZADD key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]", info: "Add/update scored members", desc: "Add or update sorted set members", ex: "ZADD leaderboard 100 \"alice\"" },
+            { cat: "Sorted Sets", cmd: "ZINCRBY", syntax: "ZINCRBY key increment member", info: "Increment score", desc: "Increment member score by amount", ex: "ZINCRBY leaderboard 5 \"alice\"" },
+            { cat: "Sorted Sets", cmd: "ZRANGE", syntax: "ZRANGE key start stop [WITHSCORES]", info: "By rank ascending", desc: "Get members by rank ascending order", ex: "ZRANGE leaderboard 0 -1 WITHSCORES" },
+            { cat: "Sorted Sets", cmd: "ZREVRANGE", syntax: "ZREVRANGE key start stop [WITHSCORES]", info: "By rank descending", desc: "Get members by rank descending order", ex: "ZREVRANGE leaderboard 0 9" },
+            { cat: "Sorted Sets", cmd: "ZRANK", syntax: "ZRANK key member", info: "Rank ascending", desc: "Get ascending rank of member", ex: "ZRANK leaderboard \"alice\"" },
+            { cat: "Sorted Sets", cmd: "ZREVRANK", syntax: "ZREVRANK key member", info: "Rank descending", desc: "Get descending rank of member", ex: "ZREVRANK leaderboard \"alice\"" },
+            { cat: "Sorted Sets", cmd: "ZRANGEBYSCORE", syntax: "ZRANGEBYSCORE key min max [WITHSCORES]", info: "Range by score", desc: "Get members by score range", ex: "ZRANGEBYSCORE leaderboard 50 100" },
+            { cat: "Sorted Sets", cmd: "ZREVRANGEBYSCORE", syntax: "ZREVRANGEBYSCORE key max min [WITHSCORES]", info: "Reverse range by score", desc: "Get members by score range descending", ex: "ZREVRANGEBYSCORE leaderboard 100 50" },
+            { cat: "Sorted Sets", cmd: "ZCOUNT", syntax: "ZCOUNT key min max", info: "Count by score range", desc: "Count members within score range", ex: "ZCOUNT leaderboard 50 100" },
+            { cat: "Sorted Sets", cmd: "ZREM", syntax: "ZREM key member [member ...]", info: "Remove members", desc: "Remove members from sorted set", ex: "ZREM leaderboard \"alice\"" },
+            { cat: "Sorted Sets", cmd: "ZREMRANGEBYRANK", syntax: "ZREMRANGEBYRANK key start stop", info: "Remove by rank range", desc: "Remove members by rank range", ex: "ZREMRANGEBYRANK leaderboard 0 9" },
+            { cat: "Sorted Sets", cmd: "ZREMRANGEBYSCORE", syntax: "ZREMRANGEBYSCORE key min max", info: "Remove by score range", desc: "Remove members by score range", ex: "ZREMRANGEBYSCORE leaderboard 0 10" },
+            { cat: "Sorted Sets", cmd: "ZSCORE", syntax: "ZSCORE key member", info: "Score of member", desc: "Get score of specific member", ex: "ZSCORE leaderboard \"alice\"" },
+            { cat: "Sorted Sets", cmd: "ZCARD", syntax: "ZCARD key", info: "Count members", desc: "Get total members in sorted set", ex: "ZCARD leaderboard" },
 
-                // ==================== STREAMS ====================
-                { cat: "Streams", cmd: "XADD", syntax: "XADD key [NOMKSTREAM] [MAXLEN|MINID [=|-] threshold] ID field value [field value ...]", info: "Append entry", ex: "XADD events * type \"click\"" },
-                { cat: "Streams", cmd: "XREAD", syntax: "XREAD [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]", info: "Read entries", ex: "XREAD COUNT 10 STREAMS events 0" },
-                { cat: "Streams", cmd: "XRANGE", syntax: "XRANGE key start end [COUNT count]", info: "Range forward", ex: "XRANGE events - + COUNT 10" },
-                { cat: "Streams", cmd: "XREVRANGE", syntax: "XREVRANGE key end start [COUNT count]", info: "Range reverse", ex: "XREVRANGE events + - COUNT 10" },
-                { cat: "Streams", cmd: "XLEN", syntax: "XLEN key", info: "Entry count", ex: "XLEN events" },
-                { cat: "Streams", cmd: "XINFO", syntax: "XINFO [CONSUMERS key group] [GROUPS key] [STREAM key] [HELP]", info: "Stream info", ex: "XINFO STREAM events" },
-                { cat: "Streams", cmd: "XDEL", syntax: "XDEL key ID [ID ...]", info: "Delete entry", ex: "XDEL events 123-0" },
-                { cat: "Streams", cmd: "XTRIM", syntax: "XTRIM key MAXLEN|MINID [=|-] threshold [LIMIT count]", info: "Trim stream", ex: "XTRIM events MAXLEN 1000" },
-                { cat: "Streams", cmd: "XGROUP", syntax: "XGROUP [CREATE key group ID] [SETID key group ID] [DESTROY key group] [DELCONSUMER key group consumer]", info: "Consumer group management", ex: "XGROUP CREATE events workers $" },
-                { cat: "Streams", cmd: "XREADGROUP", syntax: "XREADGROUP GROUP group consumer [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]", info: "Group read", ex: "XREADGROUP GROUP workers alice COUNT 10 STREAMS events >" },
-                { cat: "Streams", cmd: "XACK", syntax: "XACK key group ID [ID ...]", info: "Acknowledge", ex: "XACK events workers 123-0" },
-                { cat: "Streams", cmd: "XPENDING", syntax: "XPENDING key group [start end count] [consumer]", info: "Pending entries", ex: "XPENDING events workers" },
-                { cat: "Streams", cmd: "XCLAIM", syntax: "XCLAIM key group consumer min-idle-time ID [ID ...] [IDLE ms] [TIME ms] [RETRYCOUNT count]", info: "Claim old entries", ex: "XCLAIM events workers alice 60000 123-0" },
-                { cat: "Streams", cmd: "XAUTOCLAIM", syntax: "XAUTOCLAIM key group consumer min-idle-time start [COUNT count] [JUSTID]", info: "Auto claim", ex: "XAUTOCLAIM events workers alice 60000 0-0 COUNT 10" },
+            // ==================== STREAMS ====================
+            { cat: "Streams", cmd: "XADD", syntax: "XADD key [NOMKSTREAM] [MAXLEN|MINID [=|-] threshold] ID field value [field value ...]", info: "Append entry", desc: "Add entry to stream with fields", ex: "XADD events * type \"click\"" },
+            { cat: "Streams", cmd: "XREAD", syntax: "XREAD [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]", info: "Read entries", desc: "Read stream entries with optional blocking", ex: "XREAD COUNT 10 STREAMS events 0" },
+            { cat: "Streams", cmd: "XRANGE", syntax: "XRANGE key start end [COUNT count]", info: "Range forward", desc: "Read stream entries in forward order", ex: "XRANGE events - + COUNT 10" },
+            { cat: "Streams", cmd: "XREVRANGE", syntax: "XREVRANGE key end start [COUNT count]", info: "Range reverse", desc: "Read stream entries in reverse order", ex: "XREVRANGE events + - COUNT 10" },
+            { cat: "Streams", cmd: "XLEN", syntax: "XLEN key", info: "Entry count", desc: "Get number of entries in stream", ex: "XLEN events" },
+            { cat: "Streams", cmd: "XINFO", syntax: "XINFO [CONSUMERS key group] [GROUPS key] [STREAM key] [HELP]", info: "Stream info", desc: "Inspect stream structure and metadata", ex: "XINFO STREAM events" },
+            { cat: "Streams", cmd: "XDEL", syntax: "XDEL key ID [ID ...]", info: "Delete entry", desc: "Delete specific entries from stream", ex: "XDEL events 123-0" },
+            { cat: "Streams", cmd: "XTRIM", syntax: "XTRIM key MAXLEN|MINID [=|-] threshold [LIMIT count]", info: "Trim stream", desc: "Trim stream to maximum length", ex: "XTRIM events MAXLEN 1000" },
+            { cat: "Streams", cmd: "XGROUP", syntax: "XGROUP [CREATE key group ID] [SETID key group ID] [DESTROY key group] [DELCONSUMER key group consumer]", info: "Consumer group management", desc: "Create or manage consumer groups", ex: "XGROUP CREATE events workers $" },
+            { cat: "Streams", cmd: "XREADGROUP", syntax: "XREADGROUP GROUP group consumer [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]", info: "Group read", desc: "Read stream with consumer group", ex: "XREADGROUP GROUP workers alice COUNT 10 STREAMS events >" },
+            { cat: "Streams", cmd: "XACK", syntax: "XACK key group ID [ID ...]", info: "Acknowledge", desc: "Acknowledge stream processing of entries", ex: "XACK events workers 123-0" },
+            { cat: "Streams", cmd: "XPENDING", syntax: "XPENDING key group [start end count] [consumer]", info: "Pending entries", desc: "Get pending entries in consumer group", ex: "XPENDING events workers" },
+            { cat: "Streams", cmd: "XCLAIM", syntax: "XCLAIM key group consumer min-idle-time ID [ID ...] [IDLE ms] [TIME ms] [RETRYCOUNT count]", info: "Claim old entries", desc: "Claim pending entries from another consumer", ex: "XCLAIM events workers alice 60000 123-0" },
+            { cat: "Streams", cmd: "XAUTOCLAIM", syntax: "XAUTOCLAIM key group consumer min-idle-time start [COUNT count] [JUSTID]", info: "Auto claim", desc: "Auto-claim pending stream entries", ex: "XAUTOCLAIM events workers alice 60000 0-0 COUNT 10" },
 
-                // ==================== PUB/SUB ====================
-                { cat: "Pub/Sub", cmd: "PUBLISH", syntax: "PUBLISH channel message", info: "Publish message", ex: "PUBLISH alerts \"disk full\"" },
-                { cat: "Pub/Sub", cmd: "SUBSCRIBE", syntax: "SUBSCRIBE channel [channel ...]", info: "Subscribe to channels", ex: "SUBSCRIBE alerts" },
-                { cat: "Pub/Sub", cmd: "UNSUBSCRIBE", syntax: "UNSUBSCRIBE [channel ...]", info: "Unsubscribe from channels", ex: "UNSUBSCRIBE alerts" },
-                { cat: "Pub/Sub", cmd: "PSUBSCRIBE", syntax: "PSUBSCRIBE pattern [pattern ...]", info: "Pattern subscribe", ex: "PSUBSCRIBE news.*" },
-                { cat: "Pub/Sub", cmd: "PUNSUBSCRIBE", syntax: "PUNSUBSCRIBE [pattern ...]", info: "Pattern unsubscribe", ex: "PUNSUBSCRIBE news.*" },
-                { cat: "Pub/Sub", cmd: "PUBSUB", syntax: "PUBSUB subcommand [arg [arg ...]]", info: "Inspect pub/sub", ex: "PUBSUB CHANNELS" },
+            // ==================== PUB/SUB ====================
+            { cat: "Pub/Sub", cmd: "PUBLISH", syntax: "PUBLISH channel message", info: "Publish message", desc: "Send message to a channel", ex: "PUBLISH alerts \"disk full\"" },
+            { cat: "Pub/Sub", cmd: "SUBSCRIBE", syntax: "SUBSCRIBE channel [channel ...]", info: "Subscribe to channels", desc: "Subscribe to one or more channels", ex: "SUBSCRIBE alerts" },
+            { cat: "Pub/Sub", cmd: "UNSUBSCRIBE", syntax: "UNSUBSCRIBE [channel ...]", info: "Unsubscribe from channels", desc: "Unsubscribe from one or more channels", ex: "UNSUBSCRIBE alerts" },
+            { cat: "Pub/Sub", cmd: "PSUBSCRIBE", syntax: "PSUBSCRIBE pattern [pattern ...]", info: "Pattern subscribe", desc: "Subscribe using glob pattern", ex: "PSUBSCRIBE news.*" },
+            { cat: "Pub/Sub", cmd: "PUNSUBSCRIBE", syntax: "PUNSUBSCRIBE [pattern ...]", info: "Pattern unsubscribe", desc: "Unsubscribe using glob pattern", ex: "PUNSUBSCRIBE news.*" },
+            { cat: "Pub/Sub", cmd: "PUBSUB", syntax: "PUBSUB subcommand [arg [arg ...]]", info: "Inspect pub/sub", desc: "Inspect pub/sub system status", ex: "PUBSUB CHANNELS" },
 
-                // ==================== TRANSACTIONS ====================
-                { cat: "Transactions", cmd: "MULTI", syntax: "MULTI", info: "Start transaction", ex: "MULTI" },
-                { cat: "Transactions", cmd: "EXEC", syntax: "EXEC", info: "Execute queued commands", ex: "EXEC" },
-                { cat: "Transactions", cmd: "DISCARD", syntax: "DISCARD", info: "Cancel transaction", ex: "DISCARD" },
-                { cat: "Transactions", cmd: "WATCH", syntax: "WATCH key [key ...]", info: "Watch key for optimistic lock", ex: "WATCH counter" },
-                { cat: "Transactions", cmd: "UNWATCH", syntax: "UNWATCH", info: "Unwatch all keys", ex: "UNWATCH" },
+            // ==================== TRANSACTIONS ====================
+            { cat: "Transactions", cmd: "MULTI", syntax: "MULTI", info: "Start transaction", desc: "Start transaction command queue", ex: "MULTI" },
+            { cat: "Transactions", cmd: "EXEC", syntax: "EXEC", info: "Execute queued commands", desc: "Execute transaction and commit changes", ex: "EXEC" },
+            { cat: "Transactions", cmd: "DISCARD", syntax: "DISCARD", info: "Cancel transaction", desc: "Cancel and flush transaction queue", ex: "DISCARD" },
+            { cat: "Transactions", cmd: "WATCH", syntax: "WATCH key [key ...]", info: "Watch key for optimistic lock", desc: "Watch keys for optimistic locking", ex: "WATCH counter" },
+            { cat: "Transactions", cmd: "UNWATCH", syntax: "UNWATCH", info: "Unwatch all keys", desc: "Unwatch all watched keys", ex: "UNWATCH" },
 
-                // ==================== LUA SCRIPTS ====================
-                { cat: "Lua / Functions", cmd: "EVAL", syntax: "EVAL script numkeys key [key ...] arg [arg ...]", info: "Run Lua script", ex: "EVAL \"return redis.call('GET',KEYS[1])\" 1 mykey" },
-                { cat: "Lua / Functions", cmd: "EVALSHA", syntax: "EVALSHA sha1 numkeys key [key ...] arg [arg ...]", info: "Run cached script", ex: "EVALSHA 123abc 0" },
-                { cat: "Lua / Functions", cmd: "SCRIPT LOAD", syntax: "SCRIPT LOAD script", info: "Load script to cache", ex: "SCRIPT LOAD \"return 1\"" },
-                { cat: "Lua / Functions", cmd: "SCRIPT EXISTS", syntax: "SCRIPT EXISTS sha1 [sha1 ...]", info: "Check script exists", ex: "SCRIPT EXISTS 123abc" },
-                { cat: "Lua / Functions", cmd: "SCRIPT FLUSH", syntax: "SCRIPT FLUSH [ASYNC|SYNC]", info: "Flush script cache", ex: "SCRIPT FLUSH" },
-                { cat: "Lua / Functions", cmd: "SCRIPT KILL", syntax: "SCRIPT KILL", info: "Kill running script", ex: "SCRIPT KILL" },
-                { cat: "Lua / Functions", cmd: "FUNCTION LOAD", syntax: "FUNCTION LOAD [REPLACE] function-code", info: "Load Redis function", ex: "FUNCTION LOAD \"#!lua name=mylib\\nredis.register_function('myfunc', function() return 'ok' end)\"" },
-                { cat: "Lua / Functions", cmd: "FUNCTION LIST", syntax: "FUNCTION LIST [LIBRARYNAME lib] [WITHCODE]", info: "List functions", ex: "FUNCTION LIST" },
-                { cat: "Lua / Functions", cmd: "FUNCTION DELETE", syntax: "FUNCTION DELETE library", info: "Delete library", ex: "FUNCTION DELETE mylib" },
-                { cat: "Lua / Functions", cmd: "FCALL", syntax: "FCALL function numkeys key [key ...] arg [arg ...]", info: "Call function", ex: "FCALL myfunc 0" },
-                { cat: "Lua / Functions", cmd: "FUNCTION FLUSH", syntax: "FUNCTION FLUSH [ASYNC|SYNC]", info: "Flush functions", ex: "FUNCTION FLUSH" },
+            // ==================== LUA SCRIPTS ====================
+            { cat: "Lua / Functions", cmd: "EVAL", syntax: "EVAL script numkeys key [key ...] arg [arg ...]", info: "Run Lua script", desc: "Execute Lua script on server", ex: "EVAL \"return redis.call('GET',KEYS[1])\" 1 mykey" },
+            { cat: "Lua / Functions", cmd: "EVALSHA", syntax: "EVALSHA sha1 numkeys key [key ...] arg [arg ...]", info: "Run cached script", desc: "Execute cached Lua script", ex: "EVALSHA 123abc 0" },
+            { cat: "Lua / Functions", cmd: "SCRIPT LOAD", syntax: "SCRIPT LOAD script", info: "Load script to cache", desc: "Load Lua script into cache", ex: "SCRIPT LOAD \"return 1\"" },
+            { cat: "Lua / Functions", cmd: "SCRIPT EXISTS", syntax: "SCRIPT EXISTS sha1 [sha1 ...]", info: "Check script exists", desc: "Check if script exists in cache", ex: "SCRIPT EXISTS 123abc" },
+            { cat: "Lua / Functions", cmd: "SCRIPT FLUSH", syntax: "SCRIPT FLUSH [ASYNC|SYNC]", info: "Flush script cache", desc: "Clear all Lua script cache", ex: "SCRIPT FLUSH" },
+            { cat: "Lua / Functions", cmd: "SCRIPT KILL", syntax: "SCRIPT KILL", info: "Kill running script", desc: "Kill currently executing Lua script", ex: "SCRIPT KILL" },
+            { cat: "Lua / Functions", cmd: "FUNCTION LOAD", syntax: "FUNCTION LOAD [REPLACE] function-code", info: "Load Redis function", desc: "Load Redis Functions library", ex: "FUNCTION LOAD \"#!lua name=mylib\\nredis.register_function('myfunc', function() return 'ok' end)\"" },
+            { cat: "Lua / Functions", cmd: "FUNCTION LIST", syntax: "FUNCTION LIST [LIBRARYNAME lib] [WITHCODE]", info: "List functions", desc: "List loaded functions library", ex: "FUNCTION LIST" },
+            { cat: "Lua / Functions", cmd: "FUNCTION DELETE", syntax: "FUNCTION DELETE library", info: "Delete library", desc: "Delete function library", ex: "FUNCTION DELETE mylib" },
+            { cat: "Lua / Functions", cmd: "FCALL", syntax: "FCALL function numkeys key [key ...] arg [arg ...]", info: "Call function", desc: "Execute Redis Function", ex: "FCALL myfunc 0" },
+            { cat: "Lua / Functions", cmd: "FUNCTION FLUSH", syntax: "FUNCTION FLUSH [ASYNC|SYNC]", info: "Flush functions", desc: "Clear all function libraries", ex: "FUNCTION FLUSH" },
 
-                // ==================== BITMAPS ====================
-                { cat: "Bitmaps", cmd: "SETBIT", syntax: "SETBIT key offset value", info: "Set bit at offset", ex: "SETBIT active 100 1" },
-                { cat: "Bitmaps", cmd: "GETBIT", syntax: "GETBIT key offset", info: "Get bit value", ex: "GETBIT active 100" },
-                { cat: "Bitmaps", cmd: "BITCOUNT", syntax: "BITCOUNT key [start end]", info: "Count 1-bits", ex: "BITCOUNT active" },
-                { cat: "Bitmaps", cmd: "BITPOS", syntax: "BITPOS key bit [start] [end]", info: "Find first bit position", ex: "BITPOS active 1" },
-                { cat: "Bitmaps", cmd: "BITOP", syntax: "BITOP operation destkey key [key ...]", info: "Bitwise operation", ex: "BITOP AND result active1 active2" },
-                { cat: "Bitmaps", cmd: "BITFIELD", syntax: "BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]", info: "Bitfield command", ex: "BITFIELD mykey SET i8 0 100" },
-                { cat: "Bitmaps", cmd: "BITFIELD_RO", syntax: "BITFIELD_RO key [GET type offset]", info: "Read-only bitfield", ex: "BITFIELD_RO mykey GET i8 0" },
+            // ==================== BITMAPS ====================
+            { cat: "Bitmaps", cmd: "SETBIT", syntax: "SETBIT key offset value", info: "Set bit at offset", desc: "Set or clear bit at offset", ex: "SETBIT active 100 1" },
+            { cat: "Bitmaps", cmd: "GETBIT", syntax: "GETBIT key offset", info: "Get bit value", desc: "Get bit value at offset", ex: "GETBIT active 100" },
+            { cat: "Bitmaps", cmd: "BITCOUNT", syntax: "BITCOUNT key [start end]", info: "Count 1-bits", desc: "Count set bits in string", ex: "BITCOUNT active" },
+            { cat: "Bitmaps", cmd: "BITPOS", syntax: "BITPOS key bit [start] [end]", info: "Find first bit position", desc: "Find first position of bit value", ex: "BITPOS active 1" },
+            { cat: "Bitmaps", cmd: "BITOP", syntax: "BITOP operation destkey key [key ...]", info: "Bitwise operation", desc: "Perform bitwise AND/OR/XOR/NOT", ex: "BITOP AND result active1 active2" },
+            { cat: "Bitmaps", cmd: "BITFIELD", syntax: "BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]", info: "Bitfield command", desc: "Manipulate bitfields with encodings", ex: "BITFIELD mykey SET i8 0 100" },
+            { cat: "Bitmaps", cmd: "BITFIELD_RO", syntax: "BITFIELD_RO key [GET type offset]", info: "Read-only bitfield", desc: "Read-only bitfield operations", ex: "BITFIELD_RO mykey GET i8 0" },
 
-                // ==================== HYPERLOGLOG ====================
-                { cat: "HyperLogLog", cmd: "PFADD", syntax: "PFADD key element [element ...]", info: "Add elements", ex: "PFADD visitors \"ip1\"" },
-                { cat: "HyperLogLog", cmd: "PFCOUNT", syntax: "PFCOUNT key [key ...]", info: "Approx count", ex: "PFCOUNT visitors" },
-                { cat: "HyperLogLog", cmd: "PFMERGE", syntax: "PFMERGE destkey sourcekey [sourcekey ...]", info: "Merge HLLs", ex: "PFMERGE total visitors1 visitors2" },
+            // ==================== HYPERLOGLOG ====================
+            { cat: "HyperLogLog", cmd: "PFADD", syntax: "PFADD key element [element ...]", info: "Add elements", desc: "Add elements to HyperLogLog sketch", ex: "PFADD visitors \"ip1\"" },
+            { cat: "HyperLogLog", cmd: "PFCOUNT", syntax: "PFCOUNT key [key ...]", info: "Approx count", desc: "Get approximate unique count", ex: "PFCOUNT visitors" },
+            { cat: "HyperLogLog", cmd: "PFMERGE", syntax: "PFMERGE destkey sourcekey [sourcekey ...]", info: "Merge HLLs", desc: "Merge multiple HyperLogLog sketches", ex: "PFMERGE total visitors1 visitors2" },
 
-                // ==================== GEOSPATIAL ====================
-                { cat: "Geospatial", cmd: "GEOADD", syntax: "GEOADD key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]", info: "Add location", ex: "GEOADD cities 2.35 48.86 \"Paris\"" },
-                { cat: "Geospatial", cmd: "GEOSEARCH", syntax: "GEOSEARCH key [FROMMEMBER member] [FROMLONLAT lon lat] [BYRADIUS radius unit] [BYBOX width height unit] [ASC|DESC] [COUNT count] [WITHCOORD] [WITHDIST] [WITHHASH]", info: "Search by location", ex: "GEOSEARCH cities FROMLONLAT 2 48 BYRADIUS 100 km" },
-                { cat: "Geospatial", cmd: "GEOPOS", syntax: "GEOPOS key member [member ...]", info: "Get positions", ex: "GEOPOS cities \"Paris\"" },
-                { cat: "Geospatial", cmd: "GEODIST", syntax: "GEODIST key member1 member2 [unit]", info: "Distance between members", ex: "GEODIST cities \"Paris\" \"London\" km" },
-                { cat: "Geospatial", cmd: "GEOHASH", syntax: "GEOHASH key member [member ...]", info: "Geohash string", ex: "GEOHASH cities \"Paris\"" },
+            // ==================== GEOSPATIAL ====================
+            { cat: "Geospatial", cmd: "GEOADD", syntax: "GEOADD key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]", info: "Add location", desc: "Add geospatial location coordinate", ex: "GEOADD cities 2.35 48.86 \"Paris\"" },
+            { cat: "Geospatial", cmd: "GEOSEARCH", syntax: "GEOSEARCH key [FROMMEMBER member] [FROMLONLAT lon lat] [BYRADIUS radius unit] [BYBOX width height unit] [ASC|DESC] [COUNT count] [WITHCOORD] [WITHDIST] [WITHHASH]", info: "Search by location", desc: "Search geospatial locations by radius", ex: "GEOSEARCH cities FROMLONLAT 2 48 BYRADIUS 100 km" },
+            { cat: "Geospatial", cmd: "GEOPOS", syntax: "GEOPOS key member [member ...]", info: "Get positions", desc: "Get geospatial member coordinates", ex: "GEOPOS cities \"Paris\"" },
+            { cat: "Geospatial", cmd: "GEODIST", syntax: "GEODIST key member1 member2 [unit]", info: "Distance between members", desc: "Calculate distance between two members", ex: "GEODIST cities \"Paris\" \"London\" km" },
+            { cat: "Geospatial", cmd: "GEOHASH", syntax: "GEOHASH key member [member ...]", info: "Geohash string", desc: "Get geohash for member position", ex: "GEOHASH cities \"Paris\"" },
 
-                // ==================== SERVER & DATABASE ====================
-                { cat: "Server / DB", cmd: "SELECT", syntax: "SELECT index", info: "Switch DB", ex: "SELECT 1" },
-                { cat: "Server / DB", cmd: "FLUSHDB", syntax: "FLUSHDB [ASYNC|SYNC]", info: "Clear current DB", ex: "FLUSHDB" },
-                { cat: "Server / DB", cmd: "FLUSHALL", syntax: "FLUSHALL [ASYNC|SYNC]", info: "Clear all DBs", ex: "FLUSHALL" },
-                { cat: "Server / DB", cmd: "SWAPDB", syntax: "SWAPDB index1 index2", info: "Swap databases", ex: "SWAPDB 0 1" },
-                { cat: "Server / DB", cmd: "DBSIZE", syntax: "DBSIZE", info: "Key count in DB", ex: "DBSIZE" },
-                { cat: "Server / DB", cmd: "INFO keyspace", syntax: "INFO keyspace", info: "Keyspace section", ex: "INFO keyspace" },
-                { cat: "Server / DB", cmd: "TIME", syntax: "TIME", info: "Server time", ex: "TIME" },
-                { cat: "Server / DB", cmd: "COMMAND", syntax: "COMMAND", info: "List all commands", ex: "COMMAND" },
-                { cat: "Server / DB", cmd: "COMMAND COUNT", syntax: "COMMAND COUNT", info: "Total commands", ex: "COMMAND COUNT" },
-                { cat: "Server / DB", cmd: "COMMAND INFO", syntax: "COMMAND INFO command [command ...]", info: "Command details", ex: "COMMAND INFO SET GET" },
-                { cat: "Server / DB", cmd: "SHUTDOWN", syntax: "SHUTDOWN [NOSAVE|SAVE] [NOW]", info: "Stop server", ex: "SHUTDOWN" },
+            // ==================== SERVER & DATABASE ====================
+            { cat: "Server / DB", cmd: "SELECT", syntax: "SELECT index", info: "Switch DB", desc: "Switch to different database number", ex: "SELECT 1" },
+            { cat: "Server / DB", cmd: "FLUSHDB", syntax: "FLUSHDB [ASYNC|SYNC]", info: "Clear current DB", desc: "Delete all keys in current DB", ex: "FLUSHDB" },
+            { cat: "Server / DB", cmd: "FLUSHALL", syntax: "FLUSHALL [ASYNC|SYNC]", info: "Clear all DBs", desc: "Delete all keys in all databases", ex: "FLUSHALL" },
+            { cat: "Server / DB", cmd: "SWAPDB", syntax: "SWAPDB index1 index2", info: "Swap databases", desc: "Swap two database contents", ex: "SWAPDB 0 1" },
+            { cat: "Server / DB", cmd: "DBSIZE", syntax: "DBSIZE", info: "Key count in DB", desc: "Get total key count", ex: "DBSIZE" },
+            { cat: "Server / DB", cmd: "INFO keyspace", syntax: "INFO keyspace", info: "Keyspace section", desc: "View database keyspace stats", ex: "INFO keyspace" },
+            { cat: "Server / DB", cmd: "TIME", syntax: "TIME", info: "Server time", desc: "Get server's current timestamp", ex: "TIME" },
+            { cat: "Server / DB", cmd: "COMMAND", syntax: "COMMAND", info: "List all commands", desc: "List all available Redis commands", ex: "COMMAND" },
+            { cat: "Server / DB", cmd: "COMMAND COUNT", syntax: "COMMAND COUNT", info: "Total commands", desc: "Get total command count", ex: "COMMAND COUNT" },
+            { cat: "Server / DB", cmd: "COMMAND INFO", syntax: "COMMAND INFO command [command ...]", info: "Command details", desc: "Get command metadata and flags", ex: "COMMAND INFO SET GET" },
+            { cat: "Server / DB", cmd: "SHUTDOWN", syntax: "SHUTDOWN [NOSAVE|SAVE] [NOW]", info: "Stop server", desc: "Shutdown Redis server safely", ex: "SHUTDOWN" },
 
-                // ==================== CLIENT ====================
-                { cat: "Client", cmd: "CLIENT LIST", syntax: "CLIENT LIST [TYPE normal|master|replica|pubsub] [ID client-id]", info: "List connections", ex: "CLIENT LIST" },
-                { cat: "Client", cmd: "CLIENT INFO", syntax: "CLIENT INFO", info: "Current client info", ex: "CLIENT INFO" },
-                { cat: "Client", cmd: "CLIENT ID", syntax: "CLIENT ID", info: "Client ID", ex: "CLIENT ID" },
-                { cat: "Client", cmd: "CLIENT GETNAME", syntax: "CLIENT GETNAME", info: "Get client name", ex: "CLIENT GETNAME" },
-                { cat: "Client", cmd: "CLIENT SETNAME", syntax: "CLIENT SETNAME name", info: "Set client name", ex: "CLIENT SETNAME myapp" },
-                { cat: "Client", cmd: "CLIENT KILL", syntax: "CLIENT KILL [addr:port] [ID client-id] [TYPE normal|master|replica|pubsub] [USER username] [SKIPME yes/no]", info: "Kill connection", ex: "CLIENT KILL 127.0.0.1:54321" },
-                { cat: "Client", cmd: "CLIENT PAUSE", syntax: "CLIENT PAUSE timeout [WRITE|ALL]", info: "Pause clients", ex: "CLIENT PAUSE 5000 WRITE" },
-                { cat: "Client", cmd: "CLIENT UNPAUSE", syntax: "CLIENT UNPAUSE", info: "Unpause clients", ex: "CLIENT UNPAUSE" },
+            // ==================== CLIENT ====================
+            { cat: "Client", cmd: "CLIENT LIST", syntax: "CLIENT LIST [TYPE normal|master|replica|pubsub] [ID client-id]", info: "List connections", desc: "List all connected client connections", ex: "CLIENT LIST" },
+            { cat: "Client", cmd: "CLIENT INFO", syntax: "CLIENT INFO", info: "Current client info", desc: "Get current client connection info", ex: "CLIENT INFO" },
+            { cat: "Client", cmd: "CLIENT ID", syntax: "CLIENT ID", info: "Client ID", desc: "Get unique client ID", ex: "CLIENT ID" },
+            { cat: "Client", cmd: "CLIENT GETNAME", syntax: "CLIENT GETNAME", info: "Get client name", desc: "Get current client connection name", ex: "CLIENT GETNAME" },
+            { cat: "Client", cmd: "CLIENT SETNAME", syntax: "CLIENT SETNAME name", info: "Set client name", desc: "Set connection name for tracking", ex: "CLIENT SETNAME myapp" },
+            { cat: "Client", cmd: "CLIENT KILL", syntax: "CLIENT KILL [addr:port] [ID client-id] [TYPE normal|master|replica|pubsub] [USER username] [SKIPME yes/no]", info: "Kill connection", desc: "Disconnect client connection by address", ex: "CLIENT KILL 127.0.0.1:54321" },
+            { cat: "Client", cmd: "CLIENT PAUSE", syntax: "CLIENT PAUSE timeout [WRITE|ALL]", info: "Pause clients", desc: "Suspend client processing temporarily", ex: "CLIENT PAUSE 5000 WRITE" },
+            { cat: "Client", cmd: "CLIENT UNPAUSE", syntax: "CLIENT UNPAUSE", info: "Unpause clients", desc: "Resume client processing", ex: "CLIENT UNPAUSE" },
 
-                // ==================== CONFIGURATION ====================
-                { cat: "Config / Conn", cmd: "CONFIG GET", syntax: "CONFIG GET parameter [parameter ...]", info: "Read config", ex: "CONFIG GET maxmemory" },
-                { cat: "Config / Conn", cmd: "CONFIG SET", syntax: "CONFIG SET parameter value [parameter value ...]", info: "Set config", ex: "CONFIG SET maxmemory 1GB" },
-                { cat: "Config / Conn", cmd: "CONFIG RESETSTAT", syntax: "CONFIG RESETSTAT", info: "Reset stats", ex: "CONFIG RESETSTAT" },
-                { cat: "Config / Conn", cmd: "CONFIG REWRITE", syntax: "CONFIG REWRITE", info: "Write config to file", ex: "CONFIG REWRITE" },
+            // ==================== CONFIGURATION ====================
+            { cat: "Config / Conn", cmd: "CONFIG GET", syntax: "CONFIG GET parameter [parameter ...]", info: "Read config", desc: "Get Redis configuration parameters", ex: "CONFIG GET maxmemory" },
+            { cat: "Config / Conn", cmd: "CONFIG SET", syntax: "CONFIG SET parameter value [parameter value ...]", info: "Set config", desc: "Set Redis configuration parameters", ex: "CONFIG SET maxmemory 1GB" },
+            { cat: "Config / Conn", cmd: "CONFIG RESETSTAT", syntax: "CONFIG RESETSTAT", info: "Reset stats", desc: "Reset INFO command statistics", ex: "CONFIG RESETSTAT" },
+            { cat: "Config / Conn", cmd: "CONFIG REWRITE", syntax: "CONFIG REWRITE", info: "Write config to file", desc: "Persist configuration to redis.conf", ex: "CONFIG REWRITE" },
 
-                // ==================== MEMORY ====================
-                { cat: "Memory", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Key memory usage", ex: "MEMORY USAGE user:1" },
-                { cat: "Memory", cmd: "MEMORY STATS", syntax: "MEMORY STATS", info: "Memory stats", ex: "MEMORY STATS" },
-                { cat: "Memory", cmd: "MEMORY DOCTOR", syntax: "MEMORY DOCTOR", info: "Memory diagnostic", ex: "MEMORY DOCTOR" },
-                { cat: "Memory", cmd: "MEMORY MALLOC-STATS", syntax: "MEMORY MALLOC-STATS", info: "Malloc stats", ex: "MEMORY MALLOC-STATS" },
-                { cat: "Memory", cmd: "MEMORY PURGE", syntax: "MEMORY PURGE", info: "Purge memory", ex: "MEMORY PURGE" },
+            // ==================== MEMORY ====================
+            { cat: "Memory", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Key memory usage", desc: "Measure memory used by key", ex: "MEMORY USAGE user:1" },
+            { cat: "Memory", cmd: "MEMORY STATS", syntax: "MEMORY STATS", info: "Memory stats", desc: "Get detailed memory usage stats", ex: "MEMORY STATS" },
+            { cat: "Memory", cmd: "MEMORY DOCTOR", syntax: "MEMORY DOCTOR", info: "Memory diagnostic", desc: "Run memory diagnostics report", ex: "MEMORY DOCTOR" },
+            { cat: "Memory", cmd: "MEMORY MALLOC-STATS", syntax: "MEMORY MALLOC-STATS", info: "Malloc stats", desc: "Get allocator-specific memory stats", ex: "MEMORY MALLOC-STATS" },
+            { cat: "Memory", cmd: "MEMORY PURGE", syntax: "MEMORY PURGE", info: "Purge memory", desc: "Purge memory of deleted keys", ex: "MEMORY PURGE" },
 
-                // ==================== MONITORING ====================
-                { cat: "Monitor / Debug", cmd: "MONITOR", syntax: "MONITOR", info: "Watch all commands", ex: "MONITOR" },
-                { cat: "Monitor / Debug", cmd: "SLOWLOG GET", syntax: "SLOWLOG GET [n]", info: "Get slow queries", ex: "SLOWLOG GET 10" },
-                { cat: "Monitor / Debug", cmd: "SLOWLOG LEN", syntax: "SLOWLOG LEN", info: "Slow log length", ex: "SLOWLOG LEN" },
-                { cat: "Monitor / Debug", cmd: "SLOWLOG RESET", syntax: "SLOWLOG RESET", info: "Reset slow log", ex: "SLOWLOG RESET" },
-                { cat: "Monitor / Debug", cmd: "LATENCY DOCTOR", syntax: "LATENCY DOCTOR", info: "Latency report", ex: "LATENCY DOCTOR" },
-                { cat: "Monitor / Debug", cmd: "LATENCY LATEST", syntax: "LATENCY LATEST", info: "Latest latency", ex: "LATENCY LATEST" },
-                { cat: "Monitor / Debug", cmd: "LATENCY HISTORY", syntax: "LATENCY HISTORY event", info: "Latency history", ex: "LATENCY HISTORY command" },
-                { cat: "Monitor / Debug", cmd: "LATENCY GRAPH", syntax: "LATENCY GRAPH event", info: "Latency graph", ex: "LATENCY GRAPH command" },
+            // ==================== MONITORING ====================
+            { cat: "Monitor / Debug", cmd: "MONITOR", syntax: "MONITOR", info: "Watch all commands", desc: "Stream real-time Redis commands", ex: "MONITOR" },
+            { cat: "Monitor / Debug", cmd: "SLOWLOG GET", syntax: "SLOWLOG GET [n]", info: "Get slow queries", desc: "Get slow query log entries", ex: "SLOWLOG GET 10" },
+            { cat: "Monitor / Debug", cmd: "SLOWLOG LEN", syntax: "SLOWLOG LEN", info: "Slow log length", desc: "Get slow log entry count", ex: "SLOWLOG LEN" },
+            { cat: "Monitor / Debug", cmd: "SLOWLOG RESET", syntax: "SLOWLOG RESET", info: "Reset slow log", desc: "Clear slow query log", ex: "SLOWLOG RESET" },
+            { cat: "Monitor / Debug", cmd: "LATENCY DOCTOR", syntax: "LATENCY DOCTOR", info: "Latency report", desc: "Get latency analysis report", ex: "LATENCY DOCTOR" },
+            { cat: "Monitor / Debug", cmd: "LATENCY LATEST", syntax: "LATENCY LATEST", info: "Latest latency", desc: "Get latest latency events", ex: "LATENCY LATEST" },
+            { cat: "Monitor / Debug", cmd: "LATENCY HISTORY", syntax: "LATENCY HISTORY event", info: "Latency history", desc: "Get historical latency data", ex: "LATENCY HISTORY command" },
+            { cat: "Monitor / Debug", cmd: "LATENCY GRAPH", syntax: "LATENCY GRAPH event", info: "Latency graph", desc: "Visualize latency event graph", ex: "LATENCY GRAPH command" },
 
-                // ==================== PERSISTENCE ====================
-                { cat: "Persistence", cmd: "SAVE", syntax: "SAVE", info: "Blocking RDB save", ex: "SAVE" },
-                { cat: "Persistence", cmd: "BGSAVE", syntax: "BGSAVE [SCHEDULE]", info: "Background RDB save", ex: "BGSAVE" },
-                { cat: "Persistence", cmd: "LASTSAVE", syntax: "LASTSAVE", info: "Last save timestamp", ex: "LASTSAVE" },
-                { cat: "Persistence", cmd: "BGREWRITEAOF", syntax: "BGREWRITEAOF", info: "Rewrite AOF", ex: "BGREWRITEAOF" },
-                { cat: "Persistence", cmd: "CONFIG GET appendonly", syntax: "CONFIG GET appendonly", info: "Check AOF config", ex: "CONFIG GET appendonly" },
-                { cat: "Persistence", cmd: "INFO persistence", syntax: "INFO persistence", info: "Persistence stats", ex: "INFO persistence" },
+            // ==================== PERSISTENCE ====================
+            { cat: "Persistence", cmd: "SAVE", syntax: "SAVE", info: "Blocking RDB save", desc: "Synchronous RDB snapshot save", ex: "SAVE" },
+            { cat: "Persistence", cmd: "BGSAVE", syntax: "BGSAVE [SCHEDULE]", info: "Background RDB save", desc: "Background asynchronous RDB save", ex: "BGSAVE" },
+            { cat: "Persistence", cmd: "LASTSAVE", syntax: "LASTSAVE", info: "Last save timestamp", desc: "Get last RDB save timestamp", ex: "LASTSAVE" },
+            { cat: "Persistence", cmd: "BGREWRITEAOF", syntax: "BGREWRITEAOF", info: "Rewrite AOF", desc: "Background AOF file rewrite", ex: "BGREWRITEAOF" },
+            { cat: "Persistence", cmd: "CONFIG GET appendonly", syntax: "CONFIG GET appendonly", info: "Check AOF config", desc: "Check AOF persistence configuration", ex: "CONFIG GET appendonly" },
+            { cat: "Persistence", cmd: "INFO persistence", syntax: "INFO persistence", info: "Persistence stats", desc: "View persistence status stats", ex: "INFO persistence" },
 
-                // ==================== REPLICATION ====================
-                { cat: "Replication", cmd: "INFO replication", syntax: "INFO replication", info: "Replication stats", ex: "INFO replication" },
-                { cat: "Replication", cmd: "REPLICAOF", syntax: "REPLICAOF host port", info: "Become replica", ex: "REPLICAOF 192.168.1.10 6379" },
-                { cat: "Replication", cmd: "ROLE", syntax: "ROLE", info: "Role info", ex: "ROLE" },
-                { cat: "Replication", cmd: "SLAVEOF (legacy)", syntax: "SLAVEOF host port", info: "Legacy replica command", ex: "SLAVEOF 192.168.1.10 6379" },
+            // ==================== REPLICATION ====================
+            { cat: "Replication", cmd: "INFO replication", syntax: "INFO replication", info: "Replication stats", desc: "View replication status and details", ex: "INFO replication" },
+            { cat: "Replication", cmd: "REPLICAOF", syntax: "REPLICAOF host port", info: "Become replica", desc: "Configure instance as replica", ex: "REPLICAOF 192.168.1.10 6379" },
+            { cat: "Replication", cmd: "ROLE", syntax: "ROLE", info: "Role info", desc: "Get current replication role", ex: "ROLE" },
+            { cat: "Replication", cmd: "SLAVEOF (legacy)", syntax: "SLAVEOF host port", info: "Legacy replica command", desc: "Deprecated: use REPLICAOF", ex: "SLAVEOF 192.168.1.10 6379" },
 
-                // ==================== SENTINEL ====================
-                { cat: "Sentinel", cmd: "SENTINEL masters", syntax: "SENTINEL masters", info: "List master names", ex: "SENTINEL masters" },
-                { cat: "Sentinel", cmd: "SENTINEL master", syntax: "SENTINEL master <name>", info: "Master info", ex: "SENTINEL master mymaster" },
-                { cat: "Sentinel", cmd: "SENTINEL replicas", syntax: "SENTINEL replicas <name>", info: "List replicas", ex: "SENTINEL replicas mymaster" },
-                { cat: "Sentinel", cmd: "SENTINEL sentinels", syntax: "SENTINEL sentinels <name>", info: "List sentinels", ex: "SENTINEL sentinels mymaster" },
-                { cat: "Sentinel", cmd: "SENTINEL get-master-addr-by-name", syntax: "SENTINEL get-master-addr-by-name <name>", info: "Get master address", ex: "SENTINEL get-master-addr-by-name mymaster" },
-                { cat: "Sentinel", cmd: "SENTINEL failover", syntax: "SENTINEL failover <name>", info: "Force failover", ex: "SENTINEL failover mymaster" },
-                { cat: "Sentinel", cmd: "SENTINEL ckquorum", syntax: "SENTINEL ckquorum <name>", info: "Check quorum", ex: "SENTINEL ckquorum mymaster" },
+            // ==================== SENTINEL ====================
+            { cat: "Sentinel", cmd: "SENTINEL masters", syntax: "SENTINEL masters", info: "List master names", desc: "List all monitored masters", ex: "SENTINEL masters" },
+            { cat: "Sentinel", cmd: "SENTINEL master", syntax: "SENTINEL master <name>", info: "Master info", desc: "Get master instance details", ex: "SENTINEL master mymaster" },
+            { cat: "Sentinel", cmd: "SENTINEL replicas", syntax: "SENTINEL replicas <name>", info: "List replicas", desc: "List replicas of a master", ex: "SENTINEL replicas mymaster" },
+            { cat: "Sentinel", cmd: "SENTINEL sentinels", syntax: "SENTINEL sentinels <name>", info: "List sentinels", desc: "List sentinel instances", ex: "SENTINEL sentinels mymaster" },
+            { cat: "Sentinel", cmd: "SENTINEL get-master-addr-by-name", syntax: "SENTINEL get-master-addr-by-name <name>", info: "Get master address", desc: "Get current master IP and port", ex: "SENTINEL get-master-addr-by-name mymaster" },
+            { cat: "Sentinel", cmd: "SENTINEL failover", syntax: "SENTINEL failover <name>", info: "Force failover", desc: "Force master failover manually", ex: "SENTINEL failover mymaster" },
+            { cat: "Sentinel", cmd: "SENTINEL ckquorum", syntax: "SENTINEL ckquorum <name>", info: "Check quorum", desc: "Check Sentinel quorum availability", ex: "SENTINEL ckquorum mymaster" },
 
-                // ==================== CLUSTER ====================
-                { cat: "Cluster", cmd: "CLUSTER INFO", syntax: "CLUSTER INFO", info: "Cluster state", ex: "CLUSTER INFO" },
-                { cat: "Cluster", cmd: "CLUSTER NODES", syntax: "CLUSTER NODES", info: "Node list", ex: "CLUSTER NODES" },
-                { cat: "Cluster", cmd: "CLUSTER SLOTS", syntax: "CLUSTER SLOTS", info: "Slot mapping", ex: "CLUSTER SLOTS" },
-                { cat: "Cluster", cmd: "CLUSTER SHARDS", syntax: "CLUSTER SHARDS", info: "Shard mapping", ex: "CLUSTER SHARDS" },
-                { cat: "Cluster", cmd: "CLUSTER MEET", syntax: "CLUSTER MEET ip port", info: "Join cluster", ex: "CLUSTER MEET 192.168.1.10 6379" },
-                { cat: "Cluster", cmd: "CLUSTER FORGET", syntax: "CLUSTER FORGET node-id", info: "Forget node", ex: "CLUSTER FORGET abc123" },
-                { cat: "Cluster", cmd: "CLUSTER REPLICATE", syntax: "CLUSTER REPLICATE node-id", info: "Replicate master", ex: "CLUSTER REPLICATE def456" },
-                { cat: "Cluster", cmd: "CLUSTER FAILOVER", syntax: "CLUSTER FAILOVER [FORCE|TAKEOVER]", info: "Trigger failover", ex: "CLUSTER FAILOVER" },
-                { cat: "Cluster", cmd: "CLUSTER ADDSLOTS", syntax: "CLUSTER ADDSLOTS slot [slot ...]", info: "Assign slots", ex: "CLUSTER ADDSLOTS 0 1 2" },
-                { cat: "Cluster", cmd: "CLUSTER DELSLOTS", syntax: "CLUSTER DELSLOTS slot [slot ...]", info: "Remove slots", ex: "CLUSTER DELSLOTS 0 1 2" },
-                { cat: "Cluster", cmd: "CLUSTER ADDSLOTSRANGE", syntax: "CLUSTER ADDSLOTSRANGE start-slot end-slot [start-slot end-slot ...]", info: "Assign range", ex: "CLUSTER ADDSLOTSRANGE 0 100" },
-                { cat: "Cluster", cmd: "CLUSTER DELSLOTSRANGE", syntax: "CLUSTER DELSLOTSRANGE start-slot end-slot [start-slot end-slot ...]", info: "Remove range", ex: "CLUSTER DELSLOTSRANGE 0 100" },
-                { cat: "Cluster", cmd: "CLUSTER SETSLOT", syntax: "CLUSTER SETSLOT slot IMPORTING|MIGRATING|STABLE|NODE [node-id]", info: "Manage slot state", ex: "CLUSTER SETSLOT 0 NODE abc123" },
-                { cat: "Cluster", cmd: "CLUSTER SAVECONFIG", syntax: "CLUSTER SAVECONFIG", info: "Save cluster config", ex: "CLUSTER SAVECONFIG" },
-                { cat: "Cluster", cmd: "CLUSTER RESET", syntax: "CLUSTER RESET [HARD|SOFT]", info: "Reset cluster", ex: "CLUSTER RESET SOFT" },
+            // ==================== CLUSTER ====================
+            { cat: "Cluster", cmd: "CLUSTER INFO", syntax: "CLUSTER INFO", info: "Cluster state", desc: "Get cluster state information", ex: "CLUSTER INFO" },
+            { cat: "Cluster", cmd: "CLUSTER NODES", syntax: "CLUSTER NODES", info: "Node list", desc: "List all cluster nodes", ex: "CLUSTER NODES" },
+            { cat: "Cluster", cmd: "CLUSTER SLOTS", syntax: "CLUSTER SLOTS", info: "Slot mapping", desc: "Get slot-to-node mapping", ex: "CLUSTER SLOTS" },
+            { cat: "Cluster", cmd: "CLUSTER SHARDS", syntax: "CLUSTER SHARDS", info: "Shard mapping", desc: "Get cluster shard information", ex: "CLUSTER SHARDS" },
+            { cat: "Cluster", cmd: "CLUSTER MEET", syntax: "CLUSTER MEET ip port", info: "Join cluster", desc: "Add node to cluster", ex: "CLUSTER MEET 192.168.1.10 6379" },
+            { cat: "Cluster", cmd: "CLUSTER FORGET", syntax: "CLUSTER FORGET node-id", info: "Forget node", desc: "Remove node from cluster", ex: "CLUSTER FORGET abc123" },
+            { cat: "Cluster", cmd: "CLUSTER REPLICATE", syntax: "CLUSTER REPLICATE node-id", info: "Replicate master", desc: "Make node replica of master", ex: "CLUSTER REPLICATE def456" },
+            { cat: "Cluster", cmd: "CLUSTER FAILOVER", syntax: "CLUSTER FAILOVER [FORCE|TAKEOVER]", info: "Trigger failover", desc: "Initiate manual failover", ex: "CLUSTER FAILOVER" },
+            { cat: "Cluster", cmd: "CLUSTER ADDSLOTS", syntax: "CLUSTER ADDSLOTS slot [slot ...]", info: "Assign slots", desc: "Assign hash slots to node", ex: "CLUSTER ADDSLOTS 0 1 2" },
+            { cat: "Cluster", cmd: "CLUSTER DELSLOTS", syntax: "CLUSTER DELSLOTS slot [slot ...]", info: "Remove slots", desc: "Remove hash slots from node", ex: "CLUSTER DELSLOTS 0 1 2" },
+            { cat: "Cluster", cmd: "CLUSTER ADDSLOTSRANGE", syntax: "CLUSTER ADDSLOTSRANGE start-slot end-slot [start-slot end-slot ...]", info: "Assign range", desc: "Assign range of hash slots", ex: "CLUSTER ADDSLOTSRANGE 0 100" },
+            { cat: "Cluster", cmd: "CLUSTER DELSLOTSRANGE", syntax: "CLUSTER DELSLOTSRANGE start-slot end-slot [start-slot end-slot ...]", info: "Remove range", desc: "Remove range of hash slots", ex: "CLUSTER DELSLOTSRANGE 0 100" },
+            { cat: "Cluster", cmd: "CLUSTER SETSLOT", syntax: "CLUSTER SETSLOT slot IMPORTING|MIGRATING|STABLE|NODE [node-id]", info: "Manage slot state", desc: "Manage slot state for migration", ex: "CLUSTER SETSLOT 0 NODE abc123" },
+            { cat: "Cluster", cmd: "CLUSTER SAVECONFIG", syntax: "CLUSTER SAVECONFIG", info: "Save cluster config", desc: "Persist cluster configuration", ex: "CLUSTER SAVECONFIG" },
+            { cat: "Cluster", cmd: "CLUSTER RESET", syntax: "CLUSTER RESET [HARD|SOFT]", info: "Reset cluster", desc: "Reset cluster node state", ex: "CLUSTER RESET SOFT" },
 
-                // ==================== ACL / SECURITY ====================
-                { cat: "ACL / Security", cmd: "ACL LIST", syntax: "ACL LIST", info: "List users", ex: "ACL LIST" },
-                { cat: "ACL / Security", cmd: "ACL USERS", syntax: "ACL USERS", info: "List usernames", ex: "ACL USERS" },
-                { cat: "ACL / Security", cmd: "ACL GETUSER", syntax: "ACL GETUSER username", info: "Show user rules", ex: "ACL GETUSER alice" },
-                { cat: "ACL / Security", cmd: "ACL SETUSER", syntax: "ACL SETUSER username [rule [rule ...]]", info: "Create/update user", ex: "ACL SETUSER alice on >password +@all" },
-                { cat: "ACL / Security", cmd: "ACL DELUSER", syntax: "ACL DELUSER username [username ...]", info: "Delete users", ex: "ACL DELUSER alice" },
-                { cat: "ACL / Security", cmd: "ACL CAT", syntax: "ACL CAT [categoryname]", info: "List categories", ex: "ACL CAT" },
-                { cat: "ACL / Security", cmd: "ACL GENPASS", syntax: "ACL GENPASS [bits]", info: "Generate password", ex: "ACL GENPASS 256" },
-                { cat: "ACL / Security", cmd: "ACL WHOAMI", syntax: "ACL WHOAMI", info: "Current user", ex: "ACL WHOAMI" },
-                { cat: "ACL / Security", cmd: "ACL LOG", syntax: "ACL LOG [count | RESET]", info: "ACL security log", ex: "ACL LOG 10" },
-                { cat: "ACL / Security", cmd: "ACL LOAD", syntax: "ACL LOAD", info: "Load ACL config", ex: "ACL LOAD" },
-                { cat: "ACL / Security", cmd: "ACL SAVE", syntax: "ACL SAVE", info: "Save ACL config", ex: "ACL SAVE" },
-                { cat: "ACL / Security", cmd: "ACL DRYRUN", syntax: "ACL DRYRUN username command ...", info: "Test permissions", ex: "ACL DRYRUN alice SET mykey value" },
+            // ==================== ACL / SECURITY ====================
+            { cat: "ACL / Security", cmd: "ACL LIST", syntax: "ACL LIST", info: "List users", desc: "List all ACL user definitions", ex: "ACL LIST" },
+            { cat: "ACL / Security", cmd: "ACL USERS", syntax: "ACL USERS", info: "List usernames", desc: "List all registered usernames", ex: "ACL USERS" },
+            { cat: "ACL / Security", cmd: "ACL GETUSER", syntax: "ACL GETUSER username", info: "Show user rules", desc: "Get specific user's ACL rules", ex: "ACL GETUSER alice" },
+            { cat: "ACL / Security", cmd: "ACL SETUSER", syntax: "ACL SETUSER username [rule [rule ...]]", info: "Create/update user", desc: "Create or modify ACL user", ex: "ACL SETUSER alice on >password +@all" },
+            { cat: "ACL / Security", cmd: "ACL DELUSER", syntax: "ACL DELUSER username [username ...]", info: "Delete users", desc: "Delete one or more users", ex: "ACL DELUSER alice" },
+            { cat: "ACL / Security", cmd: "ACL CAT", syntax: "ACL CAT [categoryname]", info: "List categories", desc: "List ACL command categories", ex: "ACL CAT" },
+            { cat: "ACL / Security", cmd: "ACL GENPASS", syntax: "ACL GENPASS [bits]", info: "Generate password", desc: "Generate secure password hash", ex: "ACL GENPASS 256" },
+            { cat: "ACL / Security", cmd: "ACL WHOAMI", syntax: "ACL WHOAMI", info: "Current user", desc: "Get current authenticated user", ex: "ACL WHOAMI" },
+            { cat: "ACL / Security", cmd: "ACL LOG", syntax: "ACL LOG [count | RESET]", info: "ACL security log", desc: "View ACL security logs", ex: "ACL LOG 10" },
+            { cat: "ACL / Security", cmd: "ACL LOAD", syntax: "ACL LOAD", info: "Load ACL config", desc: "Reload ACL config from file", ex: "ACL LOAD" },
+            { cat: "ACL / Security", cmd: "ACL SAVE", syntax: "ACL SAVE", info: "Save ACL config", desc: "Save ACL config to file", ex: "ACL SAVE" },
+            { cat: "ACL / Security", cmd: "ACL DRYRUN", syntax: "ACL DRYRUN username command ...", info: "Test permissions", desc: "Test ACL permissions without executing", ex: "ACL DRYRUN alice SET mykey value" },
 
-                // ==================== BACKEND PATTERNS ====================
-                { cat: "Patterns", cmd: "Cache", syntax: "SET + EXPIRE", info: "Cache pattern", ex: "SET page:1 \"<html>\" EX 60" },
-                { cat: "Patterns", cmd: "Counter", syntax: "INCR / DECR", info: "Counter pattern", ex: "INCR visits" },
-                { cat: "Patterns", cmd: "Rate Limiter", syntax: "INCR + EXPIRE", info: "Fixed-window rate limit", ex: "INCR rate:ip; EXPIRE rate:ip 60" },
-                { cat: "Patterns", cmd: "Distributed Lock", syntax: "SET NX EX", info: "Lock pattern", ex: "SET lock:key \"uuid\" NX EX 10" },
-                { cat: "Patterns", cmd: "Queue", syntax: "LPUSH + RPOP", info: "FIFO queue pattern", ex: "LPUSH queue \"job1\"; RPOP queue" },
-                { cat: "Patterns", cmd: "Leaderboard", syntax: "ZADD + ZRANGE", info: "Leaderboard pattern", ex: "ZADD leaderboard 100 \"alice\"; ZRANGE leaderboard 0 -1" },
-                { cat: "Patterns", cmd: "User Profile", syntax: "HSET + HGETALL", info: "Profile object", ex: "HSET user:1 name \"Bob\" age 30; HGETALL user:1" },
-                { cat: "Patterns", cmd: "Unique Membership", syntax: "SADD + SISMEMBER", info: "Set membership", ex: "SADD tags \"redis\"; SISMEMBER tags \"redis\"" },
-                { cat: "Patterns", cmd: "Event Processing", syntax: "XADD + XREADGROUP", info: "Event/message queue", ex: "XADD events * type \"click\"; XREADGROUP GROUP workers alice COUNT 10 STREAMS events >" },
+            // ==================== BACKEND PATTERNS ====================
+            { cat: "Patterns", cmd: "Cache", syntax: "SET + EXPIRE", info: "Cache pattern", desc: "Cache data with automatic expiration", ex: "SET page:1 \"<html>\" EX 60" },
+            { cat: "Patterns", cmd: "Counter", syntax: "INCR / DECR", info: "Counter pattern", desc: "Track counts with atomic operations", ex: "INCR visits" },
+            { cat: "Patterns", cmd: "Rate Limiter", syntax: "INCR + EXPIRE", info: "Fixed-window rate limit", desc: "Rate limit with time window", ex: "INCR rate:ip; EXPIRE rate:ip 60" },
+            { cat: "Patterns", cmd: "Distributed Lock", syntax: "SET NX EX", info: "Lock pattern", desc: "Distributed lock with TTL", ex: "SET lock:key \"uuid\" NX EX 10" },
+            { cat: "Patterns", cmd: "Queue", syntax: "LPUSH + RPOP", info: "FIFO queue pattern", desc: "Simple FIFO queue implementation", ex: "LPUSH queue \"job1\"; RPOP queue" },
+            { cat: "Patterns", cmd: "Leaderboard", syntax: "ZADD + ZRANGE", info: "Leaderboard pattern", desc: "Sorted leaderboard ranking", ex: "ZADD leaderboard 100 \"alice\"; ZRANGE leaderboard 0 -1" },
+            { cat: "Patterns", cmd: "User Profile", syntax: "HSET + HGETALL", info: "Profile object", desc: "Store user profile as hash", ex: "HSET user:1 name \"Bob\" age 30; HGETALL user:1" },
+            { cat: "Patterns", cmd: "Unique Membership", syntax: "SADD + SISMEMBER", info: "Set membership", desc: "Track unique membership status", ex: "SADD tags \"redis\"; SISMEMBER tags \"redis\"" },
+            { cat: "Patterns", cmd: "Event Processing", syntax: "XADD + XREADGROUP", info: "Event/message queue", desc: "Event streaming with consumer groups", ex: "XADD events * type \"click\"; XREADGROUP GROUP workers alice COUNT 10 STREAMS events >" },
 
-                // ==================== REFERENCE ====================
-                { cat: "Reference", cmd: "Create / Write", syntax: "SET, HSET, LPUSH, RPUSH, SADD, ZADD, XADD", info: "Create/write operations", ex: "SET key value" },
-                { cat: "Reference", cmd: "Read", syntax: "GET, HGET, HGETALL, LRANGE, SMEMBERS, ZRANGE, XRANGE", info: "Read operations", ex: "GET key" },
-                { cat: "Reference", cmd: "Update", syntax: "SET, HSET, HINCRBY, INCR, ZINCRBY, LSET", info: "Update operations", ex: "SET key newvalue" },
-                { cat: "Reference", cmd: "Delete", syntax: "DEL, UNLINK, HDEL, LPOP, RPOP, SREM, ZREM, XDEL", info: "Delete operations", ex: "DEL key" },
-                { cat: "Reference", cmd: "Search", syntax: "KEYS, SCAN, HSCAN, SSCAN, ZSCAN", info: "Search operations", ex: "KEYS pattern" },
-                { cat: "Reference", cmd: "Expiration", syntax: "EXPIRE, PEXPIRE, TTL, PTTL, PERSIST", info: "Expiration operations", ex: "EXPIRE key 60" },
-                { cat: "Reference", cmd: "Atomicity", syntax: "MULTI, EXEC, WATCH, DISCARD, SET NX, INCR", info: "Atomic operations", ex: "MULTI ... EXEC" },
-                { cat: "Reference", cmd: "Performance", syntax: "INFO, SLOWLOG, LATENCY, MEMORY, SCAN", info: "Performance monitoring", ex: "INFO stats" },
-                { cat: "Reference", cmd: "Administration", syntax: "CONFIG, CLIENT, ACL, FLUSHDB, FLUSHALL, SAVE, BGSAVE", info: "Administration", ex: "CONFIG GET maxmemory" },
-                { cat: "Reference", cmd: "High Availability", syntax: "REPLICAOF, ROLE, SENTINEL, CLUSTER", info: "High availability", ex: "REPLICAOF 192.168.1.10 6379" }
-            ];
+            // ==================== REFERENCE ====================
+            { cat: "Reference", cmd: "Create / Write", syntax: "SET, HSET, LPUSH, RPUSH, SADD, ZADD, XADD", info: "Create/write operations", desc: "All Redis write/create operations", ex: "SET key value" },
+            { cat: "Reference", cmd: "Read", syntax: "GET, HGET, HGETALL, LRANGE, SMEMBERS, ZRANGE, XRANGE", info: "Read operations", desc: "All Redis read operations", ex: "GET key" },
+            { cat: "Reference", cmd: "Update", syntax: "SET, HSET, HINCRBY, INCR, ZINCRBY, LSET", info: "Update operations", desc: "All Redis update operations", ex: "SET key newvalue" },
+            { cat: "Reference", cmd: "Delete", syntax: "DEL, UNLINK, HDEL, LPOP, RPOP, SREM, ZREM, XDEL", info: "Delete operations", desc: "All Redis delete operations", ex: "DEL key" },
+            { cat: "Reference", cmd: "Search", syntax: "KEYS, SCAN, HSCAN, SSCAN, ZSCAN", info: "Search operations", desc: "All Redis search/cursor operations", ex: "KEYS pattern" },
+            { cat: "Reference", cmd: "Expiration", syntax: "EXPIRE, PEXPIRE, TTL, PTTL, PERSIST", info: "Expiration operations", desc: "All Redis TTL operations", ex: "EXPIRE key 60" },
+            { cat: "Reference", cmd: "Atomicity", syntax: "MULTI, EXEC, WATCH, DISCARD, SET NX, INCR", info: "Atomic operations", desc: "All Redis atomic operations", ex: "MULTI ... EXEC" },
+            { cat: "Reference", cmd: "Performance", syntax: "INFO, SLOWLOG, LATENCY, MEMORY, SCAN", info: "Performance monitoring", desc: "Redis performance monitoring tools", ex: "INFO stats" },
+            { cat: "Reference", cmd: "Administration", syntax: "CONFIG, CLIENT, ACL, FLUSHDB, FLUSHALL, SAVE, BGSAVE", info: "Administration", desc: "Redis administration operations", ex: "CONFIG GET maxmemory" },
+            { cat: "Reference", cmd: "High Availability", syntax: "REPLICAOF, ROLE, SENTINEL, CLUSTER", info: "High availability", desc: "Redis HA and clustering operations", ex: "REPLICAOF 192.168.1.10 6379" }
+        ];
 
         const grid = document.getElementById('grid');
         const searchInput = document.getElementById('searchInput');
@@ -792,7 +865,7 @@ html, body {
             const filtered = commands.filter(item => {
                 const matchesCat = (cat === 'All' || item.cat === cat);
                 if (!term) return matchesCat;
-                const hay = (item.cmd + ' ' + item.syntax + ' ' + item.info + ' ' + item.ex + ' ' + item.cat).toLowerCase();
+                const hay = (item.cmd + ' ' + item.syntax + ' ' + item.info + ' ' + item.desc + ' ' + item.ex + ' ' + item.cat).toLowerCase();
                 return matchesCat && hay.includes(term);
             });
 
@@ -804,14 +877,26 @@ html, body {
             grid.innerHTML = filtered.map(item => `
     <article class="card" data-cat="${item.cat}">
       <div class="card-header">
-        <h3 class="card-title">${item.cmd}</h3>
-        <span class="card-badge">${item.cat}</span>
+        <h3 class="card-title">${escapeHtml(item.cmd)}</h3>
+        <span class="card-badge">${escapeHtml(item.cat)}</span>
       </div>
+      
+        <div class="block-label">Info</div>
+      <div class="card-description">
+        <span class="info-text">${escapeHtml(item.info)}</span>
+      </div>
+
+        <div class="block-label">Desc</div>
+      <div class="card-desc">
+        <span class="desc-text">${escapeHtml(item.desc)}</span>
+      </div>
+      
+      
       <div class="block-label">Syntax</div>
-      <pre class="syntax-box" aria-label="Syntax for ${item.cmd}"><code>${escapeHtml(item.syntax)}</code></pre>
+      <pre class="syntax-box" aria-label="Syntax for ${escapeHtml(item.cmd)}"><code>${escapeHtml(item.syntax)}</code></pre>
 
       <div class="block-label">Usage Example</div>
-      <pre class="example-box" aria-label="Example for ${item.cmd}"><code>${escapeHtml(item.ex)}</code></pre>
+      <pre class="example-box" aria-label="Example for ${escapeHtml(item.cmd)}"><code>${escapeHtml(item.ex)}</code></pre>
     </article>
   `).join('');
         }
