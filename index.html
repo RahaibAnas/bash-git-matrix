@@ -19,6 +19,7 @@
             --accent-green: #3fb950;
             --accent-purple: #bc8cff;
             --accent-orange: #f0883e;
+            --accent-red: #e63946;
             --font-stack: 'Segoe UI', system-ui, -apple-system, sans-serif;
             --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
         }
@@ -134,6 +135,10 @@
             background: var(--accent-orange);
         }
 
+        .card-redis::before {
+            background: var(--accent-red);
+        }
+
         .matrix-card:hover {
             transform: translateY(-4px);
             border-color: #8b949e;
@@ -218,7 +223,8 @@
         <header>
             <div class="terminal-badge">$ initialization completed</div>
             <h1>Developer Workspace Hub</h1>
-            <p>Interconnected client-side reference engines for Linux Systems, Automation, and Version Control
+            <p>Interconnected client-side reference engines for Linux Systems, Automation, Databases, and Version
+                Control
                 Platforms.</p>
         </header>
 
@@ -275,20 +281,31 @@
                 </div>
             </a>
 
-            <div class="card">
-    
             <a href="PostgreSQL.html" class="matrix-card card-postgres">
                 <div class="card-header-area">
                     <span class="card-icon">🐘</span>
                     <h2 class="card-title">PostgreSQL Reference</h2>
-                    <p class="card-description">Database schema blueprints, query engines, administration commands, and performance optimization guides.</p>
+                    <p class="card-description">Database schema blueprints, query engines, administration commands, and
+                        performance optimization guides.</p>
                 </div>
                 <div class="card-footer">
                     <span class="status-dot">Ready</span>
                     <span class="action-link">Launch Module &rarr;</span>
                 </div>
             </a>
-            
+
+            <a href="redis.html" class="matrix-card card-redis">
+                <div class="card-header-area">
+                    <span class="card-icon">🔴</span>
+                    <h2 class="card-title">Redis Cheatsheet</h2>
+                    <p class="card-description">In-memory data structures, Pub/Sub channels, Lua scripting, key
+                        expiration strategies, and backend recipes.</p>
+                </div>
+                <div class="card-footer">
+                    <span class="status-dot">Ready</span>
+                    <span class="action-link">Launch Module &rarr;</span>
+                </div>
+            </a>
         </main>
     </div>
 
