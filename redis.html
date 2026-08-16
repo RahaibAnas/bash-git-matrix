@@ -2,791 +2,829 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redis CLI · cheatsheet</title>
-    <!-- Font & minimal icons (feather) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redis Command Cheatsheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap"
+        rel="stylesheet">
     <style>
+        /* === Redis-themed minimal cheatsheet === */
+        :root {
+            --bg: #0b0b0e;
+            --surface: #12121a;
+            --surface-2: #181822;
+            --border: #22222e;
+            --border-hover: #e63946;
+            --text: #eae6e1;
+            --text-muted: #a09e98;
+            --accent: #e63946;
+            /* Redis red */
+            --accent-soft: rgba(230, 57, 70, 0.12);
+            --green: #2ecc71;
+            --green-soft: rgba(46, 204, 113, 0.12);
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+            --sans: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
         * {
-            margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            background: #0d1117;
-            color: #e6edf3;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding: 2rem 1.5rem;
-            line-height: 1.5;
+        html {
+            scroll-behavior: smooth;
         }
 
-        .container {
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--sans);
+            line-height: 1.35;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Header */
+        .site-header {
+            background: linear-gradient(180deg, #140506 0%, var(--bg) 100%);
+            border-bottom: 1px solid #2a0a0a;
+            padding: 3rem 1.5rem 2.5rem;
+            text-align: center;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-icon {
+            color: var(--accent);
+            font-size: 1.6rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 6px rgba(230, 57, 70, 0.5));
+        }
+
+        .brand h1 {
+            font-family: var(--mono);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #fff;
+            margin: 0;
+        }
+
+        .brand h1 span {
+            color: var(--accent);
+        }
+
+        .subtitle {
+            max-width: 720px;
+            margin: 0 auto;
+            color: var(--text-muted);
+            font-weight: 300;
+            font-size: 0.95rem;
+        }
+
+        /* Controls */
+        .controls {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(11, 11, 14, 0.92);
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            border-bottom: 1px solid var(--border);
+            padding: 1.1rem 1.25rem;
+        }
+
+        .search-wrap {
+            max-width: 680px;
+            margin: 0 auto 0.9rem;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 0.65rem 0.9rem 0.65rem 2.4rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        #searchInput:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        /* Filter buttons */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .filter-btn {
+            appearance: none;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text-muted);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-family: var(--sans);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background .15s, color .15s, border-color .15s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--text-muted);
+            color: var(--text);
+        }
+
+        .filter-btn.active,
+        .filter-btn.active:hover {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+            gap: 1.25rem;
+            padding: 2rem 1.25rem 4rem;
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* header */
-        .header {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid #30363d;
-            padding-bottom: 1.25rem;
+        /* Card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.25rem 1.35rem 1.35rem;
+            transition: transform .08s ease, border-color .18s ease, box-shadow .2s ease;
+            position: relative;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #ff8a8a);
+            opacity: 0.8;
+            border-radius: 14px 14px 0 0;
         }
 
-        .logo-area i {
-            font-size: 2rem;
-            color: #dc382d;
+        .card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(230, 57, 70, 0.08);
         }
 
-        .logo-area h1 {
-            font-weight: 600;
-            font-size: 1.8rem;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #f0883e, #dc382d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .search-wrap {
-            display: flex;
-            align-items: center;
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 40px;
-            padding: 0.35rem 0.35rem 0.35rem 1.2rem;
-            transition: 0.2s;
-            min-width: 240px;
-        }
-
-        .search-wrap:focus-within {
-            border-color: #f0883e;
-            box-shadow: 0 0 0 3px rgba(240, 136, 62, 0.15);
-        }
-
-        .search-wrap i {
-            color: #8b949e;
-            font-size: 0.9rem;
-        }
-
-        .search-wrap input {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 0.5rem 0.5rem 0.7rem;
-            color: #e6edf3;
-            font-size: 0.95rem;
-            width: 100%;
-            outline: none;
-        }
-
-        .search-wrap input::placeholder {
-            color: #484f58;
-        }
-
-        .search-wrap button {
-            background: #238636;
-            border: none;
-            color: white;
-            font-weight: 500;
-            padding: 0.4rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: 0.15s;
-            white-space: nowrap;
-        }
-
-        .search-wrap button:hover {
-            background: #2ea043;
-        }
-
-        /* category pills */
-        .category-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 0.6rem;
-            margin-bottom: 2.2rem;
-            padding: 0.25rem 0;
-        }
-
-        .cat-btn {
-            background: transparent;
-            border: 1px solid #30363d;
-            color: #8b949e;
-            padding: 0.4rem 1.1rem;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.15s;
-            letter-spacing: 0.01em;
-            white-space: nowrap;
-        }
-
-        .cat-btn:hover {
-            background: #21262d;
-            color: #e6edf3;
-            border-color: #484f58;
-        }
-
-        .cat-btn.active {
-            background: #dc382d;
-            border-color: #dc382d;
-            color: white;
-        }
-
-        .cat-btn.active:hover {
-            background: #f03a2f;
-        }
-
-        /* command grid */
-        .command-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .cmd-card {
-            background: #161b22;
-            border: 3px solid #30363d;
-            border-radius: 16px;
-            padding: 1rem 1.2rem 1.2rem;
-            transition: 0.12s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cmd-card:hover {
-            border-color: #650000;
-            background: #1c2128;
-        }
-
-        .cmd-header {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-bottom: 0.4rem;
-        }
-
-        .cmd-name {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            font-weight: 600;
-            font-size: 1rem;
-            color: #f0e6d0;
-            background: #21262d;
-            padding: 0.1rem 0.7rem;
-            border-radius: 30px;
-            letter-spacing: -0.01em;
-            border: 1px solid #2d333b;
-        }
-
-        .cmd-section {
-            font-size: 0.7rem;
-            background: #0d1117;
-            padding: 0.2rem 0.7rem;
-            border-radius: 30px;
-            color: #8b949e;
-            border: 1px solid #21262d;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-
-        .cmd-syntax {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            background: #0d1117;
-            padding: 0.6rem 0.8rem;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            color: #b1bac4;
-            border-left: 5px solid #8d1d15;
-            margin: 0.5rem 0 0.6rem;
-            word-break: break-all;
-            line-height: 1.4;
-        }
-
-        .cmd-example {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            background: #0d1117;
-            padding: 0.6rem 0.8rem;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            color: #8b949e;
-            border: 1px dashed #2d333b;
-            margin-bottom: 0.2rem;
+        /* Card header */
+        .card-header {
             display: flex;
             align-items: flex-start;
-            gap: 0.3rem;
+            justify-content: space-between;
+            gap: 0.75rem;
+            margin-bottom: 0.9rem;
         }
 
-        .cmd-example i {
-            color: #f0883e;
+        .card-title {
+            font-family: var(--mono);
+            font-weight: 700;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: #fff;
+            margin: 0;
+        }
+
+        .card-badge {
+            flex-shrink: 0;
+            font-family: var(--mono);
             font-size: 0.7rem;
-            margin-top: 0.15rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid rgba(230, 57, 70, 0.2);
         }
 
-        .cmd-example span {
-            color: #c9d1d9;
+        /* Sections */
+        .block-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
         }
 
-        .no-results {
-            grid-column: 1 / -1;
+        /* Syntax box */
+        .syntax-box {
+            background: #0d0d11;
+            border-left: 3px solid var(--accent);
+            padding: 0.7rem 0.9rem;
+            border-radius: 0 10px 10px 0;
+            font-family: var(--mono);
+            font-size: 0.88rem;
+            color: #f2f0ec;
+            line-height: 1.45;
+            overflow-x: auto;
+            margin-bottom: 0.6rem;
+            word-break: break-word;
+        }
+
+        .syntax-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.15rem;
+            display: block;
+        }
+
+        /* Example box */
+        .example-box {
+            background: #0e1f12;
+            border-left: 3px solid var(--green);
+            padding: 0.7rem 0.9rem;
+            border-radius: 0 10px 10px 0;
+            font-family: var(--mono);
+            font-size: 0.88rem;
+            color: #a3f5c5;
+            line-height: 1.45;
+            overflow-x: auto;
+            word-break: break-word;
+        }
+
+        .example-label {
+            font-size: 0.7rem;
+            color: #8abfa3;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.15rem;
+            display: block;
+        }
+
+        /* No results */
+        .empty-state {
             text-align: center;
-            padding: 3rem 0;
-            color: #8b949e;
-            background: #161b22;
-            border-radius: 30px;
-            border: 1px dashed #30363d;
+            padding: 4rem 1rem;
+            color: var(--text-muted);
         }
 
-        .footer-note {
-            margin-top: 2.5rem;
+        .empty-state h2 {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Footer */
+        .site-footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #555;
             font-size: 0.8rem;
-            color: #484f58;
-            text-align: center;
-            border-top: 1px solid #21262d;
-            padding-top: 1.8rem;
+            border-top: 1px solid var(--border);
         }
 
-        /* responsive */
-        @media (max-width: 600px) {
-            body {
+        @media (max-width: 520px) {
+            .controls {
+                padding: 0.9rem 1rem;
+            }
+
+            .card {
                 padding: 1rem;
             }
 
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.8rem;
-            }
-
-            .search-wrap {
-                min-width: unset;
-                width: 100%;
-            }
-
-            .command-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .cat-btn {
-                font-size: 0.7rem;
-                padding: 0.3rem 0.8rem;
+            .grid {
+                padding: 1.25rem 1rem 3rem;
             }
         }
+
+        /* === Redis Custom Scrollbar - Add this at bottom of style.css === */
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #22222e #0b0b0e;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #22222e #0b0b0e;
+}
+
+/* For Chrome / Edge / Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22222e;
+  border-radius: 100px;
+  border: 2px solid #0b0b0e;
+  transition: background 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e63946; /* Redis Red */
+}
+
+/* Remove the arrow buttons you see in your screenshot */
+::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Code blocks get an even slimmer scrollbar */
+.syntax-box::-webkit-scrollbar,
+.example-box::-webkit-scrollbar {
+  height: 6px;
+}
+
+.syntax-box::-webkit-scrollbar-thumb {
+  background: #2a2a36;
+}
+
+.example-box::-webkit-scrollbar-thumb {
+  background: #1a3d25;
+}
+
+.example-box::-webkit-scrollbar-thumb:hover {
+  background: #2ecc71;
+}
+
+/* Fix accidental page-wide horizontal scroll */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+.syntax-box, .example-box {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="logo-area">
-                <i class="fab fa-redis"></i>
-                <h1>redis · cheatsheet</h1>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="brand">
+                <span class="brand-icon" aria-hidden="true">●</span>
+                <h1>Redis <span>Cheatsheet</span></h1>
             </div>
-            <div class="search-wrap">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="search commands, syntax...">
-                <button id="clearSearchBtn"><i class="fas fa-times"></i></button>
-            </div>
+            <p class="subtitle">Syntax + one usage example for server, keys, strings, hashes, lists, sets, sorted sets,
+                streams, pub/sub, transactions, Lua, bitmaps, HyperLogLog, geo, cluster, ACL, and common backend
+                patterns.</p>
+        </div>
+    </header>
+
+    <section class="controls" aria-label="Search and filters">
+        <div class="search-wrap">
+            <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round">
+                <circle cx="11" cy="11" r="8" />
+                <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search command, syntax, or example…" autocomplete="off" />
         </div>
 
-        <!-- category filter buttons -->
-        <div class="category-bar" id="categoryBar"></div>
-
-        <!-- command cards grid -->
-        <div class="command-grid" id="commandGrid"></div>
-        <div class="footer-note">
-            <i class="fas fa-terminal" style="margin-right: 6px;"></i> Redis CLI · server & client commands
-            <span
-                style="margin-left: 20px; background: #21262d; padding: 0.2rem 0.8rem; border-radius: 20px; font-size: 0.75rem; border: 1px solid #30363d;">
-                <i class="fas fa-database" style="margin-right: 4px;"></i>
-                <span id="commandCount">0</span> commands
-            </span>
+        <div class="filters" id="filterNav" role="group" aria-label="Category filters">
+            <button class="filter-btn active" data-filter="All">All</button>
+            <!-- Other buttons injected by JS -->
         </div>
-    </div>
+    </section>
 
-    <script>
-        (function () {
-            // --------------------------------------------------------------
-            //  DATA : categories + commands (syntax + example)
-            // --------------------------------------------------------------
-            const sections = [
-                { id: 'server', label: 'Server & CLI' },
-                { id: 'keys', label: 'Keys' },
-                { id: 'expire', label: 'Expiration' },
-                { id: 'strings', label: 'Strings' },
-                { id: 'hashes', label: 'Hashes' },
-                { id: 'lists', label: 'Lists' },
-                { id: 'sets', label: 'Sets' },
-                { id: 'sorted', label: 'Sorted Sets' },
-                { id: 'streams', label: 'Streams' },
-                { id: 'pubsub', label: 'Pub/Sub' },
-                { id: 'transactions', label: 'Transactions' },
-                { id: 'lua', label: 'Lua Scripts' },
-                { id: 'bitmaps', label: 'Bitmaps' },
-                { id: 'hyperlog', label: 'HyperLogLog' },
-                { id: 'geo', label: 'Geospatial' },
-                { id: 'serverdb', label: 'Server & DB' },
-                { id: 'client', label: 'Client' },
-                { id: 'config', label: 'Connection/Config' },
-                { id: 'memory', label: 'Memory' },
-                { id: 'monitor', label: 'Monitoring' },
-                { id: 'persist', label: 'Persistence' },
-                { id: 'replication', label: 'Replication' },
-                { id: 'sentinel', label: 'Sentinel' },
-                { id: 'cluster', label: 'Cluster' },
-                { id: 'acl', label: 'ACL / Security' },
-                { id: 'patterns', label: 'Backend Patterns' },
-                { id: 'reference', label: 'Reference' }
-            ];
+    <main id="grid" class="grid" aria-live="polite">
+        <!-- Cards injected by JS -->
+    </main>
 
-            // flattened command list with section reference
-            const commands = [
+    <footer class="site-footer">
+        Built for Redis CLI / Server reference. Commands shown with minimal syntax + one practical example.
+    </footer>
+
+    <script >
+        /* === Redis Command Data === */
+        // Each item: category (for buttons), command name, syntax, one-line info, example
+        const commands = [
                 // ==================== SERVER & CLI ====================
-                { section: 'server', name: 'redis-server', syntax: 'redis-server [options]', example: 'redis-server --port 6379' },
-                { section: 'server', name: 'redis-server --version', syntax: 'redis-server --version', example: 'redis-server --version' },
-                { section: 'server', name: 'redis-cli', syntax: 'redis-cli [options]', example: 'redis-cli -h 127.0.0.1 -p 6379' },
-                { section: 'server', name: 'redis-cli -h', syntax: 'redis-cli -h <host>', example: 'redis-cli -h localhost' },
-                { section: 'server', name: 'redis-cli -p', syntax: 'redis-cli -p <port>', example: 'redis-cli -p 6380' },
-                { section: 'server', name: 'redis-cli -a', syntax: 'redis-cli -a <password>', example: 'redis-cli -a mysecret' },
-                { section: 'server', name: 'PING', syntax: 'PING', example: 'PING → PONG' },
-                { section: 'server', name: 'AUTH', syntax: 'AUTH password', example: 'AUTH mysecret' },
-                { section: 'server', name: 'SELECT', syntax: 'SELECT index', example: 'SELECT 1' },
-                { section: 'server', name: 'QUIT', syntax: 'QUIT', example: 'QUIT' },
-                { section: 'server', name: 'HELLO', syntax: 'HELLO [proto]', example: 'HELLO 3' },
-                { section: 'server', name: 'INFO', syntax: 'INFO [section]', example: 'INFO memory' },
-                { section: 'server', name: 'INFO server', syntax: 'INFO server', example: 'INFO server' },
-                { section: 'server', name: 'INFO memory', syntax: 'INFO memory', example: 'INFO memory' },
-                { section: 'server', name: 'INFO clients', syntax: 'INFO clients', example: 'INFO clients' },
-                { section: 'server', name: 'INFO stats', syntax: 'INFO stats', example: 'INFO stats' },
-                { section: 'server', name: 'INFO replication', syntax: 'INFO replication', example: 'INFO replication' },
+                { cat: "CLI & Server", cmd: "redis-server", syntax: "redis-server [options]", info: "Start Redis server", ex: "redis-server --port 6379" },
+                { cat: "CLI & Server", cmd: "redis-server --version", syntax: "redis-server --version", info: "Server version", ex: "redis-server --version" },
+                { cat: "CLI & Server", cmd: "redis-cli", syntax: "redis-cli [options]", info: "Interactive CLI", ex: "redis-cli -h 127.0.0.1 -p 6379" },
+                { cat: "CLI & Server", cmd: "redis-cli -h", syntax: "redis-cli -h <host>", info: "Specify host", ex: "redis-cli -h localhost" },
+                { cat: "CLI & Server", cmd: "redis-cli -p", syntax: "redis-cli -p <port>", info: "Specify port", ex: "redis-cli -p 6380" },
+                { cat: "CLI & Server", cmd: "redis-cli -a", syntax: "redis-cli -a <password>", info: "Authenticate with password", ex: "redis-cli -a mysecret" },
+                { cat: "CLI & Server", cmd: "PING", syntax: "PING [message]", info: "Test connectivity", ex: "PING → PONG" },
+                { cat: "CLI & Server", cmd: "AUTH", syntax: "AUTH [username] password", info: "Authenticate", ex: "AUTH default secret" },
+                { cat: "CLI & Server", cmd: "SELECT", syntax: "SELECT db-index", info: "Switch DB", ex: "SELECT 1" },
+                { cat: "CLI & Server", cmd: "QUIT", syntax: "QUIT", info: "Close connection", ex: "QUIT" },
+                { cat: "CLI & Server", cmd: "HELLO", syntax: "HELLO [proto] [AUTH ...] [SETNAME ...]", info: "Handshake / auth", ex: "HELLO 3 AUTH default pass SETNAME api-1" },
+                { cat: "CLI & Server", cmd: "INFO", syntax: "INFO [section]", info: "Server info", ex: "INFO memory" },
+                { cat: "CLI & Server", cmd: "INFO server", syntax: "INFO server", info: "Server section", ex: "INFO server" },
+                { cat: "CLI & Server", cmd: "INFO memory", syntax: "INFO memory", info: "Memory section", ex: "INFO memory" },
+                { cat: "CLI & Server", cmd: "INFO clients", syntax: "INFO clients", info: "Clients section", ex: "INFO clients" },
+                { cat: "CLI & Server", cmd: "INFO stats", syntax: "INFO stats", info: "Stats section", ex: "INFO stats" },
+                { cat: "CLI & Server", cmd: "INFO replication", syntax: "INFO replication", info: "Replication section", ex: "INFO replication" },
 
                 // ==================== KEYS ====================
-                { section: 'keys', name: 'SET', syntax: 'SET key value [options]', example: 'SET user:1 "Alice"' },
-                { section: 'keys', name: 'GET', syntax: 'GET key', example: 'GET user:1' },
-                { section: 'keys', name: 'EXISTS', syntax: 'EXISTS key [key ...]', example: 'EXISTS user:1' },
-                { section: 'keys', name: 'DEL', syntax: 'DEL key [key ...]', example: 'DEL user:1' },
-                { section: 'keys', name: 'UNLINK', syntax: 'UNLINK key [key ...]', example: 'UNLINK cache:large' },
-                { section: 'keys', name: 'TYPE', syntax: 'TYPE key', example: 'TYPE user:1' },
-                { section: 'keys', name: 'RENAME', syntax: 'RENAME key newkey', example: 'RENAME old:name new:name' },
-                { section: 'keys', name: 'RENAMENX', syntax: 'RENAMENX key newkey', example: 'RENAMENX temp:data final:data' },
-                { section: 'keys', name: 'RANDOMKEY', syntax: 'RANDOMKEY', example: 'RANDOMKEY' },
-                { section: 'keys', name: 'KEYS', syntax: 'KEYS pattern', example: 'KEYS user:*' },
-                { section: 'keys', name: 'SCAN', syntax: 'SCAN cursor [MATCH pattern] [COUNT count]', example: 'SCAN 0 MATCH user:*' },
-                { section: 'keys', name: 'OBJECT', syntax: 'OBJECT subcommand key', example: 'OBJECT ENCODING user:1' },
-                { section: 'keys', name: 'MEMORY USAGE', syntax: 'MEMORY USAGE key [SAMPLES n]', example: 'MEMORY USAGE user:1' },
-                { section: 'keys', name: 'TTL', syntax: 'TTL key', example: 'TTL session:123' },
-                { section: 'keys', name: 'PTTL', syntax: 'PTTL key', example: 'PTTL session:123' },
+                { cat: "Keys", cmd: "SET", syntax: "SET key value [NX|XX] [GET] [EX sec] [PX ms] [KEEPTTL]", info: "Set string value", ex: "SET user:1 \"Alice\"" },
+                { cat: "Keys", cmd: "GET", syntax: "GET key", info: "Get string", ex: "GET user:1" },
+                { cat: "Keys", cmd: "EXISTS", syntax: "EXISTS key [key ...]", info: "Check keys exist", ex: "EXISTS user:1" },
+                { cat: "Keys", cmd: "DEL", syntax: "DEL key [key ...]", info: "Delete key(s)", ex: "DEL user:1" },
+                { cat: "Keys", cmd: "UNLINK", syntax: "UNLINK key [key ...]", info: "Async delete", ex: "UNLINK cache:large" },
+                { cat: "Keys", cmd: "TYPE", syntax: "TYPE key", info: "Key data type", ex: "TYPE user:1" },
+                { cat: "Keys", cmd: "RENAME", syntax: "RENAME key newkey", info: "Rename key", ex: "RENAME old:name new:name" },
+                { cat: "Keys", cmd: "RENAMENX", syntax: "RENAMENX key newkey", info: "Rename if not exists", ex: "RENAMENX temp:data final:data" },
+                { cat: "Keys", cmd: "RANDOMKEY", syntax: "RANDOMKEY", info: "Get random key", ex: "RANDOMKEY" },
+                { cat: "Keys", cmd: "KEYS", syntax: "KEYS pattern", info: "Find keys (use in dev only)", ex: "KEYS user:*" },
+                { cat: "Keys", cmd: "SCAN", syntax: "SCAN cursor [MATCH pattern] [COUNT count]", info: "Iterate keys safely", ex: "SCAN 0 MATCH user:* COUNT 100" },
+                { cat: "Keys", cmd: "OBJECT", syntax: "OBJECT subcommand key", info: "Internal encoding info", ex: "OBJECT ENCODING user:1" },
+                { cat: "Keys", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Memory of a key", ex: "MEMORY USAGE user:1" },
+                { cat: "Keys", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire (-1 never, -2 missing)", ex: "TTL session:123" },
+                { cat: "Keys", cmd: "PTTL", syntax: "PTTL key", info: "Milliseconds until expire", ex: "PTTL session:123" },
 
                 // ==================== EXPIRATION ====================
-                { section: 'expire', name: 'EXPIRE', syntax: 'EXPIRE key seconds', example: 'EXPIRE session:123 3600' },
-                { section: 'expire', name: 'PEXPIRE', syntax: 'PEXPIRE key milliseconds', example: 'PEXPIRE temp 5000' },
-                { section: 'expire', name: 'EXPIREAT', syntax: 'EXPIREAT key timestamp', example: 'EXPIREAT otp 1672531200' },
-                { section: 'expire', name: 'PEXPIREAT', syntax: 'PEXPIREAT key timestamp_ms', example: 'PEXPIREAT cache 1672531200000' },
-                { section: 'expire', name: 'TTL', syntax: 'TTL key', example: 'TTL session:123' },
-                { section: 'expire', name: 'PTTL', syntax: 'PTTL key', example: 'PTTL session:123' },
-                { section: 'expire', name: 'PERSIST', syntax: 'PERSIST key', example: 'PERSIST session:123' },
+                { cat: "Expiration", cmd: "EXPIRE", syntax: "EXPIRE key seconds [NX|XX|GT|LT]", info: "Set expire in seconds", ex: "EXPIRE session:123 3600" },
+                { cat: "Expiration", cmd: "PEXPIRE", syntax: "PEXPIRE key milliseconds [NX|XX]", info: "Set expire in ms", ex: "PEXPIRE temp 5000" },
+                { cat: "Expiration", cmd: "EXPIREAT", syntax: "EXPIREAT key timestamp", info: "Set expire at Unix timestamp", ex: "EXPIREAT otp 1672531200" },
+                { cat: "Expiration", cmd: "PEXPIREAT", syntax: "PEXPIREAT key timestamp_ms", info: "Set expire at Unix ms timestamp", ex: "PEXPIREAT cache 1672531200000" },
+                { cat: "Expiration", cmd: "TTL", syntax: "TTL key", info: "Seconds until expire", ex: "TTL session:123" },
+                { cat: "Expiration", cmd: "PTTL", syntax: "PTTL key", info: "Milliseconds until expire", ex: "PTTL session:123" },
+                { cat: "Expiration", cmd: "PERSIST", syntax: "PERSIST key", info: "Remove expiration", ex: "PERSIST session:123" },
 
                 // ==================== STRINGS ====================
-                { section: 'strings', name: 'SET', syntax: 'SET key value [NX|XX] [EX|PX|EXAT|PXAT] [KEEPTTL]', example: 'SET counter 0 EX 10' },
-                { section: 'strings', name: 'GET', syntax: 'GET key', example: 'GET counter' },
-                { section: 'strings', name: 'MSET', syntax: 'MSET key value [key value ...]', example: 'MSET a 1 b 2' },
-                { section: 'strings', name: 'MGET', syntax: 'MGET key [key ...]', example: 'MGET a b' },
-                { section: 'strings', name: 'SETNX', syntax: 'SETNX key value', example: 'SETNX lock "acquired"' },
-                { section: 'strings', name: 'GETSET', syntax: 'GETSET key value', example: 'GETSET counter 0' },
-                { section: 'strings', name: 'APPEND', syntax: 'APPEND key value', example: 'APPEND log "new line"' },
-                { section: 'strings', name: 'STRLEN', syntax: 'STRLEN key', example: 'STRLEN user:name' },
-                { section: 'strings', name: 'INCR', syntax: 'INCR key', example: 'INCR counter' },
-                { section: 'strings', name: 'INCRBY', syntax: 'INCRBY key increment', example: 'INCRBY counter 5' },
-                { section: 'strings', name: 'INCRBYFLOAT', syntax: 'INCRBYFLOAT key increment', example: 'INCRBYFLOAT price 0.99' },
-                { section: 'strings', name: 'DECR', syntax: 'DECR key', example: 'DECR counter' },
-                { section: 'strings', name: 'DECRBY', syntax: 'DECRBY key decrement', example: 'DECRBY counter 3' },
-                { section: 'strings', name: 'MSETNX', syntax: 'MSETNX key value [key value ...]', example: 'MSETNX a 1 b 2' },
+                { cat: "Strings", cmd: "SET", syntax: "SET key value [NX|XX] [EX|PX|EXAT|PXAT] [KEEPTTL]", info: "Set string value", ex: "SET counter 0 EX 10" },
+                { cat: "Strings", cmd: "GET", syntax: "GET key", info: "Get string", ex: "GET counter" },
+                { cat: "Strings", cmd: "MSET", syntax: "MSET key value [key value ...]", info: "Multi-set", ex: "MSET a 1 b 2" },
+                { cat: "Strings", cmd: "MGET", syntax: "MGET key [key ...]", info: "Multi-get", ex: "MGET a b" },
+                { cat: "Strings", cmd: "SETNX", syntax: "SETNX key value", info: "Set if not exists", ex: "SETNX lock \"acquired\"" },
+                { cat: "Strings", cmd: "GETSET", syntax: "GETSET key value", info: "Set and return old", ex: "GETSET counter 0" },
+                { cat: "Strings", cmd: "APPEND", syntax: "APPEND key value", info: "Append to string", ex: "APPEND log \"new line\"" },
+                { cat: "Strings", cmd: "STRLEN", syntax: "STRLEN key", info: "String length", ex: "STRLEN user:name" },
+                { cat: "Strings", cmd: "INCR", syntax: "INCR key", info: "Increment by 1", ex: "INCR counter" },
+                { cat: "Strings", cmd: "INCRBY", syntax: "INCRBY key increment", info: "Increment by N", ex: "INCRBY counter 5" },
+                { cat: "Strings", cmd: "INCRBYFLOAT", syntax: "INCRBYFLOAT key increment", info: "Float increment", ex: "INCRBYFLOAT price 0.99" },
+                { cat: "Strings", cmd: "DECR", syntax: "DECR key", info: "Decrement by 1", ex: "DECR counter" },
+                { cat: "Strings", cmd: "DECRBY", syntax: "DECRBY key decrement", info: "Decrement by N", ex: "DECRBY counter 3" },
+                { cat: "Strings", cmd: "MSETNX", syntax: "MSETNX key value [key value ...]", info: "Multi-set if none exists", ex: "MSETNX a 1 b 2" },
 
                 // ==================== HASHES ====================
-                { section: 'hashes', name: 'HSET', syntax: 'HSET key field value [field value ...]', example: 'HSET user:2 name "Bob" age 30' },
-                { section: 'hashes', name: 'HMSET', syntax: 'HMSET key field value [field value ...]', example: 'HMSET user:3 name "Charlie" age 25' },
-                { section: 'hashes', name: 'HGET', syntax: 'HGET key field', example: 'HGET user:2 name' },
-                { section: 'hashes', name: 'HMGET', syntax: 'HMGET key field [field ...]', example: 'HMGET user:2 name age' },
-                { section: 'hashes', name: 'HGETALL', syntax: 'HGETALL key', example: 'HGETALL user:2' },
-                { section: 'hashes', name: 'HKEYS', syntax: 'HKEYS key', example: 'HKEYS user:2' },
-                { section: 'hashes', name: 'HVALS', syntax: 'HVALS key', example: 'HVALS user:2' },
-                { section: 'hashes', name: 'HLEN', syntax: 'HLEN key', example: 'HLEN user:2' },
-                { section: 'hashes', name: 'HEXISTS', syntax: 'HEXISTS key field', example: 'HEXISTS user:2 age' },
-                { section: 'hashes', name: 'HDEL', syntax: 'HDEL key field [field ...]', example: 'HDEL user:2 age' },
-                { section: 'hashes', name: 'HINCRBY', syntax: 'HINCRBY key field increment', example: 'HINCRBY user:2 score 5' },
-                { section: 'hashes', name: 'HINCRBYFLOAT', syntax: 'HINCRBYFLOAT key field increment', example: 'HINCRBYFLOAT user:2 balance 10.50' },
-                { section: 'hashes', name: 'HRANDFIELD', syntax: 'HRANDFIELD key [count] [WITHVALUES]', example: 'HRANDFIELD user:2 2 WITHVALUES' },
+                { cat: "Hashes", cmd: "HSET", syntax: "HSET key field value [field value ...]", info: "Set hash fields", ex: "HSET user:2 name \"Bob\" age 30" },
+                { cat: "Hashes", cmd: "HMSET", syntax: "HMSET key field value [field value ...]", info: "Multi-set fields", ex: "HMSET user:3 name \"Charlie\" age 25" },
+                { cat: "Hashes", cmd: "HGET", syntax: "HGET key field", info: "Get hash field", ex: "HGET user:2 name" },
+                { cat: "Hashes", cmd: "HMGET", syntax: "HMGET key field [field ...]", info: "Multi-get fields", ex: "HMGET user:2 name age" },
+                { cat: "Hashes", cmd: "HGETALL", syntax: "HGETALL key", info: "Get all fields/values", ex: "HGETALL user:2" },
+                { cat: "Hashes", cmd: "HKEYS", syntax: "HKEYS key", info: "Get all field names", ex: "HKEYS user:2" },
+                { cat: "Hashes", cmd: "HVALS", syntax: "HVALS key", info: "Get all values", ex: "HVALS user:2" },
+                { cat: "Hashes", cmd: "HLEN", syntax: "HLEN key", info: "Count fields", ex: "HLEN user:2" },
+                { cat: "Hashes", cmd: "HEXISTS", syntax: "HEXISTS key field", info: "Check field exists", ex: "HEXISTS user:2 age" },
+                { cat: "Hashes", cmd: "HDEL", syntax: "HDEL key field [field ...]", info: "Delete fields", ex: "HDEL user:2 age" },
+                { cat: "Hashes", cmd: "HINCRBY", syntax: "HINCRBY key field increment", info: "Increment field", ex: "HINCRBY user:2 score 5" },
+                { cat: "Hashes", cmd: "HINCRBYFLOAT", syntax: "HINCRBYFLOAT key field increment", info: "Float increment field", ex: "HINCRBYFLOAT user:2 balance 10.50" },
+                { cat: "Hashes", cmd: "HRANDFIELD", syntax: "HRANDFIELD key [count] [WITHVALUES]", info: "Random fields", ex: "HRANDFIELD user:2 2 WITHVALUES" },
 
                 // ==================== LISTS ====================
-                { section: 'lists', name: 'LPUSH', syntax: 'LPUSH key value [value ...]', example: 'LPUSH tasks "task1"' },
-                { section: 'lists', name: 'RPUSH', syntax: 'RPUSH key value [value ...]', example: 'RPUSH tasks "task2"' },
-                { section: 'lists', name: 'LPUSHX', syntax: 'LPUSHX key value', example: 'LPUSHX existing-list "new"' },
-                { section: 'lists', name: 'RPUSHX', syntax: 'RPUSHX key value', example: 'RPUSHX existing-list "new"' },
-                { section: 'lists', name: 'LPOP', syntax: 'LPOP key [count]', example: 'LPOP tasks' },
-                { section: 'lists', name: 'RPOP', syntax: 'RPOP key [count]', example: 'RPOP tasks' },
-                { section: 'lists', name: 'LREM', syntax: 'LREM key count element', example: 'LREM tasks 2 "old-task"' },
-                { section: 'lists', name: 'LTRIM', syntax: 'LTRIM key start stop', example: 'LTRIM tasks 0 99' },
-                { section: 'lists', name: 'LRANGE', syntax: 'LRANGE key start stop', example: 'LRANGE tasks 0 -1' },
-                { section: 'lists', name: 'LINDEX', syntax: 'LINDEX key index', example: 'LINDEX tasks 0' },
-                { section: 'lists', name: 'LLEN', syntax: 'LLEN key', example: 'LLEN tasks' },
-                { section: 'lists', name: 'LSET', syntax: 'LSET key index element', example: 'LSET tasks 0 "new-task"' },
-                { section: 'lists', name: 'BLPOP', syntax: 'BLPOP key [key ...] timeout', example: 'BLPOP tasks 5' },
-                { section: 'lists', name: 'BRPOP', syntax: 'BRPOP key [key ...] timeout', example: 'BRPOP tasks 5' },
-                { section: 'lists', name: 'BLMOVE', syntax: 'BLMOVE source dest LEFT|RIGHT LEFT|RIGHT timeout', example: 'BLMOVE list1 list2 LEFT RIGHT 10' },
+                { cat: "Lists", cmd: "LPUSH", syntax: "LPUSH key value [value ...]", info: "Prepend element(s)", ex: "LPUSH tasks \"task1\"" },
+                { cat: "Lists", cmd: "RPUSH", syntax: "RPUSH key value [value ...]", info: "Append element(s)", ex: "RPUSH tasks \"task2\"" },
+                { cat: "Lists", cmd: "LPUSHX", syntax: "LPUSHX key value", info: "Prepend if exists", ex: "LPUSHX existing-list \"new\"" },
+                { cat: "Lists", cmd: "RPUSHX", syntax: "RPUSHX key value", info: "Append if exists", ex: "RPUSHX existing-list \"new\"" },
+                { cat: "Lists", cmd: "LPOP", syntax: "LPOP key [count]", info: "Pop left", ex: "LPOP tasks" },
+                { cat: "Lists", cmd: "RPOP", syntax: "RPOP key [count]", info: "Pop right", ex: "RPOP tasks" },
+                { cat: "Lists", cmd: "LREM", syntax: "LREM key count element", info: "Remove by value", ex: "LREM tasks 2 \"old-task\"" },
+                { cat: "Lists", cmd: "LTRIM", syntax: "LTRIM key start stop", info: "Trim range", ex: "LTRIM tasks 0 99" },
+                { cat: "Lists", cmd: "LRANGE", syntax: "LRANGE key start stop", info: "Range read", ex: "LRANGE tasks 0 -1" },
+                { cat: "Lists", cmd: "LINDEX", syntax: "LINDEX key index", info: "Index read", ex: "LINDEX tasks 0" },
+                { cat: "Lists", cmd: "LLEN", syntax: "LLEN key", info: "List length", ex: "LLEN tasks" },
+                { cat: "Lists", cmd: "LSET", syntax: "LSET key index element", info: "Set index", ex: "LSET tasks 0 \"new-task\"" },
+                { cat: "Lists", cmd: "BLPOP", syntax: "BLPOP key [key ...] timeout", info: "Blocking left pop", ex: "BLPOP tasks 5" },
+                { cat: "Lists", cmd: "BRPOP", syntax: "BRPOP key [key ...] timeout", info: "Blocking right pop", ex: "BRPOP tasks 5" },
+                { cat: "Lists", cmd: "BLMOVE", syntax: "BLMOVE source dest LEFT|RIGHT LEFT|RIGHT timeout", info: "Blocking move", ex: "BLMOVE list1 list2 LEFT RIGHT 10" },
 
                 // ==================== SETS ====================
-                { section: 'sets', name: 'SADD', syntax: 'SADD key member [member ...]', example: 'SADD tags "redis"' },
-                { section: 'sets', name: 'SREM', syntax: 'SREM key member [member ...]', example: 'SREM tags "redis"' },
-                { section: 'sets', name: 'SPOP', syntax: 'SPOP key [count]', example: 'SPOP tags 1' },
-                { section: 'sets', name: 'SMEMBERS', syntax: 'SMEMBERS key', example: 'SMEMBERS tags' },
-                { section: 'sets', name: 'SISMEMBER', syntax: 'SISMEMBER key member', example: 'SISMEMBER tags "redis"' },
-                { section: 'sets', name: 'SMISMEMBER', syntax: 'SMISMEMBER key member [member ...]', example: 'SMISMEMBER tags "redis" "node"' },
-                { section: 'sets', name: 'SCARD', syntax: 'SCARD key', example: 'SCARD tags' },
-                { section: 'sets', name: 'SRANDMEMBER', syntax: 'SRANDMEMBER key [count]', example: 'SRANDMEMBER tags 2' },
-                { section: 'sets', name: 'SINTER', syntax: 'SINTER key [key ...]', example: 'SINTER setA setB' },
-                { section: 'sets', name: 'SINTERSTORE', syntax: 'SINTERSTORE dest key [key ...]', example: 'SINTERSTORE common setA setB' },
-                { section: 'sets', name: 'SUNION', syntax: 'SUNION key [key ...]', example: 'SUNION setA setB' },
-                { section: 'sets', name: 'SUNIONSTORE', syntax: 'SUNIONSTORE dest key [key ...]', example: 'SUNIONSTORE all setA setB' },
-                { section: 'sets', name: 'SDIFF', syntax: 'SDIFF key [key ...]', example: 'SDIFF setA setB' },
-                { section: 'sets', name: 'SDIFFSTORE', syntax: 'SDIFFSTORE dest key [key ...]', example: 'SDIFFSTORE diff setA setB' },
-                { section: 'sets', name: 'SMOVE', syntax: 'SMOVE source dest member', example: 'SMOVE setA setB "item"' },
+                { cat: "Sets", cmd: "SADD", syntax: "SADD key member [member ...]", info: "Add members", ex: "SADD tags \"redis\"" },
+                { cat: "Sets", cmd: "SREM", syntax: "SREM key member [member ...]", info: "Remove members", ex: "SREM tags \"redis\"" },
+                { cat: "Sets", cmd: "SPOP", syntax: "SPOP key [count]", info: "Pop random members", ex: "SPOP tags 1" },
+                { cat: "Sets", cmd: "SMEMBERS", syntax: "SMEMBERS key", info: "All members", ex: "SMEMBERS tags" },
+                { cat: "Sets", cmd: "SISMEMBER", syntax: "SISMEMBER key member", info: "Check member", ex: "SISMEMBER tags \"redis\"" },
+                { cat: "Sets", cmd: "SMISMEMBER", syntax: "SMISMEMBER key member [member ...]", info: "Check many", ex: "SMISMEMBER tags \"redis\" \"node\"" },
+                { cat: "Sets", cmd: "SCARD", syntax: "SCARD key", info: "Member count", ex: "SCARD tags" },
+                { cat: "Sets", cmd: "SRANDMEMBER", syntax: "SRANDMEMBER key [count]", info: "Random members", ex: "SRANDMEMBER tags 2" },
+                { cat: "Sets", cmd: "SINTER", syntax: "SINTER key [key ...]", info: "Intersection", ex: "SINTER setA setB" },
+                { cat: "Sets", cmd: "SINTERSTORE", syntax: "SINTERSTORE dest key [key ...]", info: "Store intersection", ex: "SINTERSTORE common setA setB" },
+                { cat: "Sets", cmd: "SUNION", syntax: "SUNION key [key ...]", info: "Union", ex: "SUNION setA setB" },
+                { cat: "Sets", cmd: "SUNIONSTORE", syntax: "SUNIONSTORE dest key [key ...]", info: "Store union", ex: "SUNIONSTORE all setA setB" },
+                { cat: "Sets", cmd: "SDIFF", syntax: "SDIFF key [key ...]", info: "Difference", ex: "SDIFF setA setB" },
+                { cat: "Sets", cmd: "SDIFFSTORE", syntax: "SDIFFSTORE dest key [key ...]", info: "Store difference", ex: "SDIFFSTORE diff setA setB" },
+                { cat: "Sets", cmd: "SMOVE", syntax: "SMOVE source dest member", info: "Move member", ex: "SMOVE setA setB \"item\"" },
 
                 // ==================== SORTED SETS ====================
-                { section: 'sorted', name: 'ZADD', syntax: 'ZADD key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]', example: 'ZADD leaderboard 100 "alice"' },
-                { section: 'sorted', name: 'ZINCRBY', syntax: 'ZINCRBY key increment member', example: 'ZINCRBY leaderboard 5 "alice"' },
-                { section: 'sorted', name: 'ZRANGE', syntax: 'ZRANGE key start stop [WITHSCORES]', example: 'ZRANGE leaderboard 0 -1 WITHSCORES' },
-                { section: 'sorted', name: 'ZREVRANGE', syntax: 'ZREVRANGE key start stop [WITHSCORES]', example: 'ZREVRANGE leaderboard 0 9' },
-                { section: 'sorted', name: 'ZRANK', syntax: 'ZRANK key member', example: 'ZRANK leaderboard "alice"' },
-                { section: 'sorted', name: 'ZREVRANK', syntax: 'ZREVRANK key member', example: 'ZREVRANK leaderboard "alice"' },
-                { section: 'sorted', name: 'ZRANGEBYSCORE', syntax: 'ZRANGEBYSCORE key min max [WITHSCORES]', example: 'ZRANGEBYSCORE leaderboard 50 100' },
-                { section: 'sorted', name: 'ZREVRANGEBYSCORE', syntax: 'ZREVRANGEBYSCORE key max min [WITHSCORES]', example: 'ZREVRANGEBYSCORE leaderboard 100 50' },
-                { section: 'sorted', name: 'ZCOUNT', syntax: 'ZCOUNT key min max', example: 'ZCOUNT leaderboard 50 100' },
-                { section: 'sorted', name: 'ZREM', syntax: 'ZREM key member [member ...]', example: 'ZREM leaderboard "alice"' },
-                { section: 'sorted', name: 'ZREMRANGEBYRANK', syntax: 'ZREMRANGEBYRANK key start stop', example: 'ZREMRANGEBYRANK leaderboard 0 9' },
-                { section: 'sorted', name: 'ZREMRANGEBYSCORE', syntax: 'ZREMRANGEBYSCORE key min max', example: 'ZREMRANGEBYSCORE leaderboard 0 10' },
-                { section: 'sorted', name: 'ZSCORE', syntax: 'ZSCORE key member', example: 'ZSCORE leaderboard "alice"' },
-                { section: 'sorted', name: 'ZCARD', syntax: 'ZCARD key', example: 'ZCARD leaderboard' },
+                { cat: "Sorted Sets", cmd: "ZADD", syntax: "ZADD key [NX|XX] [GT|LT] [CH] [INCR] score member [score member ...]", info: "Add/update scored members", ex: "ZADD leaderboard 100 \"alice\"" },
+                { cat: "Sorted Sets", cmd: "ZINCRBY", syntax: "ZINCRBY key increment member", info: "Increment score", ex: "ZINCRBY leaderboard 5 \"alice\"" },
+                { cat: "Sorted Sets", cmd: "ZRANGE", syntax: "ZRANGE key start stop [WITHSCORES]", info: "By rank ascending", ex: "ZRANGE leaderboard 0 -1 WITHSCORES" },
+                { cat: "Sorted Sets", cmd: "ZREVRANGE", syntax: "ZREVRANGE key start stop [WITHSCORES]", info: "By rank descending", ex: "ZREVRANGE leaderboard 0 9" },
+                { cat: "Sorted Sets", cmd: "ZRANK", syntax: "ZRANK key member", info: "Rank ascending", ex: "ZRANK leaderboard \"alice\"" },
+                { cat: "Sorted Sets", cmd: "ZREVRANK", syntax: "ZREVRANK key member", info: "Rank descending", ex: "ZREVRANK leaderboard \"alice\"" },
+                { cat: "Sorted Sets", cmd: "ZRANGEBYSCORE", syntax: "ZRANGEBYSCORE key min max [WITHSCORES]", info: "Range by score", ex: "ZRANGEBYSCORE leaderboard 50 100" },
+                { cat: "Sorted Sets", cmd: "ZREVRANGEBYSCORE", syntax: "ZREVRANGEBYSCORE key max min [WITHSCORES]", info: "Reverse range by score", ex: "ZREVRANGEBYSCORE leaderboard 100 50" },
+                { cat: "Sorted Sets", cmd: "ZCOUNT", syntax: "ZCOUNT key min max", info: "Count by score range", ex: "ZCOUNT leaderboard 50 100" },
+                { cat: "Sorted Sets", cmd: "ZREM", syntax: "ZREM key member [member ...]", info: "Remove members", ex: "ZREM leaderboard \"alice\"" },
+                { cat: "Sorted Sets", cmd: "ZREMRANGEBYRANK", syntax: "ZREMRANGEBYRANK key start stop", info: "Remove by rank range", ex: "ZREMRANGEBYRANK leaderboard 0 9" },
+                { cat: "Sorted Sets", cmd: "ZREMRANGEBYSCORE", syntax: "ZREMRANGEBYSCORE key min max", info: "Remove by score range", ex: "ZREMRANGEBYSCORE leaderboard 0 10" },
+                { cat: "Sorted Sets", cmd: "ZSCORE", syntax: "ZSCORE key member", info: "Score of member", ex: "ZSCORE leaderboard \"alice\"" },
+                { cat: "Sorted Sets", cmd: "ZCARD", syntax: "ZCARD key", info: "Count members", ex: "ZCARD leaderboard" },
 
                 // ==================== STREAMS ====================
-                { section: 'streams', name: 'XADD', syntax: 'XADD key [NOMKSTREAM] [MAXLEN|MINID [=|-] threshold] ID field value [field value ...]', example: 'XADD events * type "click"' },
-                { section: 'streams', name: 'XREAD', syntax: 'XREAD [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]', example: 'XREAD COUNT 10 STREAMS events 0' },
-                { section: 'streams', name: 'XRANGE', syntax: 'XRANGE key start end [COUNT count]', example: 'XRANGE events - + COUNT 10' },
-                { section: 'streams', name: 'XREVRANGE', syntax: 'XREVRANGE key end start [COUNT count]', example: 'XREVRANGE events + - COUNT 10' },
-                { section: 'streams', name: 'XLEN', syntax: 'XLEN key', example: 'XLEN events' },
-                { section: 'streams', name: 'XINFO', syntax: 'XINFO [CONSUMERS key group] [GROUPS key] [STREAM key] [HELP]', example: 'XINFO STREAM events' },
-                { section: 'streams', name: 'XDEL', syntax: 'XDEL key ID [ID ...]', example: 'XDEL events 123-0' },
-                { section: 'streams', name: 'XTRIM', syntax: 'XTRIM key MAXLEN|MINID [=|-] threshold [LIMIT count]', example: 'XTRIM events MAXLEN 1000' },
-                { section: 'streams', name: 'XGROUP', syntax: 'XGROUP [CREATE key group ID] [SETID key group ID] [DESTROY key group] [DELCONSUMER key group consumer]', example: 'XGROUP CREATE events workers $' },
-                { section: 'streams', name: 'XREADGROUP', syntax: 'XREADGROUP GROUP group consumer [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]', example: 'XREADGROUP GROUP workers alice COUNT 10 STREAMS events >' },
-                { section: 'streams', name: 'XACK', syntax: 'XACK key group ID [ID ...]', example: 'XACK events workers 123-0' },
-                { section: 'streams', name: 'XPENDING', syntax: 'XPENDING key group [start end count] [consumer]', example: 'XPENDING events workers' },
-                { section: 'streams', name: 'XCLAIM', syntax: 'XCLAIM key group consumer min-idle-time ID [ID ...] [IDLE ms] [TIME ms] [RETRYCOUNT count]', example: 'XCLAIM events workers alice 60000 123-0' },
-                { section: 'streams', name: 'XAUTOCLAIM', syntax: 'XAUTOCLAIM key group consumer min-idle-time start [COUNT count] [JUSTID]', example: 'XAUTOCLAIM events workers alice 60000 0-0 COUNT 10' },
+                { cat: "Streams", cmd: "XADD", syntax: "XADD key [NOMKSTREAM] [MAXLEN|MINID [=|-] threshold] ID field value [field value ...]", info: "Append entry", ex: "XADD events * type \"click\"" },
+                { cat: "Streams", cmd: "XREAD", syntax: "XREAD [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]", info: "Read entries", ex: "XREAD COUNT 10 STREAMS events 0" },
+                { cat: "Streams", cmd: "XRANGE", syntax: "XRANGE key start end [COUNT count]", info: "Range forward", ex: "XRANGE events - + COUNT 10" },
+                { cat: "Streams", cmd: "XREVRANGE", syntax: "XREVRANGE key end start [COUNT count]", info: "Range reverse", ex: "XREVRANGE events + - COUNT 10" },
+                { cat: "Streams", cmd: "XLEN", syntax: "XLEN key", info: "Entry count", ex: "XLEN events" },
+                { cat: "Streams", cmd: "XINFO", syntax: "XINFO [CONSUMERS key group] [GROUPS key] [STREAM key] [HELP]", info: "Stream info", ex: "XINFO STREAM events" },
+                { cat: "Streams", cmd: "XDEL", syntax: "XDEL key ID [ID ...]", info: "Delete entry", ex: "XDEL events 123-0" },
+                { cat: "Streams", cmd: "XTRIM", syntax: "XTRIM key MAXLEN|MINID [=|-] threshold [LIMIT count]", info: "Trim stream", ex: "XTRIM events MAXLEN 1000" },
+                { cat: "Streams", cmd: "XGROUP", syntax: "XGROUP [CREATE key group ID] [SETID key group ID] [DESTROY key group] [DELCONSUMER key group consumer]", info: "Consumer group management", ex: "XGROUP CREATE events workers $" },
+                { cat: "Streams", cmd: "XREADGROUP", syntax: "XREADGROUP GROUP group consumer [COUNT count] [BLOCK ms] STREAMS key ID [key ID ...]", info: "Group read", ex: "XREADGROUP GROUP workers alice COUNT 10 STREAMS events >" },
+                { cat: "Streams", cmd: "XACK", syntax: "XACK key group ID [ID ...]", info: "Acknowledge", ex: "XACK events workers 123-0" },
+                { cat: "Streams", cmd: "XPENDING", syntax: "XPENDING key group [start end count] [consumer]", info: "Pending entries", ex: "XPENDING events workers" },
+                { cat: "Streams", cmd: "XCLAIM", syntax: "XCLAIM key group consumer min-idle-time ID [ID ...] [IDLE ms] [TIME ms] [RETRYCOUNT count]", info: "Claim old entries", ex: "XCLAIM events workers alice 60000 123-0" },
+                { cat: "Streams", cmd: "XAUTOCLAIM", syntax: "XAUTOCLAIM key group consumer min-idle-time start [COUNT count] [JUSTID]", info: "Auto claim", ex: "XAUTOCLAIM events workers alice 60000 0-0 COUNT 10" },
 
                 // ==================== PUB/SUB ====================
-                { section: 'pubsub', name: 'PUBLISH', syntax: 'PUBLISH channel message', example: 'PUBLISH alerts "disk full"' },
-                { section: 'pubsub', name: 'SUBSCRIBE', syntax: 'SUBSCRIBE channel [channel ...]', example: 'SUBSCRIBE alerts' },
-                { section: 'pubsub', name: 'UNSUBSCRIBE', syntax: 'UNSUBSCRIBE [channel ...]', example: 'UNSUBSCRIBE alerts' },
-                { section: 'pubsub', name: 'PSUBSCRIBE', syntax: 'PSUBSCRIBE pattern [pattern ...]', example: 'PSUBSCRIBE news.*' },
-                { section: 'pubsub', name: 'PUNSUBSCRIBE', syntax: 'PUNSUBSCRIBE [pattern ...]', example: 'PUNSUBSCRIBE news.*' },
-                { section: 'pubsub', name: 'PUBSUB', syntax: 'PUBSUB subcommand [arg [arg ...]]', example: 'PUBSUB CHANNELS' },
+                { cat: "Pub/Sub", cmd: "PUBLISH", syntax: "PUBLISH channel message", info: "Publish message", ex: "PUBLISH alerts \"disk full\"" },
+                { cat: "Pub/Sub", cmd: "SUBSCRIBE", syntax: "SUBSCRIBE channel [channel ...]", info: "Subscribe to channels", ex: "SUBSCRIBE alerts" },
+                { cat: "Pub/Sub", cmd: "UNSUBSCRIBE", syntax: "UNSUBSCRIBE [channel ...]", info: "Unsubscribe from channels", ex: "UNSUBSCRIBE alerts" },
+                { cat: "Pub/Sub", cmd: "PSUBSCRIBE", syntax: "PSUBSCRIBE pattern [pattern ...]", info: "Pattern subscribe", ex: "PSUBSCRIBE news.*" },
+                { cat: "Pub/Sub", cmd: "PUNSUBSCRIBE", syntax: "PUNSUBSCRIBE [pattern ...]", info: "Pattern unsubscribe", ex: "PUNSUBSCRIBE news.*" },
+                { cat: "Pub/Sub", cmd: "PUBSUB", syntax: "PUBSUB subcommand [arg [arg ...]]", info: "Inspect pub/sub", ex: "PUBSUB CHANNELS" },
 
                 // ==================== TRANSACTIONS ====================
-                { section: 'transactions', name: 'MULTI', syntax: 'MULTI', example: 'MULTI' },
-                { section: 'transactions', name: 'EXEC', syntax: 'EXEC', example: 'EXEC' },
-                { section: 'transactions', name: 'DISCARD', syntax: 'DISCARD', example: 'DISCARD' },
-                { section: 'transactions', name: 'WATCH', syntax: 'WATCH key [key ...]', example: 'WATCH counter' },
-                { section: 'transactions', name: 'UNWATCH', syntax: 'UNWATCH', example: 'UNWATCH' },
+                { cat: "Transactions", cmd: "MULTI", syntax: "MULTI", info: "Start transaction", ex: "MULTI" },
+                { cat: "Transactions", cmd: "EXEC", syntax: "EXEC", info: "Execute queued commands", ex: "EXEC" },
+                { cat: "Transactions", cmd: "DISCARD", syntax: "DISCARD", info: "Cancel transaction", ex: "DISCARD" },
+                { cat: "Transactions", cmd: "WATCH", syntax: "WATCH key [key ...]", info: "Watch key for optimistic lock", ex: "WATCH counter" },
+                { cat: "Transactions", cmd: "UNWATCH", syntax: "UNWATCH", info: "Unwatch all keys", ex: "UNWATCH" },
 
                 // ==================== LUA SCRIPTS ====================
-                { section: 'lua', name: 'EVAL', syntax: 'EVAL script numkeys key [key ...] arg [arg ...]', example: 'EVAL "return redis.call(\'GET\',KEYS[1])" 1 mykey' },
-                { section: 'lua', name: 'EVALSHA', syntax: 'EVALSHA sha1 numkeys key [key ...] arg [arg ...]', example: 'EVALSHA 123abc 0' },
-                { section: 'lua', name: 'SCRIPT LOAD', syntax: 'SCRIPT LOAD script', example: 'SCRIPT LOAD "return 1"' },
-                { section: 'lua', name: 'SCRIPT EXISTS', syntax: 'SCRIPT EXISTS sha1 [sha1 ...]', example: 'SCRIPT EXISTS 123abc' },
-                { section: 'lua', name: 'SCRIPT FLUSH', syntax: 'SCRIPT FLUSH [ASYNC|SYNC]', example: 'SCRIPT FLUSH' },
-                { section: 'lua', name: 'SCRIPT KILL', syntax: 'SCRIPT KILL', example: 'SCRIPT KILL' },
-                { section: 'lua', name: 'FUNCTION LOAD', syntax: 'FUNCTION LOAD [REPLACE] function-code', example: 'FUNCTION LOAD "#!lua name=mylib\nredis.register_function(\'myfunc\', function() return \'ok\' end)"' },
-                { section: 'lua', name: 'FUNCTION LIST', syntax: 'FUNCTION LIST [LIBRARYNAME lib] [WITHCODE]', example: 'FUNCTION LIST' },
-                { section: 'lua', name: 'FUNCTION DELETE', syntax: 'FUNCTION DELETE library', example: 'FUNCTION DELETE mylib' },
-                { section: 'lua', name: 'FUNCTION CALL', syntax: 'FCALL function numkeys key [key ...] arg [arg ...]', example: 'FCALL myfunc 0' },
-                { section: 'lua', name: 'FUNCTION FLUSH', syntax: 'FUNCTION FLUSH [ASYNC|SYNC]', example: 'FUNCTION FLUSH' },
+                { cat: "Lua / Functions", cmd: "EVAL", syntax: "EVAL script numkeys key [key ...] arg [arg ...]", info: "Run Lua script", ex: "EVAL \"return redis.call('GET',KEYS[1])\" 1 mykey" },
+                { cat: "Lua / Functions", cmd: "EVALSHA", syntax: "EVALSHA sha1 numkeys key [key ...] arg [arg ...]", info: "Run cached script", ex: "EVALSHA 123abc 0" },
+                { cat: "Lua / Functions", cmd: "SCRIPT LOAD", syntax: "SCRIPT LOAD script", info: "Load script to cache", ex: "SCRIPT LOAD \"return 1\"" },
+                { cat: "Lua / Functions", cmd: "SCRIPT EXISTS", syntax: "SCRIPT EXISTS sha1 [sha1 ...]", info: "Check script exists", ex: "SCRIPT EXISTS 123abc" },
+                { cat: "Lua / Functions", cmd: "SCRIPT FLUSH", syntax: "SCRIPT FLUSH [ASYNC|SYNC]", info: "Flush script cache", ex: "SCRIPT FLUSH" },
+                { cat: "Lua / Functions", cmd: "SCRIPT KILL", syntax: "SCRIPT KILL", info: "Kill running script", ex: "SCRIPT KILL" },
+                { cat: "Lua / Functions", cmd: "FUNCTION LOAD", syntax: "FUNCTION LOAD [REPLACE] function-code", info: "Load Redis function", ex: "FUNCTION LOAD \"#!lua name=mylib\\nredis.register_function('myfunc', function() return 'ok' end)\"" },
+                { cat: "Lua / Functions", cmd: "FUNCTION LIST", syntax: "FUNCTION LIST [LIBRARYNAME lib] [WITHCODE]", info: "List functions", ex: "FUNCTION LIST" },
+                { cat: "Lua / Functions", cmd: "FUNCTION DELETE", syntax: "FUNCTION DELETE library", info: "Delete library", ex: "FUNCTION DELETE mylib" },
+                { cat: "Lua / Functions", cmd: "FCALL", syntax: "FCALL function numkeys key [key ...] arg [arg ...]", info: "Call function", ex: "FCALL myfunc 0" },
+                { cat: "Lua / Functions", cmd: "FUNCTION FLUSH", syntax: "FUNCTION FLUSH [ASYNC|SYNC]", info: "Flush functions", ex: "FUNCTION FLUSH" },
 
                 // ==================== BITMAPS ====================
-                { section: 'bitmaps', name: 'SETBIT', syntax: 'SETBIT key offset value', example: 'SETBIT active 100 1' },
-                { section: 'bitmaps', name: 'GETBIT', syntax: 'GETBIT key offset', example: 'GETBIT active 100' },
-                { section: 'bitmaps', name: 'BITCOUNT', syntax: 'BITCOUNT key [start end]', example: 'BITCOUNT active' },
-                { section: 'bitmaps', name: 'BITPOS', syntax: 'BITPOS key bit [start] [end]', example: 'BITPOS active 1' },
-                { section: 'bitmaps', name: 'BITOP', syntax: 'BITOP operation destkey key [key ...]', example: 'BITOP AND result active1 active2' },
-                { section: 'bitmaps', name: 'BITFIELD', syntax: 'BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]', example: 'BITFIELD mykey SET i8 0 100' },
-                { section: 'bitmaps', name: 'BITFIELD_RO', syntax: 'BITFIELD_RO key [GET type offset]', example: 'BITFIELD_RO mykey GET i8 0' },
+                { cat: "Bitmaps", cmd: "SETBIT", syntax: "SETBIT key offset value", info: "Set bit at offset", ex: "SETBIT active 100 1" },
+                { cat: "Bitmaps", cmd: "GETBIT", syntax: "GETBIT key offset", info: "Get bit value", ex: "GETBIT active 100" },
+                { cat: "Bitmaps", cmd: "BITCOUNT", syntax: "BITCOUNT key [start end]", info: "Count 1-bits", ex: "BITCOUNT active" },
+                { cat: "Bitmaps", cmd: "BITPOS", syntax: "BITPOS key bit [start] [end]", info: "Find first bit position", ex: "BITPOS active 1" },
+                { cat: "Bitmaps", cmd: "BITOP", syntax: "BITOP operation destkey key [key ...]", info: "Bitwise operation", ex: "BITOP AND result active1 active2" },
+                { cat: "Bitmaps", cmd: "BITFIELD", syntax: "BITFIELD key [GET type offset] [SET type offset value] [INCRBY type offset increment] [OVERFLOW WRAP|SAT|FAIL]", info: "Bitfield command", ex: "BITFIELD mykey SET i8 0 100" },
+                { cat: "Bitmaps", cmd: "BITFIELD_RO", syntax: "BITFIELD_RO key [GET type offset]", info: "Read-only bitfield", ex: "BITFIELD_RO mykey GET i8 0" },
 
                 // ==================== HYPERLOGLOG ====================
-                { section: 'hyperlog', name: 'PFADD', syntax: 'PFADD key element [element ...]', example: 'PFADD visitors "ip1"' },
-                { section: 'hyperlog', name: 'PFCOUNT', syntax: 'PFCOUNT key [key ...]', example: 'PFCOUNT visitors' },
-                { section: 'hyperlog', name: 'PFMERGE', syntax: 'PFMERGE destkey sourcekey [sourcekey ...]', example: 'PFMERGE total visitors1 visitors2' },
+                { cat: "HyperLogLog", cmd: "PFADD", syntax: "PFADD key element [element ...]", info: "Add elements", ex: "PFADD visitors \"ip1\"" },
+                { cat: "HyperLogLog", cmd: "PFCOUNT", syntax: "PFCOUNT key [key ...]", info: "Approx count", ex: "PFCOUNT visitors" },
+                { cat: "HyperLogLog", cmd: "PFMERGE", syntax: "PFMERGE destkey sourcekey [sourcekey ...]", info: "Merge HLLs", ex: "PFMERGE total visitors1 visitors2" },
 
                 // ==================== GEOSPATIAL ====================
-                { section: 'geo', name: 'GEOADD', syntax: 'GEOADD key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]', example: 'GEOADD cities 2.35 48.86 "Paris"' },
-                { section: 'geo', name: 'GEOSEARCH', syntax: 'GEOSEARCH key [FROMMEMBER member] [FROMLONLAT lon lat] [BYRADIUS radius unit] [BYBOX width height unit] [ASC|DESC] [COUNT count] [WITHCOORD] [WITHDIST] [WITHHASH]', example: 'GEOSEARCH cities FROMLONLAT 2 48 BYRADIUS 100 km' },
-                { section: 'geo', name: 'GEOPOS', syntax: 'GEOPOS key member [member ...]', example: 'GEOPOS cities "Paris"' },
-                { section: 'geo', name: 'GEODIST', syntax: 'GEODIST key member1 member2 [unit]', example: 'GEODIST cities "Paris" "London" km' },
-                { section: 'geo', name: 'GEOHASH', syntax: 'GEOHASH key member [member ...]', example: 'GEOHASH cities "Paris"' },
+                { cat: "Geospatial", cmd: "GEOADD", syntax: "GEOADD key [NX|XX] [CH] longitude latitude member [longitude latitude member ...]", info: "Add location", ex: "GEOADD cities 2.35 48.86 \"Paris\"" },
+                { cat: "Geospatial", cmd: "GEOSEARCH", syntax: "GEOSEARCH key [FROMMEMBER member] [FROMLONLAT lon lat] [BYRADIUS radius unit] [BYBOX width height unit] [ASC|DESC] [COUNT count] [WITHCOORD] [WITHDIST] [WITHHASH]", info: "Search by location", ex: "GEOSEARCH cities FROMLONLAT 2 48 BYRADIUS 100 km" },
+                { cat: "Geospatial", cmd: "GEOPOS", syntax: "GEOPOS key member [member ...]", info: "Get positions", ex: "GEOPOS cities \"Paris\"" },
+                { cat: "Geospatial", cmd: "GEODIST", syntax: "GEODIST key member1 member2 [unit]", info: "Distance between members", ex: "GEODIST cities \"Paris\" \"London\" km" },
+                { cat: "Geospatial", cmd: "GEOHASH", syntax: "GEOHASH key member [member ...]", info: "Geohash string", ex: "GEOHASH cities \"Paris\"" },
 
                 // ==================== SERVER & DATABASE ====================
-                { section: 'serverdb', name: 'SELECT', syntax: 'SELECT index', example: 'SELECT 1' },
-                { section: 'serverdb', name: 'FLUSHDB', syntax: 'FLUSHDB [ASYNC|SYNC]', example: 'FLUSHDB' },
-                { section: 'serverdb', name: 'FLUSHALL', syntax: 'FLUSHALL [ASYNC|SYNC]', example: 'FLUSHALL' },
-                { section: 'serverdb', name: 'SWAPDB', syntax: 'SWAPDB index1 index2', example: 'SWAPDB 0 1' },
-                { section: 'serverdb', name: 'DBSIZE', syntax: 'DBSIZE', example: 'DBSIZE' },
-                { section: 'serverdb', name: 'INFO keyspace', syntax: 'INFO keyspace', example: 'INFO keyspace' },
-                { section: 'serverdb', name: 'TIME', syntax: 'TIME', example: 'TIME' },
-                { section: 'serverdb', name: 'COMMAND', syntax: 'COMMAND', example: 'COMMAND' },
-                { section: 'serverdb', name: 'COMMAND COUNT', syntax: 'COMMAND COUNT', example: 'COMMAND COUNT' },
-                { section: 'serverdb', name: 'COMMAND INFO', syntax: 'COMMAND INFO command [command ...]', example: 'COMMAND INFO SET GET' },
-                { section: 'serverdb', name: 'SHUTDOWN', syntax: 'SHUTDOWN [NOSAVE|SAVE]', example: 'SHUTDOWN' },
+                { cat: "Server / DB", cmd: "SELECT", syntax: "SELECT index", info: "Switch DB", ex: "SELECT 1" },
+                { cat: "Server / DB", cmd: "FLUSHDB", syntax: "FLUSHDB [ASYNC|SYNC]", info: "Clear current DB", ex: "FLUSHDB" },
+                { cat: "Server / DB", cmd: "FLUSHALL", syntax: "FLUSHALL [ASYNC|SYNC]", info: "Clear all DBs", ex: "FLUSHALL" },
+                { cat: "Server / DB", cmd: "SWAPDB", syntax: "SWAPDB index1 index2", info: "Swap databases", ex: "SWAPDB 0 1" },
+                { cat: "Server / DB", cmd: "DBSIZE", syntax: "DBSIZE", info: "Key count in DB", ex: "DBSIZE" },
+                { cat: "Server / DB", cmd: "INFO keyspace", syntax: "INFO keyspace", info: "Keyspace section", ex: "INFO keyspace" },
+                { cat: "Server / DB", cmd: "TIME", syntax: "TIME", info: "Server time", ex: "TIME" },
+                { cat: "Server / DB", cmd: "COMMAND", syntax: "COMMAND", info: "List all commands", ex: "COMMAND" },
+                { cat: "Server / DB", cmd: "COMMAND COUNT", syntax: "COMMAND COUNT", info: "Total commands", ex: "COMMAND COUNT" },
+                { cat: "Server / DB", cmd: "COMMAND INFO", syntax: "COMMAND INFO command [command ...]", info: "Command details", ex: "COMMAND INFO SET GET" },
+                { cat: "Server / DB", cmd: "SHUTDOWN", syntax: "SHUTDOWN [NOSAVE|SAVE] [NOW]", info: "Stop server", ex: "SHUTDOWN" },
 
                 // ==================== CLIENT ====================
-                { section: 'client', name: 'CLIENT LIST', syntax: 'CLIENT LIST [TYPE normal|master|replica|pubsub] [ID client-id]', example: 'CLIENT LIST' },
-                { section: 'client', name: 'CLIENT INFO', syntax: 'CLIENT INFO', example: 'CLIENT INFO' },
-                { section: 'client', name: 'CLIENT ID', syntax: 'CLIENT ID', example: 'CLIENT ID' },
-                { section: 'client', name: 'CLIENT GETNAME', syntax: 'CLIENT GETNAME', example: 'CLIENT GETNAME' },
-                { section: 'client', name: 'CLIENT SETNAME', syntax: 'CLIENT SETNAME name', example: 'CLIENT SETNAME myapp' },
-                { section: 'client', name: 'CLIENT KILL', syntax: 'CLIENT KILL [addr:port] [ID client-id] [TYPE normal|master|replica|pubsub] [USER username] [SKIPME yes/no]', example: 'CLIENT KILL 127.0.0.1:54321' },
-                { section: 'client', name: 'CLIENT PAUSE', syntax: 'CLIENT PAUSE timeout [WRITE|ALL]', example: 'CLIENT PAUSE 5000 WRITE' },
-                { section: 'client', name: 'CLIENT UNPAUSE', syntax: 'CLIENT UNPAUSE', example: 'CLIENT UNPAUSE' },
+                { cat: "Client", cmd: "CLIENT LIST", syntax: "CLIENT LIST [TYPE normal|master|replica|pubsub] [ID client-id]", info: "List connections", ex: "CLIENT LIST" },
+                { cat: "Client", cmd: "CLIENT INFO", syntax: "CLIENT INFO", info: "Current client info", ex: "CLIENT INFO" },
+                { cat: "Client", cmd: "CLIENT ID", syntax: "CLIENT ID", info: "Client ID", ex: "CLIENT ID" },
+                { cat: "Client", cmd: "CLIENT GETNAME", syntax: "CLIENT GETNAME", info: "Get client name", ex: "CLIENT GETNAME" },
+                { cat: "Client", cmd: "CLIENT SETNAME", syntax: "CLIENT SETNAME name", info: "Set client name", ex: "CLIENT SETNAME myapp" },
+                { cat: "Client", cmd: "CLIENT KILL", syntax: "CLIENT KILL [addr:port] [ID client-id] [TYPE normal|master|replica|pubsub] [USER username] [SKIPME yes/no]", info: "Kill connection", ex: "CLIENT KILL 127.0.0.1:54321" },
+                { cat: "Client", cmd: "CLIENT PAUSE", syntax: "CLIENT PAUSE timeout [WRITE|ALL]", info: "Pause clients", ex: "CLIENT PAUSE 5000 WRITE" },
+                { cat: "Client", cmd: "CLIENT UNPAUSE", syntax: "CLIENT UNPAUSE", info: "Unpause clients", ex: "CLIENT UNPAUSE" },
 
                 // ==================== CONFIGURATION ====================
-                { section: 'config', name: 'CONFIG GET', syntax: 'CONFIG GET parameter [parameter ...]', example: 'CONFIG GET maxmemory' },
-                { section: 'config', name: 'CONFIG SET', syntax: 'CONFIG SET parameter value [parameter value ...]', example: 'CONFIG SET maxmemory 1GB' },
-                { section: 'config', name: 'CONFIG RESETSTAT', syntax: 'CONFIG RESETSTAT', example: 'CONFIG RESETSTAT' },
-                { section: 'config', name: 'CONFIG REWRITE', syntax: 'CONFIG REWRITE', example: 'CONFIG REWRITE' },
+                { cat: "Config / Conn", cmd: "CONFIG GET", syntax: "CONFIG GET parameter [parameter ...]", info: "Read config", ex: "CONFIG GET maxmemory" },
+                { cat: "Config / Conn", cmd: "CONFIG SET", syntax: "CONFIG SET parameter value [parameter value ...]", info: "Set config", ex: "CONFIG SET maxmemory 1GB" },
+                { cat: "Config / Conn", cmd: "CONFIG RESETSTAT", syntax: "CONFIG RESETSTAT", info: "Reset stats", ex: "CONFIG RESETSTAT" },
+                { cat: "Config / Conn", cmd: "CONFIG REWRITE", syntax: "CONFIG REWRITE", info: "Write config to file", ex: "CONFIG REWRITE" },
 
                 // ==================== MEMORY ====================
-                { section: 'memory', name: 'MEMORY USAGE', syntax: 'MEMORY USAGE key [SAMPLES n]', example: 'MEMORY USAGE user:1' },
-                { section: 'memory', name: 'MEMORY STATS', syntax: 'MEMORY STATS', example: 'MEMORY STATS' },
-                { section: 'memory', name: 'MEMORY DOCTOR', syntax: 'MEMORY DOCTOR', example: 'MEMORY DOCTOR' },
-                { section: 'memory', name: 'MEMORY MALLOC-STATS', syntax: 'MEMORY MALLOC-STATS', example: 'MEMORY MALLOC-STATS' },
-                { section: 'memory', name: 'MEMORY PURGE', syntax: 'MEMORY PURGE', example: 'MEMORY PURGE' },
+                { cat: "Memory", cmd: "MEMORY USAGE", syntax: "MEMORY USAGE key [SAMPLES n]", info: "Key memory usage", ex: "MEMORY USAGE user:1" },
+                { cat: "Memory", cmd: "MEMORY STATS", syntax: "MEMORY STATS", info: "Memory stats", ex: "MEMORY STATS" },
+                { cat: "Memory", cmd: "MEMORY DOCTOR", syntax: "MEMORY DOCTOR", info: "Memory diagnostic", ex: "MEMORY DOCTOR" },
+                { cat: "Memory", cmd: "MEMORY MALLOC-STATS", syntax: "MEMORY MALLOC-STATS", info: "Malloc stats", ex: "MEMORY MALLOC-STATS" },
+                { cat: "Memory", cmd: "MEMORY PURGE", syntax: "MEMORY PURGE", info: "Purge memory", ex: "MEMORY PURGE" },
 
                 // ==================== MONITORING ====================
-                { section: 'monitor', name: 'MONITOR', syntax: 'MONITOR', example: 'MONITOR' },
-                { section: 'monitor', name: 'SLOWLOG GET', syntax: 'SLOWLOG GET [n]', example: 'SLOWLOG GET 10' },
-                { section: 'monitor', name: 'SLOWLOG LEN', syntax: 'SLOWLOG LEN', example: 'SLOWLOG LEN' },
-                { section: 'monitor', name: 'SLOWLOG RESET', syntax: 'SLOWLOG RESET', example: 'SLOWLOG RESET' },
-                { section: 'monitor', name: 'LATENCY DOCTOR', syntax: 'LATENCY DOCTOR', example: 'LATENCY DOCTOR' },
-                { section: 'monitor', name: 'LATENCY LATEST', syntax: 'LATENCY LATEST', example: 'LATENCY LATEST' },
-                { section: 'monitor', name: 'LATENCY HISTORY', syntax: 'LATENCY HISTORY event', example: 'LATENCY HISTORY command' },
-                { section: 'monitor', name: 'LATENCY GRAPH', syntax: 'LATENCY GRAPH event', example: 'LATENCY GRAPH command' },
+                { cat: "Monitor / Debug", cmd: "MONITOR", syntax: "MONITOR", info: "Watch all commands", ex: "MONITOR" },
+                { cat: "Monitor / Debug", cmd: "SLOWLOG GET", syntax: "SLOWLOG GET [n]", info: "Get slow queries", ex: "SLOWLOG GET 10" },
+                { cat: "Monitor / Debug", cmd: "SLOWLOG LEN", syntax: "SLOWLOG LEN", info: "Slow log length", ex: "SLOWLOG LEN" },
+                { cat: "Monitor / Debug", cmd: "SLOWLOG RESET", syntax: "SLOWLOG RESET", info: "Reset slow log", ex: "SLOWLOG RESET" },
+                { cat: "Monitor / Debug", cmd: "LATENCY DOCTOR", syntax: "LATENCY DOCTOR", info: "Latency report", ex: "LATENCY DOCTOR" },
+                { cat: "Monitor / Debug", cmd: "LATENCY LATEST", syntax: "LATENCY LATEST", info: "Latest latency", ex: "LATENCY LATEST" },
+                { cat: "Monitor / Debug", cmd: "LATENCY HISTORY", syntax: "LATENCY HISTORY event", info: "Latency history", ex: "LATENCY HISTORY command" },
+                { cat: "Monitor / Debug", cmd: "LATENCY GRAPH", syntax: "LATENCY GRAPH event", info: "Latency graph", ex: "LATENCY GRAPH command" },
 
                 // ==================== PERSISTENCE ====================
-                { section: 'persist', name: 'SAVE', syntax: 'SAVE', example: 'SAVE' },
-                { section: 'persist', name: 'BGSAVE', syntax: 'BGSAVE [SCHEDULE]', example: 'BGSAVE' },
-                { section: 'persist', name: 'LASTSAVE', syntax: 'LASTSAVE', example: 'LASTSAVE' },
-                { section: 'persist', name: 'BGREWRITEAOF', syntax: 'BGREWRITEAOF', example: 'BGREWRITEAOF' },
-                { section: 'persist', name: 'CONFIG GET appendonly', syntax: 'CONFIG GET appendonly', example: 'CONFIG GET appendonly' },
-                { section: 'persist', name: 'INFO persistence', syntax: 'INFO persistence', example: 'INFO persistence' },
+                { cat: "Persistence", cmd: "SAVE", syntax: "SAVE", info: "Blocking RDB save", ex: "SAVE" },
+                { cat: "Persistence", cmd: "BGSAVE", syntax: "BGSAVE [SCHEDULE]", info: "Background RDB save", ex: "BGSAVE" },
+                { cat: "Persistence", cmd: "LASTSAVE", syntax: "LASTSAVE", info: "Last save timestamp", ex: "LASTSAVE" },
+                { cat: "Persistence", cmd: "BGREWRITEAOF", syntax: "BGREWRITEAOF", info: "Rewrite AOF", ex: "BGREWRITEAOF" },
+                { cat: "Persistence", cmd: "CONFIG GET appendonly", syntax: "CONFIG GET appendonly", info: "Check AOF config", ex: "CONFIG GET appendonly" },
+                { cat: "Persistence", cmd: "INFO persistence", syntax: "INFO persistence", info: "Persistence stats", ex: "INFO persistence" },
 
                 // ==================== REPLICATION ====================
-                { section: 'replication', name: 'INFO replication', syntax: 'INFO replication', example: 'INFO replication' },
-                { section: 'replication', name: 'REPLICAOF', syntax: 'REPLICAOF host port', example: 'REPLICAOF 192.168.1.10 6379' },
-                { section: 'replication', name: 'ROLE', syntax: 'ROLE', example: 'ROLE' },
-                { section: 'replication', name: 'SLAVEOF', syntax: 'SLAVEOF host port', example: 'SLAVEOF 192.168.1.10 6379' },
+                { cat: "Replication", cmd: "INFO replication", syntax: "INFO replication", info: "Replication stats", ex: "INFO replication" },
+                { cat: "Replication", cmd: "REPLICAOF", syntax: "REPLICAOF host port", info: "Become replica", ex: "REPLICAOF 192.168.1.10 6379" },
+                { cat: "Replication", cmd: "ROLE", syntax: "ROLE", info: "Role info", ex: "ROLE" },
+                { cat: "Replication", cmd: "SLAVEOF (legacy)", syntax: "SLAVEOF host port", info: "Legacy replica command", ex: "SLAVEOF 192.168.1.10 6379" },
 
                 // ==================== SENTINEL ====================
-                { section: 'sentinel', name: 'SENTINEL masters', syntax: 'SENTINEL masters', example: 'SENTINEL masters' },
-                { section: 'sentinel', name: 'SENTINEL master', syntax: 'SENTINEL master <name>', example: 'SENTINEL master mymaster' },
-                { section: 'sentinel', name: 'SENTINEL replicas', syntax: 'SENTINEL replicas <name>', example: 'SENTINEL replicas mymaster' },
-                { section: 'sentinel', name: 'SENTINEL sentinels', syntax: 'SENTINEL sentinels <name>', example: 'SENTINEL sentinels mymaster' },
-                { section: 'sentinel', name: 'SENTINEL get-master-addr-by-name', syntax: 'SENTINEL get-master-addr-by-name <name>', example: 'SENTINEL get-master-addr-by-name mymaster' },
-                { section: 'sentinel', name: 'SENTINEL failover', syntax: 'SENTINEL failover <name>', example: 'SENTINEL failover mymaster' },
-                { section: 'sentinel', name: 'SENTINEL ckquorum', syntax: 'SENTINEL ckquorum <name>', example: 'SENTINEL ckquorum mymaster' },
+                { cat: "Sentinel", cmd: "SENTINEL masters", syntax: "SENTINEL masters", info: "List master names", ex: "SENTINEL masters" },
+                { cat: "Sentinel", cmd: "SENTINEL master", syntax: "SENTINEL master <name>", info: "Master info", ex: "SENTINEL master mymaster" },
+                { cat: "Sentinel", cmd: "SENTINEL replicas", syntax: "SENTINEL replicas <name>", info: "List replicas", ex: "SENTINEL replicas mymaster" },
+                { cat: "Sentinel", cmd: "SENTINEL sentinels", syntax: "SENTINEL sentinels <name>", info: "List sentinels", ex: "SENTINEL sentinels mymaster" },
+                { cat: "Sentinel", cmd: "SENTINEL get-master-addr-by-name", syntax: "SENTINEL get-master-addr-by-name <name>", info: "Get master address", ex: "SENTINEL get-master-addr-by-name mymaster" },
+                { cat: "Sentinel", cmd: "SENTINEL failover", syntax: "SENTINEL failover <name>", info: "Force failover", ex: "SENTINEL failover mymaster" },
+                { cat: "Sentinel", cmd: "SENTINEL ckquorum", syntax: "SENTINEL ckquorum <name>", info: "Check quorum", ex: "SENTINEL ckquorum mymaster" },
 
                 // ==================== CLUSTER ====================
-                { section: 'cluster', name: 'CLUSTER INFO', syntax: 'CLUSTER INFO', example: 'CLUSTER INFO' },
-                { section: 'cluster', name: 'CLUSTER NODES', syntax: 'CLUSTER NODES', example: 'CLUSTER NODES' },
-                { section: 'cluster', name: 'CLUSTER SLOTS', syntax: 'CLUSTER SLOTS', example: 'CLUSTER SLOTS' },
-                { section: 'cluster', name: 'CLUSTER SHARDS', syntax: 'CLUSTER SHARDS', example: 'CLUSTER SHARDS' },
-                { section: 'cluster', name: 'CLUSTER MEET', syntax: 'CLUSTER MEET ip port', example: 'CLUSTER MEET 192.168.1.10 6379' },
-                { section: 'cluster', name: 'CLUSTER FORGET', syntax: 'CLUSTER FORGET node-id', example: 'CLUSTER FORGET abc123' },
-                { section: 'cluster', name: 'CLUSTER REPLICATE', syntax: 'CLUSTER REPLICATE node-id', example: 'CLUSTER REPLICATE def456' },
-                { section: 'cluster', name: 'CLUSTER FAILOVER', syntax: 'CLUSTER FAILOVER [FORCE|TAKEOVER]', example: 'CLUSTER FAILOVER' },
-                { section: 'cluster', name: 'CLUSTER ADDSLOTS', syntax: 'CLUSTER ADDSLOTS slot [slot ...]', example: 'CLUSTER ADDSLOTS 0 1 2' },
-                { section: 'cluster', name: 'CLUSTER DELSLOTS', syntax: 'CLUSTER DELSLOTS slot [slot ...]', example: 'CLUSTER DELSLOTS 0 1 2' },
-                { section: 'cluster', name: 'CLUSTER ADDSLOTSRANGE', syntax: 'CLUSTER ADDSLOTSRANGE start-slot end-slot [start-slot end-slot ...]', example: 'CLUSTER ADDSLOTSRANGE 0 100' },
-                { section: 'cluster', name: 'CLUSTER DELSLOTSRANGE', syntax: 'CLUSTER DELSLOTSRANGE start-slot end-slot [start-slot end-slot ...]', example: 'CLUSTER DELSLOTSRANGE 0 100' },
-                { section: 'cluster', name: 'CLUSTER SETSLOT', syntax: 'CLUSTER SETSLOT slot IMPORTING|MIGRATING|STABLE|NODE [node-id]', example: 'CLUSTER SETSLOT 0 NODE abc123' },
-                { section: 'cluster', name: 'CLUSTER SAVECONFIG', syntax: 'CLUSTER SAVECONFIG', example: 'CLUSTER SAVECONFIG' },
-                { section: 'cluster', name: 'CLUSTER RESET', syntax: 'CLUSTER RESET [HARD|SOFT]', example: 'CLUSTER RESET SOFT' },
+                { cat: "Cluster", cmd: "CLUSTER INFO", syntax: "CLUSTER INFO", info: "Cluster state", ex: "CLUSTER INFO" },
+                { cat: "Cluster", cmd: "CLUSTER NODES", syntax: "CLUSTER NODES", info: "Node list", ex: "CLUSTER NODES" },
+                { cat: "Cluster", cmd: "CLUSTER SLOTS", syntax: "CLUSTER SLOTS", info: "Slot mapping", ex: "CLUSTER SLOTS" },
+                { cat: "Cluster", cmd: "CLUSTER SHARDS", syntax: "CLUSTER SHARDS", info: "Shard mapping", ex: "CLUSTER SHARDS" },
+                { cat: "Cluster", cmd: "CLUSTER MEET", syntax: "CLUSTER MEET ip port", info: "Join cluster", ex: "CLUSTER MEET 192.168.1.10 6379" },
+                { cat: "Cluster", cmd: "CLUSTER FORGET", syntax: "CLUSTER FORGET node-id", info: "Forget node", ex: "CLUSTER FORGET abc123" },
+                { cat: "Cluster", cmd: "CLUSTER REPLICATE", syntax: "CLUSTER REPLICATE node-id", info: "Replicate master", ex: "CLUSTER REPLICATE def456" },
+                { cat: "Cluster", cmd: "CLUSTER FAILOVER", syntax: "CLUSTER FAILOVER [FORCE|TAKEOVER]", info: "Trigger failover", ex: "CLUSTER FAILOVER" },
+                { cat: "Cluster", cmd: "CLUSTER ADDSLOTS", syntax: "CLUSTER ADDSLOTS slot [slot ...]", info: "Assign slots", ex: "CLUSTER ADDSLOTS 0 1 2" },
+                { cat: "Cluster", cmd: "CLUSTER DELSLOTS", syntax: "CLUSTER DELSLOTS slot [slot ...]", info: "Remove slots", ex: "CLUSTER DELSLOTS 0 1 2" },
+                { cat: "Cluster", cmd: "CLUSTER ADDSLOTSRANGE", syntax: "CLUSTER ADDSLOTSRANGE start-slot end-slot [start-slot end-slot ...]", info: "Assign range", ex: "CLUSTER ADDSLOTSRANGE 0 100" },
+                { cat: "Cluster", cmd: "CLUSTER DELSLOTSRANGE", syntax: "CLUSTER DELSLOTSRANGE start-slot end-slot [start-slot end-slot ...]", info: "Remove range", ex: "CLUSTER DELSLOTSRANGE 0 100" },
+                { cat: "Cluster", cmd: "CLUSTER SETSLOT", syntax: "CLUSTER SETSLOT slot IMPORTING|MIGRATING|STABLE|NODE [node-id]", info: "Manage slot state", ex: "CLUSTER SETSLOT 0 NODE abc123" },
+                { cat: "Cluster", cmd: "CLUSTER SAVECONFIG", syntax: "CLUSTER SAVECONFIG", info: "Save cluster config", ex: "CLUSTER SAVECONFIG" },
+                { cat: "Cluster", cmd: "CLUSTER RESET", syntax: "CLUSTER RESET [HARD|SOFT]", info: "Reset cluster", ex: "CLUSTER RESET SOFT" },
 
                 // ==================== ACL / SECURITY ====================
-                { section: 'acl', name: 'ACL LIST', syntax: 'ACL LIST', example: 'ACL LIST' },
-                { section: 'acl', name: 'ACL USERS', syntax: 'ACL USERS', example: 'ACL USERS' },
-                { section: 'acl', name: 'ACL GETUSER', syntax: 'ACL GETUSER username', example: 'ACL GETUSER alice' },
-                { section: 'acl', name: 'ACL SETUSER', syntax: 'ACL SETUSER username [rule [rule ...]]', example: 'ACL SETUSER alice on >password +@all' },
-                { section: 'acl', name: 'ACL DELUSER', syntax: 'ACL DELUSER username [username ...]', example: 'ACL DELUSER alice' },
-                { section: 'acl', name: 'ACL CAT', syntax: 'ACL CAT [categoryname]', example: 'ACL CAT' },
-                { section: 'acl', name: 'ACL GENPASS', syntax: 'ACL GENPASS [bits]', example: 'ACL GENPASS 256' },
-                { section: 'acl', name: 'ACL WHOAMI', syntax: 'ACL WHOAMI', example: 'ACL WHOAMI' },
-                { section: 'acl', name: 'ACL LOG', syntax: 'ACL LOG [count | RESET]', example: 'ACL LOG 10' },
-                { section: 'acl', name: 'ACL LOAD', syntax: 'ACL LOAD', example: 'ACL LOAD' },
-                { section: 'acl', name: 'ACL SAVE', syntax: 'ACL SAVE', example: 'ACL SAVE' },
-                { section: 'acl', name: 'ACL DRYRUN', syntax: 'ACL DRYRUN username command ...', example: 'ACL DRYRUN alice SET mykey value' },
+                { cat: "ACL / Security", cmd: "ACL LIST", syntax: "ACL LIST", info: "List users", ex: "ACL LIST" },
+                { cat: "ACL / Security", cmd: "ACL USERS", syntax: "ACL USERS", info: "List usernames", ex: "ACL USERS" },
+                { cat: "ACL / Security", cmd: "ACL GETUSER", syntax: "ACL GETUSER username", info: "Show user rules", ex: "ACL GETUSER alice" },
+                { cat: "ACL / Security", cmd: "ACL SETUSER", syntax: "ACL SETUSER username [rule [rule ...]]", info: "Create/update user", ex: "ACL SETUSER alice on >password +@all" },
+                { cat: "ACL / Security", cmd: "ACL DELUSER", syntax: "ACL DELUSER username [username ...]", info: "Delete users", ex: "ACL DELUSER alice" },
+                { cat: "ACL / Security", cmd: "ACL CAT", syntax: "ACL CAT [categoryname]", info: "List categories", ex: "ACL CAT" },
+                { cat: "ACL / Security", cmd: "ACL GENPASS", syntax: "ACL GENPASS [bits]", info: "Generate password", ex: "ACL GENPASS 256" },
+                { cat: "ACL / Security", cmd: "ACL WHOAMI", syntax: "ACL WHOAMI", info: "Current user", ex: "ACL WHOAMI" },
+                { cat: "ACL / Security", cmd: "ACL LOG", syntax: "ACL LOG [count | RESET]", info: "ACL security log", ex: "ACL LOG 10" },
+                { cat: "ACL / Security", cmd: "ACL LOAD", syntax: "ACL LOAD", info: "Load ACL config", ex: "ACL LOAD" },
+                { cat: "ACL / Security", cmd: "ACL SAVE", syntax: "ACL SAVE", info: "Save ACL config", ex: "ACL SAVE" },
+                { cat: "ACL / Security", cmd: "ACL DRYRUN", syntax: "ACL DRYRUN username command ...", info: "Test permissions", ex: "ACL DRYRUN alice SET mykey value" },
 
                 // ==================== BACKEND PATTERNS ====================
-                { section: 'patterns', name: 'Cache', syntax: 'SET + EXPIRE', example: 'SET page:1 "<html>" EX 60' },
-                { section: 'patterns', name: 'Counter', syntax: 'INCR / DECR', example: 'INCR visits' },
-                { section: 'patterns', name: 'Rate Limiter', syntax: 'INCR + EXPIRE', example: 'INCR rate:ip EXPIRE rate:ip 60' },
-                { section: 'patterns', name: 'Distributed Lock', syntax: 'SET NX EX', example: 'SET lock:key "uuid" NX EX 10' },
-                { section: 'patterns', name: 'Queue', syntax: 'LPUSH + RPOP', example: 'LPUSH queue "job1" RPOP queue' },
-                { section: 'patterns', name: 'Leaderboard', syntax: 'ZADD + ZRANGE', example: 'ZADD leaderboard 100 "alice" ZRANGE leaderboard 0 -1' },
-                { section: 'patterns', name: 'User Profile', syntax: 'HSET + HGETALL', example: 'HSET user:1 name "Bob" age 30 HGETALL user:1' },
-                { section: 'patterns', name: 'Unique Membership', syntax: 'SADD + SISMEMBER', example: 'SADD tags "redis" SISMEMBER tags "redis"' },
-                { section: 'patterns', name: 'Event Processing', syntax: 'XADD + XREADGROUP', example: 'XADD events * type "click" XREADGROUP GROUP workers alice COUNT 10 STREAMS events >' },
+                { cat: "Patterns", cmd: "Cache", syntax: "SET + EXPIRE", info: "Cache pattern", ex: "SET page:1 \"<html>\" EX 60" },
+                { cat: "Patterns", cmd: "Counter", syntax: "INCR / DECR", info: "Counter pattern", ex: "INCR visits" },
+                { cat: "Patterns", cmd: "Rate Limiter", syntax: "INCR + EXPIRE", info: "Fixed-window rate limit", ex: "INCR rate:ip; EXPIRE rate:ip 60" },
+                { cat: "Patterns", cmd: "Distributed Lock", syntax: "SET NX EX", info: "Lock pattern", ex: "SET lock:key \"uuid\" NX EX 10" },
+                { cat: "Patterns", cmd: "Queue", syntax: "LPUSH + RPOP", info: "FIFO queue pattern", ex: "LPUSH queue \"job1\"; RPOP queue" },
+                { cat: "Patterns", cmd: "Leaderboard", syntax: "ZADD + ZRANGE", info: "Leaderboard pattern", ex: "ZADD leaderboard 100 \"alice\"; ZRANGE leaderboard 0 -1" },
+                { cat: "Patterns", cmd: "User Profile", syntax: "HSET + HGETALL", info: "Profile object", ex: "HSET user:1 name \"Bob\" age 30; HGETALL user:1" },
+                { cat: "Patterns", cmd: "Unique Membership", syntax: "SADD + SISMEMBER", info: "Set membership", ex: "SADD tags \"redis\"; SISMEMBER tags \"redis\"" },
+                { cat: "Patterns", cmd: "Event Processing", syntax: "XADD + XREADGROUP", info: "Event/message queue", ex: "XADD events * type \"click\"; XREADGROUP GROUP workers alice COUNT 10 STREAMS events >" },
 
                 // ==================== REFERENCE ====================
-                { section: 'reference', name: 'Create / Write', syntax: 'SET, HSET, LPUSH, RPUSH, SADD, ZADD, XADD', example: 'SET key value' },
-                { section: 'reference', name: 'Read', syntax: 'GET, HGET, HGETALL, LRANGE, SMEMBERS, ZRANGE, XRANGE', example: 'GET key' },
-                { section: 'reference', name: 'Update', syntax: 'SET, HSET, HINCRBY, INCR, ZINCRBY, LSET', example: 'SET key newvalue' },
-                { section: 'reference', name: 'Delete', syntax: 'DEL, UNLINK, HDEL, LPOP, RPOP, SREM, ZREM, XDEL', example: 'DEL key' },
-                { section: 'reference', name: 'Search', syntax: 'KEYS, SCAN, HSCAN, SSCAN, ZSCAN', example: 'KEYS pattern' },
-                { section: 'reference', name: 'Expiration', syntax: 'EXPIRE, PEXPIRE, TTL, PTTL, PERSIST', example: 'EXPIRE key 60' },
-                { section: 'reference', name: 'Atomicity', syntax: 'MULTI, EXEC, WATCH, DISCARD, SET NX, INCR', example: 'MULTI ... EXEC' },
-                { section: 'reference', name: 'Performance', syntax: 'INFO, SLOWLOG, LATENCY, MEMORY, SCAN', example: 'INFO stats' },
-                { section: 'reference', name: 'Administration', syntax: 'CONFIG, CLIENT, ACL, FLUSHDB, FLUSHALL, SAVE, BGSAVE', example: 'CONFIG GET maxmemory' },
-                { section: 'reference', name: 'High Availability', syntax: 'REPLICAOF, ROLE, SENTINEL, CLUSTER', example: 'REPLICAOF 192.168.1.10 6379' }
+                { cat: "Reference", cmd: "Create / Write", syntax: "SET, HSET, LPUSH, RPUSH, SADD, ZADD, XADD", info: "Create/write operations", ex: "SET key value" },
+                { cat: "Reference", cmd: "Read", syntax: "GET, HGET, HGETALL, LRANGE, SMEMBERS, ZRANGE, XRANGE", info: "Read operations", ex: "GET key" },
+                { cat: "Reference", cmd: "Update", syntax: "SET, HSET, HINCRBY, INCR, ZINCRBY, LSET", info: "Update operations", ex: "SET key newvalue" },
+                { cat: "Reference", cmd: "Delete", syntax: "DEL, UNLINK, HDEL, LPOP, RPOP, SREM, ZREM, XDEL", info: "Delete operations", ex: "DEL key" },
+                { cat: "Reference", cmd: "Search", syntax: "KEYS, SCAN, HSCAN, SSCAN, ZSCAN", info: "Search operations", ex: "KEYS pattern" },
+                { cat: "Reference", cmd: "Expiration", syntax: "EXPIRE, PEXPIRE, TTL, PTTL, PERSIST", info: "Expiration operations", ex: "EXPIRE key 60" },
+                { cat: "Reference", cmd: "Atomicity", syntax: "MULTI, EXEC, WATCH, DISCARD, SET NX, INCR", info: "Atomic operations", ex: "MULTI ... EXEC" },
+                { cat: "Reference", cmd: "Performance", syntax: "INFO, SLOWLOG, LATENCY, MEMORY, SCAN", info: "Performance monitoring", ex: "INFO stats" },
+                { cat: "Reference", cmd: "Administration", syntax: "CONFIG, CLIENT, ACL, FLUSHDB, FLUSHALL, SAVE, BGSAVE", info: "Administration", ex: "CONFIG GET maxmemory" },
+                { cat: "Reference", cmd: "High Availability", syntax: "REPLICAOF, ROLE, SENTINEL, CLUSTER", info: "High availability", ex: "REPLICAOF 192.168.1.10 6379" }
             ];
 
-            // Function to count and display total commands
-            // Function to count and display commands (with filtering support)
-            function updateCommandCount() {
-                const searchTerm = searchInput.value.trim().toLowerCase();
-                let filtered = commands;
+        const grid = document.getElementById('grid');
+        const searchInput = document.getElementById('searchInput');
+        const filterNav = document.getElementById('filterNav');
 
-                // Apply category filter
-                if (activeCategory !== 'all') {
-                    filtered = filtered.filter(cmd => cmd.section === activeCategory);
-                }
+        // Build category buttons from data
+        function buildFilters() {
+            const cats = ["All", ...new Set(commands.map(c => c.cat))];
+            // Sort by common order roughly; for simplicity keep insertion/add 'All' first
+            const html = cats.map(c => `<button class="filter-btn ${c === 'All' ? 'active' : ''}" data-filter="${c}">${c}</button>`).join('');
+            filterNav.innerHTML = html;
 
-                // Apply search filter
-                if (searchTerm) {
-                    filtered = filtered.filter(cmd => {
-                        return cmd.name.toLowerCase().includes(searchTerm) ||
-                            cmd.syntax.toLowerCase().includes(searchTerm) ||
-                            cmd.example.toLowerCase().includes(searchTerm);
-                    });
-                }
-
-                const total = filtered.length;
-                const totalAll = commands.length;
-                const countDisplay = document.getElementById('commandCount');
-
-                if (countDisplay) {
-                    // Show filtered count and total
-                    if (searchTerm || activeCategory !== 'all') {
-                        countDisplay.innerHTML = `${total} / ${totalAll}`;
-                    } else {
-                        countDisplay.textContent = totalAll;
-                    }
-                }
-            }
-
-            // Call this function after rendering commands
-            // Add this line inside your renderCommands() function, right before the closing }
-            // or call it after initial render
-
-            // DOM elements
-            const grid = document.getElementById('commandGrid');
-            const searchInput = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clearSearchBtn');
-            const categoryBar = document.getElementById('categoryBar');
-
-            let activeCategory = 'all';
-
-            // render category buttons
-            function renderCategories() {
-                let html = `<button class="cat-btn active" data-cat="all">All</button>`;
-                sections.forEach(s => {
-                    html += `<button class="cat-btn" data-cat="${s.id}">${s.label}</button>`;
+            filterNav.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterNav.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    render();
                 });
-                categoryBar.innerHTML = html;
-                // attach events
-                document.querySelectorAll('.cat-btn').forEach(btn => {
-                    btn.addEventListener('click', function (e) {
-                        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                        activeCategory = this.dataset.cat;
-                        renderCommands();
-                        updateCommandCount();
-                    });
-                });
-            }
+            });
+        }
 
-            // render command cards based on filter + search
-            function renderCommands() {
-                const searchTerm = searchInput.value.trim().toLowerCase();
-                let filtered = commands;
+        // Render cards
+        function render() {
+            const term = searchInput.value.trim().toLowerCase();
+            const activeBtn = filterNav.querySelector('.filter-btn.active');
+            const cat = activeBtn ? activeBtn.dataset.filter : 'All';
 
-                // category filter
-                if (activeCategory !== 'all') {
-                    filtered = filtered.filter(cmd => cmd.section === activeCategory);
-                }
-
-                // search filter (name, syntax, example)
-                if (searchTerm) {
-                    filtered = filtered.filter(cmd => {
-                        return cmd.name.toLowerCase().includes(searchTerm) ||
-                            cmd.syntax.toLowerCase().includes(searchTerm) ||
-                            cmd.example.toLowerCase().includes(searchTerm);
-                    });
-                }
-
-                if (filtered.length === 0) {
-                    grid.innerHTML = `<div class="no-results"><i class="fas fa-search" style="margin-right: 8px;"></i> no commands found</div>`;
-                    return;
-                }
-
-                let cards = '';
-                filtered.forEach(cmd => {
-                    const sectionLabel = sections.find(s => s.id === cmd.section)?.label || cmd.section;
-                    cards += `
-          <div class="cmd-card">
-            <div class="cmd-header">
-              <span class="cmd-name">${cmd.name}</span>
-              <span class="cmd-section">${sectionLabel}</span>
-            </div>
-            <div class="cmd-syntax">${cmd.syntax}</div>
-            <div class="cmd-example"><i class="fas fa-code"></i><span>${cmd.example}</span></div>
-          </div>
-        `;
-                });
-                grid.innerHTML = cards;
-                updateCommandCount(); // Add this line
-            }
-
-            // search input handler
-            searchInput.addEventListener('input', renderCommands);
-            clearBtn.addEventListener('click', function () {
-                searchInput.value = '';
-                renderCommands();
+            const filtered = commands.filter(item => {
+                const matchesCat = (cat === 'All' || item.cat === cat);
+                if (!term) return matchesCat;
+                const hay = (item.cmd + ' ' + item.syntax + ' ' + item.info + ' ' + item.ex + ' ' + item.cat).toLowerCase();
+                return matchesCat && hay.includes(term);
             });
 
-            // initial render
-            renderCategories();
-            renderCommands();
-            updateCommandCount(); // Add this line
-        })();
+            if (!filtered.length) {
+                grid.innerHTML = `<div class="empty-state"><h2>No results</h2><p>Try a different search or category.</p></div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(item => `
+    <article class="card" data-cat="${item.cat}">
+      <div class="card-header">
+        <h3 class="card-title">${item.cmd}</h3>
+        <span class="card-badge">${item.cat}</span>
+      </div>
+      <div class="block-label">Syntax</div>
+      <pre class="syntax-box" aria-label="Syntax for ${item.cmd}"><code>${escapeHtml(item.syntax)}</code></pre>
+
+      <div class="block-label">Usage Example</div>
+      <pre class="example-box" aria-label="Example for ${item.cmd}"><code>${escapeHtml(item.ex)}</code></pre>
+    </article>
+  `).join('');
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        // Search listener
+        searchInput.addEventListener('input', render);
+
+        // Init
+        buildFilters();
+        render();
     </script>
 </body>
 
