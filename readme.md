@@ -1,8 +1,8 @@
 # 🐧 Dev Workspace Hub
 
-A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, system automation, shell scripting, database management, in-memory datastores, and Git version control systems[cite: 3, 4].
+A premium, modern, interactive suite of developer reference hubs covering the complete landscape of Linux command-line workflows, system automation, shell scripting, database management, in-memory datastores, containerization with Docker, and Git version control systems[cite: 3, 4].
 
-This repository features a **central landing dashboard (`index.html`)** connecting **six distinct, fully responsive frontend environments**[cite: 3, 4]. Built with a highly cohesive, GitHub-inspired dark aesthetic, these reference engines leverage high-performance client-side logic to query, analyze, and master essential DevOps, backend, and development paradigms[cite: 3, 4].
+This repository features a **central landing dashboard (`index.html`)** connecting **seven distinct, fully responsive frontend environments**[cite: 3, 4]. Built with a highly cohesive, GitHub-inspired dark aesthetic, these reference engines leverage high-performance client-side logic to query, analyze, and master essential DevOps, backend, and development paradigms[cite: 3, 4].
 
 🌐 **Live Workspace Matrix:** [rahaibanas.github.io/bash-git-matrix](https://rahaibanas.github.io/bash-git-matrix/)[cite: 3]
 
@@ -10,7 +10,7 @@ This repository features a **central landing dashboard (`index.html`)** connecti
 
 ## 🗺️ Hub Ecosystem Structure
 
-The toolkit is organized around a core entry point that routes into six functional technical modules[cite: 3, 4]:
+The toolkit is organized around a core entry point that routes into seven functional technical modules[cite: 3, 4]:
 
 ### 🎛️ The Central Gateway (`index.html`)
 * **Role:** The primary interactive landing page[cite: 3]. It provides an immediate visual status overview of all sub-modules, featuring a terminal-style interface designed for clean visibility, quick multi-module onboarding, and seamless deployment onto platforms like **GitHub Pages**[cite: 3].
@@ -39,11 +39,15 @@ The toolkit is organized around a core entry point that routes into six function
 * **Focus:** In-memory key-value data structures, caching paradigms, pub/sub messaging channels, stream consumers, transactions, geospatial indexing, cluster topologies, and backend architecture patterns[cite: 4].
 * **Key Features:** Real-time client-side search filtering across commands, category filters (Hashes, Streams, ACL, Bitmaps, Pub/Sub, etc.), minimal syntax references paired with practical, copy-ready usage examples, and custom Redis-themed UI styling[cite: 4].
 
+### 7. 🐳 Docker Command Cheatsheet (`docker.html`)
+* **Focus:** Containerization workflows, image management, container lifecycle operations, Docker Compose orchestration, volume and network configuration, registry authentication, and multi-stage build patterns.
+* **Key Features:** Lightning-fast client-side search with fuzzy matching across all commands, dynamic category filtering (Images, Containers, Build, Compose, Networks, Volumes, Cleanup, Advanced), one-click copy for example commands, expandable options sections with detailed flag descriptions, and a custom dark/light theme toggle with persistent user preference.
+
 ---
 
 ## ✨ System Architecture & Visual Design
 
-* **🎨 Theme Paradigm:** Tailored dark mode dashboard layouts using unified professional custom palette properties (`#0d1117`, `#161b22`, `#30363d`, and vivid responsive color accents `#58a6ff`, `#f0883e`, and `#e63946` for Redis accents)[cite: 3, 4].
+* **🎨 Theme Paradigm:** Tailored dark mode dashboard layouts using unified professional custom palette properties (`#0d1117`, `#161b22`, `#30363d`, and vivid responsive color accents `#58a6ff`, `#f0883e`, `#e63946` for Redis accents, and `#0db7ed` for Docker accents)[cite: 3, 4].
 * **⚡ Ultra-Low Latency Interactions:** Powered purely by modern raw client-side Vanilla ES6 JavaScript, resulting in instantaneous, hardware-accelerated text filtering and modal transitions without external framework overloads[cite: 3, 4].
 * **🌐 Interconnected Layout Matrix:** Each sub-module embeds active global navigational elements or fast back-links that provide immediate cross-file routing while tracking the client's current operational scope back to the index or sister hubs[cite: 3, 4].
 * **📱 Clean Media Adaptability:** Explicitly uses responsive CSS design boundaries that automatically refactor complex table schemas, filters, cards, and code syntax overlays into single-column layouts for mobile viewports and tablet screens[cite: 3, 4].
