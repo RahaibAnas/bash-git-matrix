@@ -668,687 +668,1560 @@
     <!-- ===== JAVASCRIPT ===== -->
     <script>
         // ===== ALL GIT COMMANDS DATA =====
-        const gitCommands = [
-            // ===== SETUP =====
-            {
-                name: "git init",
-                category: "setup",
-                description: "Initialize a new Git repository in the current directory.",
-                usages: [
-                    { cmd: "git init", desc: "Create a new Git repository in the current folder" },
-                    { cmd: "git init <directory>", desc: "Create a new Git repository in the specified directory" },
-                    { cmd: "git init --bare", desc: "Create a bare repository (no working directory, used for remote repos)" },
-                    { cmd: "git init --bare --shared", desc: "Create a shared bare repository for team collaboration" },
-                    { cmd: "git init -b main", desc: "Initialize with 'main' as the default branch name" },
-                    { cmd: "git init --template=<template-dir>", desc: "Initialize using a custom template directory" }
-                ]
-            },
-            {
-                name: "git clone",
-                category: "setup",
-                description: "Clone a repository into a new directory.",
-                usages: [
-                    { cmd: "git clone <url>", desc: "Clone a repository from a URL" },
-                    { cmd: "git clone <url> <directory>", desc: "Clone into a specific directory name" },
-                    { cmd: "git clone --depth 1 <url>", desc: "Shallow clone — only the latest commit (faster)" },
-                    { cmd: "git clone --branch <branch> <url>", desc: "Clone a specific branch only" },
-                    { cmd: "git clone --single-branch <url>", desc: "Clone only one branch (default branch)" },
-                    { cmd: "git clone --recurse-submodules <url>", desc: "Clone and initialize all submodules" },
-                    { cmd: "git clone --mirror <url>", desc: "Create a mirror clone (bare + all refs)" },
-                    { cmd: "git clone --shallow-since=2023-01-01 <url>", desc: "Shallow clone since a specific date" },
-                    { cmd: "git clone git@github.com:user/repo.git", desc: "Clone using SSH" },
-                    { cmd: "git clone https://github.com/user/repo.git", desc: "Clone using HTTPS" }
-                ]
-            },
-            // ===== BASIC =====
-            {
-                name: "git add",
-                category: "basic",
-                description: "Add file contents to the staging area (index).",
-                usages: [
-                    { cmd: "git add <file>", desc: "Stage a specific file" },
-                    { cmd: "git add .", desc: "Stage all changes in current directory and subdirectories" },
-                    { cmd: "git add -A", desc: "Stage all changes (new, modified, deleted) in entire repo" },
-                    { cmd: "git add --all", desc: "Same as -A — stage everything" },
-                    { cmd: "git add *.js", desc: "Stage all JavaScript files (using wildcard)" },
-                    { cmd: "git add -p", desc: "Interactively stage parts (hunks) of files" },
-                    { cmd: "git add -p <file>", desc: "Interactively stage parts of a specific file" },
-                    { cmd: "git add -u", desc: "Stage only modified and deleted files (not new ones)" },
-                    { cmd: "git add -n <file>", desc: "Dry run — show what would be added without actually adding" },
-                    { cmd: "git add --force <file>", desc: "Force add an ignored file" },
-                    { cmd: "git add -i", desc: "Open interactive staging mode" }
-                ]
-            },
-            {
-                name: "git commit",
-                category: "basic",
-                description: "Record changes to the repository with a message.",
-                usages: [
-                    { cmd: 'git commit -m "message"', desc: "Commit staged changes with a message" },
-                    { cmd: 'git commit -am "message"', desc: "Stage all tracked files and commit in one step" },
-                    { cmd: "git commit --amend", desc: "Modify the most recent commit (opens editor)" },
-                    { cmd: 'git commit --amend -m "new message"', desc: "Change the last commit message" },
-                    { cmd: "git commit --amend --no-edit", desc: "Amend last commit without changing the message" },
-                    { cmd: "git commit --allow-empty -m \"msg\"", desc: "Create an empty commit (useful for CI triggers)" },
-                    { cmd: "git commit -v", desc: "Show diff in the commit message editor" },
-                    { cmd: "git commit --dry-run", desc: "Show what would be committed without committing" },
-                    { cmd: "git commit --signoff", desc: "Add a Signed-off-by line to the commit" },
-                    { cmd: "git commit -S", desc: "GPG sign the commit" },
-                    { cmd: 'git commit --date="2024-01-01" -m "msg"', desc: "Commit with a custom date" }
-                ]
-            },
-            {
-                name: "git status",
-                category: "basic",
-                description: "Show the working tree status.",
-                usages: [
-                    { cmd: "git status", desc: "Show full status of working directory and staging area" },
-                    { cmd: "git status -s", desc: "Short format status output" },
-                    { cmd: "git status --short", desc: "Same as -s — compact output" },
-                    { cmd: "git status -b", desc: "Show branch info in short format" },
-                    { cmd: "git status --ignored", desc: "Show ignored files as well" },
-                    { cmd: "git status -uno", desc: "Don't show untracked files" },
-                    { cmd: "git status --porcelain", desc: "Machine-readable output (for scripts)" }
-                ]
-            },
-            {
-                name: "git diff",
-                category: "basic",
-                description: "Show changes between commits, working tree, and staging area.",
-                usages: [
-                    { cmd: "git diff", desc: "Show unstaged changes in working directory" },
-                    { cmd: "git diff --staged", desc: "Show changes staged for the next commit" },
-                    { cmd: "git diff --cached", desc: "Same as --staged" },
-                    { cmd: "git diff HEAD", desc: "Show all changes since last commit (staged + unstaged)" },
-                    { cmd: "git diff <branch1> <branch2>", desc: "Compare two branches" },
-                    { cmd: "git diff <commit1> <commit2>", desc: "Compare two commits" },
-                    { cmd: "git diff <file>", desc: "Show changes for a specific file" },
-                    { cmd: "git diff --stat", desc: "Show summary of changes (files changed, insertions, deletions)" },
-                    { cmd: "git diff --name-only", desc: "Show only names of changed files" },
-                    { cmd: "git diff --name-status", desc: "Show file names with their status (M, A, D)" },
-                    { cmd: "git diff --color-words", desc: "Show word-level diff with colors" },
-                    { cmd: "git diff --word-diff", desc: "Show inline word differences" }
-                ]
-            },
-            {
-                name: "git rm",
-                category: "basic",
-                description: "Remove files from working tree and staging area.",
-                usages: [
-                    { cmd: "git rm <file>", desc: "Remove file from working directory and stage the removal" },
-                    { cmd: "git rm --cached <file>", desc: "Remove file from staging area but keep it in working directory" },
-                    { cmd: "git rm -r <directory>", desc: "Recursively remove a directory" },
-                    { cmd: "git rm -f <file>", desc: "Force removal of a modified file" },
-                    { cmd: "git rm --cached -r .", desc: "Untrack all files (useful after updating .gitignore)" },
-                    { cmd: "git rm *.log", desc: "Remove all .log files" }
-                ]
-            },
-            {
-                name: "git mv",
-                category: "basic",
-                description: "Move or rename a file, directory, or symlink.",
-                usages: [
-                    { cmd: "git mv <old-name> <new-name>", desc: "Rename a file" },
-                    { cmd: "git mv <file> <directory>/", desc: "Move a file to a different directory" },
-                    { cmd: "git mv -f <old> <new>", desc: "Force rename even if target exists" }
-                ]
-            },
-            // ===== BRANCHING =====
-            {
-                name: "git branch",
-                category: "branch",
-                description: "List, create, or delete branches.",
-                usages: [
-                    { cmd: "git branch", desc: "List all local branches" },
-                    { cmd: "git branch -a", desc: "List all branches (local + remote)" },
-                    { cmd: "git branch -r", desc: "List remote branches only" },
-                    { cmd: "git branch <name>", desc: "Create a new branch" },
-                    { cmd: "git branch -d <name>", desc: "Delete a merged branch" },
-                    { cmd: "git branch -D <name>", desc: "Force delete a branch (even if not merged)" },
-                    { cmd: "git branch -m <old> <new>", desc: "Rename a branch" },
-                    { cmd: "git branch -m <new-name>", desc: "Rename current branch" },
-                    { cmd: "git branch -v", desc: "List branches with last commit info" },
-                    { cmd: "git branch -vv", desc: "List branches with tracking info" },
-                    { cmd: "git branch --merged", desc: "List branches merged into current branch" },
-                    { cmd: "git branch --no-merged", desc: "List branches not yet merged" },
-                    { cmd: "git branch --contains <commit>", desc: "List branches containing a specific commit" },
-                    { cmd: "git branch -u origin/<branch>", desc: "Set upstream tracking branch" },
-                    { cmd: "git branch --set-upstream-to=origin/<branch>", desc: "Set tracking branch (verbose)" }
-                ]
-            },
-            {
-                name: "git checkout",
-                category: "branch",
-                description: "Switch branches or restore working tree files.",
-                usages: [
-                    { cmd: "git checkout <branch>", desc: "Switch to an existing branch" },
-                    { cmd: "git checkout -b <branch>", desc: "Create and switch to a new branch" },
-                    { cmd: "git checkout -b <branch> origin/<branch>", desc: "Create local branch from remote branch" },
-                    { cmd: "git checkout -- <file>", desc: "Discard changes in a file (restore from last commit)" },
-                    { cmd: "git checkout .", desc: "Discard all changes in working directory" },
-                    { cmd: "git checkout <commit>", desc: "Detach HEAD to a specific commit" },
-                    { cmd: "git checkout <commit> -- <file>", desc: "Restore a file from a specific commit" },
-                    { cmd: "git checkout -", desc: "Switch to the previously checked out branch" },
-                    { cmd: "git checkout --orphan <branch>", desc: "Create a branch with no commit history" },
-                    { cmd: "git checkout --track origin/<branch>", desc: "Create tracking branch from remote" }
-                ]
-            },
-            {
-                name: "git switch",
-                category: "branch",
-                description: "Switch branches (modern alternative to checkout for branches).",
-                usages: [
-                    { cmd: "git switch <branch>", desc: "Switch to an existing branch" },
-                    { cmd: "git switch -c <branch>", desc: "Create and switch to a new branch" },
-                    { cmd: "git switch -c <branch> origin/<branch>", desc: "Create branch from remote and switch" },
-                    { cmd: "git switch -", desc: "Switch to previous branch" },
-                    { cmd: "git switch --detach <commit>", desc: "Switch to a commit in detached HEAD state" },
-                    { cmd: "git switch --discard-changes <branch>", desc: "Switch branch and discard local changes" }
-                ]
-            },
-            {
-                name: "git merge",
-                category: "branch",
-                description: "Join two or more development histories together.",
-                usages: [
-                    { cmd: "git merge <branch>", desc: "Merge specified branch into current branch" },
-                    { cmd: "git merge --no-ff <branch>", desc: "Merge with a merge commit (no fast-forward)" },
-                    { cmd: "git merge --ff-only <branch>", desc: "Only merge if fast-forward is possible" },
-                    { cmd: "git merge --squash <branch>", desc: "Squash all commits into one before merging" },
-                    { cmd: "git merge --abort", desc: "Abort a merge in progress (during conflicts)" },
-                    { cmd: "git merge --continue", desc: "Continue merge after resolving conflicts" },
-                    { cmd: 'git merge -m "message" <branch>', desc: "Merge with a custom merge commit message" },
-                    { cmd: "git merge --no-commit <branch>", desc: "Merge but don't auto-commit" },
-                    { cmd: "git merge --strategy=ours <branch>", desc: "Merge but keep our version for conflicts" }
-                ]
-            },
-            {
-                name: "git rebase",
-                category: "branch",
-                description: "Reapply commits on top of another base tip.",
-                usages: [
-                    { cmd: "git rebase <branch>", desc: "Rebase current branch onto specified branch" },
-                    { cmd: "git rebase -i HEAD~<n>", desc: "Interactive rebase — edit last n commits" },
-                    { cmd: "git rebase -i <commit>", desc: "Interactive rebase from a specific commit" },
-                    { cmd: "git rebase --onto <new> <old> <branch>", desc: "Rebase a range of commits onto a new base" },
-                    { cmd: "git rebase --abort", desc: "Abort a rebase in progress" },
-                    { cmd: "git rebase --continue", desc: "Continue rebase after resolving conflicts" },
-                    { cmd: "git rebase --skip", desc: "Skip the current commit during rebase" },
-                    { cmd: "git rebase main", desc: "Rebase current branch onto main" },
-                    { cmd: "git rebase -i --root", desc: "Interactive rebase all commits from the beginning" },
-                    { cmd: "git rebase --autosquash -i HEAD~5", desc: "Auto-arrange fixup/squash commits" }
-                ]
-            },
-            // ===== REMOTE =====
-            {
-                name: "git remote",
-                category: "remote",
-                description: "Manage set of tracked repositories (remotes).",
-                usages: [
-                    { cmd: "git remote", desc: "List remote names" },
-                    { cmd: "git remote -v", desc: "List remotes with their URLs (fetch & push)" },
-                    { cmd: "git remote add <name> <url>", desc: "Add a new remote" },
-                    { cmd: "git remote add origin <url>", desc: "Add the default 'origin' remote" },
-                    { cmd: "git remote remove <name>", desc: "Remove a remote" },
-                    { cmd: "git remote rename <old> <new>", desc: "Rename a remote" },
-                    { cmd: "git remote set-url origin <new-url>", desc: "Change URL of existing remote" },
-                    { cmd: "git remote show origin", desc: "Show detailed info about a remote" },
-                    { cmd: "git remote prune origin", desc: "Remove stale remote-tracking branches" },
-                    { cmd: "git remote get-url origin", desc: "Get the URL of a remote" }
-                ]
-            },
-            {
-                name: "git push",
-                category: "remote",
-                description: "Upload local commits to a remote repository.",
-                usages: [
-                    { cmd: "git push", desc: "Push current branch to its upstream" },
-                    { cmd: "git push origin <branch>", desc: "Push a branch to origin" },
-                    { cmd: "git push -u origin <branch>", desc: "Push and set upstream tracking" },
-                    { cmd: "git push --set-upstream origin <branch>", desc: "Same as -u — set upstream" },
-                    { cmd: "git push origin --delete <branch>", desc: "Delete a remote branch" },
-                    { cmd: "git push -d origin <branch>", desc: "Short form of deleting remote branch" },
-                    { cmd: "git push --all", desc: "Push all branches to remote" },
-                    { cmd: "git push --tags", desc: "Push all tags to remote" },
-                    { cmd: "git push --force", desc: "Force push (overwrite remote history) ⚠️" },
-                    { cmd: "git push --force-with-lease", desc: "Safer force push — fails if remote has new commits" },
-                    { cmd: "git push origin <tag-name>", desc: "Push a specific tag" },
-                    { cmd: "git push origin HEAD", desc: "Push current branch (whatever it's named)" }
-                ]
-            },
-            {
-                name: "git pull",
-                category: "remote",
-                description: "Fetch from remote and integrate with local branch.",
-                usages: [
-                    { cmd: "git pull", desc: "Pull changes from upstream (fetch + merge)" },
-                    { cmd: "git pull origin <branch>", desc: "Pull a specific branch from origin" },
-                    { cmd: "git pull --rebase", desc: "Pull with rebase instead of merge" },
-                    { cmd: "git pull --rebase origin main", desc: "Rebase current branch onto remote main" },
-                    { cmd: "git pull --ff-only", desc: "Only pull if fast-forward is possible" },
-                    { cmd: "git pull --no-commit", desc: "Pull but don't auto-commit the merge" },
-                    { cmd: "git pull --all", desc: "Fetch all remotes and merge" },
-                    { cmd: "git pull --autostash", desc: "Automatically stash and unstash changes during pull" }
-                ]
-            },
-            {
-                name: "git fetch",
-                category: "remote",
-                description: "Download objects and refs from another repository without merging.",
-                usages: [
-                    { cmd: "git fetch", desc: "Fetch from default remote (origin)" },
-                    { cmd: "git fetch origin", desc: "Fetch all branches from origin" },
-                    { cmd: "git fetch origin <branch>", desc: "Fetch a specific branch" },
-                    { cmd: "git fetch --all", desc: "Fetch from all remotes" },
-                    { cmd: "git fetch --prune", desc: "Fetch and remove stale remote-tracking branches" },
-                    { cmd: "git fetch --tags", desc: "Fetch all tags from remote" },
-                    { cmd: "git fetch --depth 1", desc: "Shallow fetch — only latest commit" },
-                    { cmd: "git fetch origin pull/<id>/head:<branch>", desc: "Fetch a GitHub pull request locally" }
-                ]
-            },
-            // ===== HISTORY =====
-            {
-                name: "git log",
-                category: "history",
-                description: "Show commit logs and history.",
-                usages: [
-                    { cmd: "git log", desc: "Show full commit history" },
-                    { cmd: "git log --oneline", desc: "Compact one-line format" },
-                    { cmd: "git log --oneline --graph", desc: "Show branch graph in terminal" },
-                    { cmd: "git log --oneline --graph --all", desc: "Graph of all branches" },
-                    { cmd: "git log --oneline -n 10", desc: "Show last 10 commits" },
-                    { cmd: "git log -p", desc: "Show commits with diffs (patches)" },
-                    { cmd: "git log --stat", desc: "Show file change statistics per commit" },
-                    { cmd: "git log --author=\"name\"", desc: "Filter commits by author" },
-                    { cmd: "git log --since=\"2024-01-01\"", desc: "Commits since a specific date" },
-                    { cmd: "git log --until=\"2024-12-31\"", desc: "Commits until a specific date" },
-                    { cmd: "git log --grep=\"keyword\"", desc: "Search commit messages for a keyword" },
-                    { cmd: "git log -- <file>", desc: "Show commit history for a specific file" },
-                    { cmd: "git log --follow <file>", desc: "Follow file history across renames" },
-                    { cmd: 'git log --pretty=format:"%h %s %an"', desc: "Custom format output" },
-                    { cmd: "git log --all --decorate", desc: "Show all branches with decorations" },
-                    { cmd: "git log branch1..branch2", desc: "Commits in branch2 that aren't in branch1" },
-                    { cmd: "git log --merges", desc: "Show only merge commits" },
-                    { cmd: "git log --no-merges", desc: "Exclude merge commits" }
-                ]
-            },
-            {
-                name: "git show",
-                category: "history",
-                description: "Show information about Git objects (commits, tags, etc.).",
-                usages: [
-                    { cmd: "git show", desc: "Show the latest commit details and diff" },
-                    { cmd: "git show <commit>", desc: "Show details of a specific commit" },
-                    { cmd: "git show <commit>:<file>", desc: "Show a file's content at a specific commit" },
-                    { cmd: "git show --stat", desc: "Show commit with file change stats" },
-                    { cmd: "git show <tag>", desc: "Show tag information and commit it points to" },
-                    { cmd: "git show HEAD~2", desc: "Show the commit 2 steps before HEAD" },
-                    { cmd: "git show --name-only <commit>", desc: "Show only file names in a commit" }
-                ]
-            },
-            {
-                name: "git blame",
-                category: "history",
-                description: "Show who last modified each line of a file.",
-                usages: [
-                    { cmd: "git blame <file>", desc: "Show line-by-line annotations of a file" },
-                    { cmd: "git blame -L 10,20 <file>", desc: "Blame only lines 10 through 20" },
-                    { cmd: "git blame -w <file>", desc: "Ignore whitespace changes" },
-                    { cmd: "git blame -e <file>", desc: "Show author email instead of name" },
-                    { cmd: "git blame --since=2weeks <file>", desc: "Only show changes from last 2 weeks" },
-                    { cmd: "git blame -C <file>", desc: "Detect lines moved from other files" }
-                ]
-            },
-            {
-                name: "git shortlog",
-                category: "history",
-                description: "Summarize git log output by author.",
-                usages: [
-                    { cmd: "git shortlog", desc: "Group commits by author" },
-                    { cmd: "git shortlog -s", desc: "Show only commit count per author" },
-                    { cmd: "git shortlog -s -n", desc: "Show commit count sorted by number" },
-                    { cmd: "git shortlog -sne", desc: "Show count, sorted, with email" }
-                ]
-            },
-            {
-                name: "git reflog",
-                category: "history",
-                description: "Show reference logs — history of HEAD movements.",
-                usages: [
-                    { cmd: "git reflog", desc: "Show the reflog (all HEAD changes)" },
-                    { cmd: "git reflog show <branch>", desc: "Show reflog for a specific branch" },
-                    { cmd: "git reflog expire --expire=now --all", desc: "Expire all reflog entries" },
-                    { cmd: "git reflog delete HEAD@{2}", desc: "Delete a specific reflog entry" }
-                ]
-            },
-            // ===== UNDO =====
-            {
-                name: "git reset",
-                category: "undo",
-                description: "Reset current HEAD to a specified state.",
-                usages: [
-                    { cmd: "git reset <file>", desc: "Unstage a file (keep changes in working directory)" },
-                    { cmd: "git reset", desc: "Unstage all files" },
-                    { cmd: "git reset --soft HEAD~1", desc: "Undo last commit, keep changes staged" },
-                    { cmd: "git reset --mixed HEAD~1", desc: "Undo last commit, unstage changes (default)" },
-                    { cmd: "git reset --hard HEAD~1", desc: "Undo last commit and discard all changes ⚠️" },
-                    { cmd: "git reset --hard HEAD", desc: "Discard all uncommitted changes ⚠️" },
-                    { cmd: "git reset --hard origin/main", desc: "Reset to match remote main exactly ⚠️" },
-                    { cmd: "git reset --hard <commit>", desc: "Reset to a specific commit (destructive) ⚠️" },
-                    { cmd: "git reset HEAD~3", desc: "Undo last 3 commits (keep changes)" },
-                    { cmd: "git reset --soft HEAD^", desc: "Same as HEAD~1 — undo last commit, keep staged" }
-                ]
-            },
-            {
-                name: "git revert",
-                category: "undo",
-                description: "Create a new commit that undoes a previous commit (safe undo).",
-                usages: [
-                    { cmd: "git revert <commit>", desc: "Create a new commit that undoes the specified commit" },
-                    { cmd: "git revert HEAD", desc: "Revert the most recent commit" },
-                    { cmd: "git revert --no-commit <commit>", desc: "Revert but don't auto-commit" },
-                    { cmd: "git revert -n <commit>", desc: "Same as --no-commit" },
-                    { cmd: "git revert HEAD~3..HEAD", desc: "Revert the last 3 commits" },
-                    { cmd: "git revert --abort", desc: "Abort a revert in progress" },
-                    { cmd: "git revert --continue", desc: "Continue revert after resolving conflicts" },
-                    { cmd: "git revert -m 1 <merge-commit>", desc: "Revert a merge commit (keep parent 1)" }
-                ]
-            },
-            {
-                name: "git restore",
-                category: "undo",
-                description: "Restore working tree files (modern alternative to checkout for files).",
-                usages: [
-                    { cmd: "git restore <file>", desc: "Discard changes in working directory for a file" },
-                    { cmd: "git restore .", desc: "Discard all changes in working directory" },
-                    { cmd: "git restore --staged <file>", desc: "Unstage a file (keep changes in working dir)" },
-                    { cmd: "git restore --staged .", desc: "Unstage all files" },
-                    { cmd: "git restore --source=HEAD~2 <file>", desc: "Restore file from 2 commits ago" },
-                    { cmd: "git restore --source=<commit> <file>", desc: "Restore file from a specific commit" },
-                    { cmd: "git restore --staged --worktree <file>", desc: "Unstage AND discard changes" }
-                ]
-            },
-            {
-                name: "git clean",
-                category: "undo",
-                description: "Remove untracked files from the working tree.",
-                usages: [
-                    { cmd: "git clean -n", desc: "Dry run — show what would be removed" },
-                    { cmd: "git clean -f", desc: "Force remove untracked files" },
-                    { cmd: "git clean -fd", desc: "Remove untracked files and directories" },
-                    { cmd: "git clean -fX", desc: "Remove only ignored files" },
-                    { cmd: "git clean -fx", desc: "Remove all untracked files (including ignored)" },
-                    { cmd: "git clean -i", desc: "Interactive clean mode" }
-                ]
-            },
-            // ===== STASH =====
-            {
-                name: "git stash",
-                category: "stash",
-                description: "Temporarily save uncommitted changes for later use.",
-                usages: [
-                    { cmd: "git stash", desc: "Stash current changes (tracked files)" },
-                    { cmd: 'git stash save "message"', desc: "Stash with a descriptive message" },
-                    { cmd: "git stash push -m \"message\"", desc: "Modern way to stash with a message" },
-                    { cmd: "git stash -u", desc: "Stash including untracked files" },
-                    { cmd: "git stash --include-untracked", desc: "Same as -u" },
-                    { cmd: "git stash -a", desc: "Stash everything including ignored files" },
-                    { cmd: "git stash list", desc: "List all stashed changes" },
-                    { cmd: "git stash pop", desc: "Apply most recent stash and remove it from list" },
-                    { cmd: "git stash apply", desc: "Apply most recent stash but keep it in list" },
-                    { cmd: "git stash apply stash@{2}", desc: "Apply a specific stash by index" },
-                    { cmd: "git stash drop", desc: "Remove most recent stash" },
-                    { cmd: "git stash drop stash@{1}", desc: "Remove a specific stash" },
-                    { cmd: "git stash clear", desc: "Remove all stashes ⚠️" },
-                    { cmd: "git stash show", desc: "Show summary of stashed changes" },
-                    { cmd: "git stash show -p", desc: "Show full diff of stashed changes" },
-                    { cmd: "git stash branch <branch>", desc: "Create a new branch from a stash" },
-                    { cmd: "git stash push <file>", desc: "Stash a specific file only" }
-                ]
-            },
-            // ===== TAGS =====
-            {
-                name: "git tag",
-                category: "tag",
-                description: "Create, list, delete, or verify tags.",
-                usages: [
-                    { cmd: "git tag", desc: "List all tags" },
-                    { cmd: "git tag -l \"v1.*\"", desc: "List tags matching a pattern" },
-                    { cmd: "git tag <name>", desc: "Create a lightweight tag" },
-                    { cmd: "git tag -a <name> -m \"message\"", desc: "Create an annotated tag with message" },
-                    { cmd: "git tag -a v1.0 -m \"Version 1.0\"", desc: "Create annotated tag for version 1.0" },
-                    { cmd: "git tag -a <name> <commit>", desc: "Tag a specific commit" },
-                    { cmd: "git tag -d <name>", desc: "Delete a local tag" },
-                    { cmd: "git push origin <tag-name>", desc: "Push a tag to remote" },
-                    { cmd: "git push origin --tags", desc: "Push all tags to remote" },
-                    { cmd: "git push origin --delete <tag>", desc: "Delete a remote tag" },
-                    { cmd: "git tag -v <name>", desc: "Verify a GPG-signed tag" },
-                    { cmd: "git show <tag>", desc: "Show tag details" },
-                    { cmd: "git describe --tags", desc: "Describe current commit relative to tags" }
-                ]
-            },
-            // ===== CONFIG =====
-            {
-                name: "git config",
-                category: "config",
-                description: "Get and set Git configuration variables.",
-                usages: [
-                    { cmd: "git config --global user.name \"Your Name\"", desc: "Set your name globally" },
-                    { cmd: "git config --global user.email \"you@email.com\"", desc: "Set your email globally" },
-                    { cmd: "git config --list", desc: "List all configuration settings" },
-                    { cmd: "git config --global --list", desc: "List global config settings" },
-                    { cmd: "git config user.name", desc: "Show current user.name value" },
-                    { cmd: "git config --global core.editor \"code --wait\"", desc: "Set VS Code as default editor" },
-                    { cmd: "git config --global core.editor \"vim\"", desc: "Set Vim as default editor" },
-                    { cmd: "git config --global init.defaultBranch main", desc: "Set 'main' as default branch name" },
-                    { cmd: "git config --global alias.st status", desc: "Create alias: git st = git status" },
-                    { cmd: "git config --global alias.co checkout", desc: "Create alias: git co = git checkout" },
-                    { cmd: "git config --global alias.br branch", desc: "Create alias: git br = git branch" },
-                    { cmd: "git config --global alias.ci commit", desc: "Create alias: git ci = git commit" },
-                    { cmd: "git config --global alias.lg \"log --oneline --graph --all\"", desc: "Create a pretty log alias" },
-                    { cmd: "git config --global credential.helper cache", desc: "Cache credentials temporarily" },
-                    { cmd: "git config --global credential.helper store", desc: "Store credentials permanently (plaintext)" },
-                    { cmd: "git config --global pull.rebase true", desc: "Set rebase as default pull strategy" },
-                    { cmd: "git config --global merge.conflictstyle diff3", desc: "Use diff3 conflict style" },
-                    { cmd: "git config --global core.autocrlf true", desc: "Auto convert line endings (Windows)" },
-                    { cmd: "git config --global core.autocrlf input", desc: "Convert CRLF to LF on commit (Mac/Linux)" },
-                    { cmd: "git config --unset <key>", desc: "Remove a config setting" }
-                ]
-            },
-            {
-                name: ".gitignore",
-                category: "config",
-                description: "Specify files and patterns to be ignored by Git.",
-                usages: [
-                    { cmd: "node_modules/", desc: "Ignore node_modules directory" },
-                    { cmd: "*.log", desc: "Ignore all .log files" },
-                    { cmd: ".env", desc: "Ignore .env file" },
-                    { cmd: "dist/", desc: "Ignore build/dist folder" },
-                    { cmd: "*.pyc", desc: "Ignore Python compiled files" },
-                    { cmd: "build/", desc: "Ignore build directory" },
-                    { cmd: "__pycache__/", desc: "Ignore Python cache" },
-                    { cmd: ".DS_Store", desc: "Ignore macOS metadata file" },
-                    { cmd: "Thumbs.db", desc: "Ignore Windows thumbnail cache" },
-                    { cmd: "!important.log", desc: "Exception — don't ignore this file (negate pattern)" },
-                    { cmd: "*.env*", desc: "Ignore all env-related files" },
-                    { cmd: "**/*.bak", desc: "Ignore .bak files in any subdirectory" },
-                    { cmd: "git check-ignore -v <file>", desc: "Check which .gitignore rule ignores a file" },
-                    { cmd: "git rm --cached <file>", desc: "Stop tracking a file that's already been committed" }
-                ]
-            },
-            // ===== ADVANCED =====
-            {
-                name: "git cherry-pick",
-                category: "advanced",
-                description: "Apply specific commits from one branch to another.",
-                usages: [
-                    { cmd: "git cherry-pick <commit>", desc: "Apply a specific commit to current branch" },
-                    { cmd: "git cherry-pick <commit1> <commit2>", desc: "Cherry-pick multiple commits" },
-                    { cmd: "git cherry-pick <start>..<end>", desc: "Cherry-pick a range of commits" },
-                    { cmd: "git cherry-pick --no-commit <commit>", desc: "Apply changes without committing" },
-                    { cmd: "git cherry-pick -n <commit>", desc: "Same as --no-commit" },
-                    { cmd: "git cherry-pick --abort", desc: "Abort cherry-pick in progress" },
-                    { cmd: "git cherry-pick --continue", desc: "Continue after resolving conflicts" },
-                    { cmd: "git cherry-pick -x <commit>", desc: "Append source commit info to message" }
-                ]
-            },
-            {
-                name: "git bisect",
-                category: "advanced",
-                description: "Use binary search to find the commit that introduced a bug.",
-                usages: [
-                    { cmd: "git bisect start", desc: "Start the bisect process" },
-                    { cmd: "git bisect bad", desc: "Mark current commit as bad (has the bug)" },
-                    { cmd: "git bisect good <commit>", desc: "Mark a known good commit" },
-                    { cmd: "git bisect good", desc: "Mark current commit as good" },
-                    { cmd: "git bisect reset", desc: "End bisect and return to original branch" },
-                    { cmd: "git bisect log", desc: "Show bisect log" },
-                    { cmd: "git bisect run <script>", desc: "Automatically bisect using a test script" },
-                    { cmd: "git bisect skip", desc: "Skip current commit (can't test it)" }
-                ]
-            },
-            {
-                name: "git submodule",
-                category: "advanced",
-                description: "Manage repositories within repositories.",
-                usages: [
-                    { cmd: "git submodule add <url>", desc: "Add a new submodule" },
-                    { cmd: "git submodule add <url> <path>", desc: "Add submodule at a specific path" },
-                    { cmd: "git submodule init", desc: "Initialize submodules" },
-                    { cmd: "git submodule update", desc: "Fetch and checkout submodule commits" },
-                    { cmd: "git submodule update --init", desc: "Init and update in one step" },
-                    { cmd: "git submodule update --init --recursive", desc: "Init and update all nested submodules" },
-                    { cmd: "git submodule status", desc: "Show status of submodules" },
-                    { cmd: "git submodule foreach git pull", desc: "Pull latest changes in all submodules" },
-                    { cmd: "git submodule deinit <path>", desc: "Unregister a submodule" }
-                ]
-            },
-            {
-                name: "git worktree",
-                category: "advanced",
-                description: "Manage multiple working trees attached to the same repository.",
-                usages: [
-                    { cmd: "git worktree add <path> <branch>", desc: "Create a new worktree for a branch" },
-                    { cmd: "git worktree add ../hotfix hotfix", desc: "Create worktree in a sibling directory" },
-                    { cmd: "git worktree list", desc: "List all linked worktrees" },
-                    { cmd: "git worktree remove <path>", desc: "Remove a worktree" },
-                    { cmd: "git worktree prune", desc: "Clean up stale worktree info" }
-                ]
-            },
-            {
-                name: "git archive",
-                category: "advanced",
-                description: "Create an archive of files from a named tree.",
-                usages: [
-                    { cmd: "git archive --format=zip HEAD > project.zip", desc: "Create a ZIP archive of current HEAD" },
-                    { cmd: "git archive --format=tar HEAD > project.tar", desc: "Create a TAR archive" },
-                    { cmd: "git archive --format=zip --output=v1.0.zip v1.0", desc: "Archive a specific tag" },
-                    { cmd: "git archive HEAD --prefix=project/ > project.tar", desc: "Archive with a prefix directory" }
-                ]
-            },
-            {
-                name: "git grep",
-                category: "advanced",
-                description: "Search for patterns in tracked files.",
-                usages: [
-                    { cmd: "git grep \"search term\"", desc: "Search for a string in tracked files" },
-                    { cmd: "git grep -n \"term\"", desc: "Search with line numbers" },
-                    { cmd: "git grep -c \"term\"", desc: "Count matches per file" },
-                    { cmd: "git grep \"term\" <commit>", desc: "Search in a specific commit" },
-                    { cmd: "git grep -i \"term\"", desc: "Case-insensitive search" },
-                    { cmd: "git grep --heading \"term\"", desc: "Group results by file" }
-                ]
-            },
-            // ===== GITHUB SPECIFIC =====
-            {
-                name: "GitHub: Fork & PR",
-                category: "github",
-                description: "Fork repositories and create Pull Requests on GitHub.",
-                usages: [
-                    { cmd: "# Fork via GitHub UI", desc: "Click 'Fork' button on the repository page" },
-                    { cmd: "git clone <your-fork-url>", desc: "Clone your forked repository" },
-                    { cmd: "git remote add upstream <original-url>", desc: "Add original repo as 'upstream' remote" },
-                    { cmd: "git fetch upstream", desc: "Fetch changes from original repository" },
-                    { cmd: "git merge upstream/main", desc: "Merge upstream changes into your branch" },
-                    { cmd: "git rebase upstream/main", desc: "Rebase your work onto upstream changes" },
-                    { cmd: "git push origin <feature-branch>", desc: "Push feature branch to your fork" },
-                    { cmd: "# Create PR via GitHub UI", desc: "Click 'New Pull Request' on GitHub" },
-                    { cmd: "gh pr create --title \"Title\" --body \"Desc\"", desc: "Create PR using GitHub CLI" },
-                    { cmd: "gh pr list", desc: "List open pull requests (GitHub CLI)" },
-                    { cmd: "gh pr merge <number>", desc: "Merge a pull request (GitHub CLI)" },
-                    { cmd: "gh pr checkout <number>", desc: "Check out a PR locally (GitHub CLI)" }
-                ]
-            },
-            {
-                name: "GitHub: SSH Setup",
-                category: "github",
-                description: "Set up SSH keys for GitHub authentication.",
-                usages: [
-                    { cmd: "ssh-keygen -t ed25519 -C \"your@email.com\"", desc: "Generate a new SSH key" },
-                    { cmd: "ssh-keygen -t rsa -b 4096 -C \"your@email.com\"", desc: "Generate RSA SSH key (legacy)" },
-                    { cmd: "eval \"$(ssh-agent -s)\"", desc: "Start the SSH agent" },
-                    { cmd: "ssh-add ~/.ssh/id_ed25519", desc: "Add SSH key to the agent" },
-                    { cmd: "cat ~/.ssh/id_ed25519.pub", desc: "Display public key (copy to GitHub)" },
-                    { cmd: "# Add key in GitHub → Settings → SSH Keys", desc: "Paste your public key on GitHub" },
-                    { cmd: "ssh -T git@github.com", desc: "Test SSH connection to GitHub" },
-                    { cmd: "git remote set-url origin git@github.com:user/repo.git", desc: "Switch remote URL to SSH" }
-                ]
-            },
-            {
-                name: "GitHub: Actions",
-                category: "github",
-                description: "GitHub Actions CI/CD workflow concepts and files.",
-                usages: [
-                    { cmd: "mkdir -p .github/workflows", desc: "Create the workflows directory" },
-                    { cmd: "# Create .github/workflows/ci.yml", desc: "Create a workflow YAML file" },
-                    { cmd: "on: [push, pull_request]", desc: "Trigger workflow on push or PR" },
-                    { cmd: "on:\n  push:\n    branches: [main]", desc: "Trigger only on push to main" },
-                    { cmd: "runs-on: ubuntu-latest", desc: "Specify the runner OS" },
-                    { cmd: "uses: actions/checkout@v4", desc: "Use the checkout action" },
-                    { cmd: "uses: actions/setup-node@v4", desc: "Use the Node.js setup action" },
-                    { cmd: "gh run list", desc: "List workflow runs (GitHub CLI)" },
-                    { cmd: "gh run view <run-id>", desc: "View a specific workflow run" },
-                    { cmd: "gh workflow run <workflow>", desc: "Manually trigger a workflow" }
-                ]
-            },
-            {
-                name: "GitHub: gh CLI",
-                category: "github",
-                description: "GitHub CLI (gh) common commands for interacting with GitHub.",
-                usages: [
-                    { cmd: "gh auth login", desc: "Authenticate with GitHub" },
-                    { cmd: "gh auth status", desc: "Check authentication status" },
-                    { cmd: "gh repo create <name>", desc: "Create a new repository" },
-                    { cmd: "gh repo create <name> --public", desc: "Create a public repository" },
-                    { cmd: "gh repo create <name> --private", desc: "Create a private repository" },
-                    { cmd: "gh repo clone <owner/repo>", desc: "Clone a repository" },
-                    { cmd: "gh repo fork <owner/repo>", desc: "Fork a repository" },
-                    { cmd: "gh repo view", desc: "View repository details" },
-                    { cmd: "gh issue create --title \"Bug\" --body \"Details\"", desc: "Create an issue" },
-                    { cmd: "gh issue list", desc: "List repository issues" },
-                    { cmd: "gh issue close <number>", desc: "Close an issue" },
-                    { cmd: "gh pr create", desc: "Create a pull request interactively" },
-                    { cmd: "gh pr list", desc: "List pull requests" },
-                    { cmd: "gh pr review <number> --approve", desc: "Approve a pull request" },
-                    { cmd: "gh release create <tag>", desc: "Create a new release" },
-                    { cmd: "gh gist create <file>", desc: "Create a gist from a file" },
-                    { cmd: "gh api repos/<owner>/<repo>", desc: "Make a GitHub API request" }
-                ]
-            },
-            {
-                name: "GitHub: Pages",
-                category: "github",
-                description: "Deploy static websites using GitHub Pages.",
-                usages: [
-                    { cmd: "# Settings → Pages → Source", desc: "Enable GitHub Pages in repo settings" },
-                    { cmd: "# Select branch: main, folder: / or /docs", desc: "Choose source branch and folder" },
-                    { cmd: "git checkout -b gh-pages", desc: "Create a gh-pages branch for deployment" },
-                    { cmd: "# Push to gh-pages branch", desc: "GitHub auto-deploys from gh-pages" },
-                    { cmd: "# URL: https://<user>.github.io/<repo>", desc: "Access your deployed site" },
-                    { cmd: "# Add custom domain in Settings → Pages", desc: "Configure a custom domain" }
-                ]
-            }
-        ];
+    const gitCommands = [
+        // ===== SETUP =====
+        {
+            name: "git init",
+            category: "setup",
+            description: "Initialize a new Git repository in the current directory.",
+            usages: [
+                { cmd: "git init", desc: "Create a new Git repository in the current folder" },
+                { cmd: "git init <directory>", desc: "Create a new Git repository in the specified directory" },
+                { cmd: "git init --bare", desc: "Create a bare repository (no working directory, used for remote repos)" },
+                { cmd: "git init --bare --shared", desc: "Create a shared bare repository for team collaboration" },
+                { cmd: "git init -b main", desc: "Initialize with 'main' as the default branch name" },
+                { cmd: "git init --template=<template-dir>", desc: "Initialize using a custom template directory" }
+            ]
+        },
+        {
+            name: "git clone",
+            category: "setup",
+            description: "Clone a repository into a new directory.",
+            usages: [
+                { cmd: "git clone <url>", desc: "Clone a repository from a URL" },
+                { cmd: "git clone <url> <directory>", desc: "Clone into a specific directory name" },
+                { cmd: "git clone --depth 1 <url>", desc: "Shallow clone — only the latest commit (faster)" },
+                { cmd: "git clone --branch <branch> <url>", desc: "Clone a specific branch only" },
+                { cmd: "git clone --single-branch <url>", desc: "Clone only one branch (default branch)" },
+                { cmd: "git clone --recurse-submodules <url>", desc: "Clone and initialize all submodules" },
+                { cmd: "git clone --mirror <url>", desc: "Create a mirror clone (bare + all refs)" },
+                { cmd: "git clone --shallow-since=2023-01-01 <url>", desc: "Shallow clone since a specific date" },
+                { cmd: "git clone git@github.com:user/repo.git", desc: "Clone using SSH" },
+                { cmd: "git clone https://github.com/user/repo.git", desc: "Clone using HTTPS" }
+            ]
+        },
+        // ===== BASIC =====
+        {
+            name: "git add",
+            category: "basic",
+            description: "Add file contents to the staging area (index).",
+            usages: [
+                { cmd: "git add <file>", desc: "Stage a specific file" },
+                { cmd: "git add .", desc: "Stage all changes in current directory and subdirectories" },
+                { cmd: "git add -A", desc: "Stage all changes (new, modified, deleted) in entire repo" },
+                { cmd: "git add --all", desc: "Same as -A — stage everything" },
+                { cmd: "git add *.js", desc: "Stage all JavaScript files (using wildcard)" },
+                { cmd: "git add -p", desc: "Interactively stage parts (hunks) of files" },
+                { cmd: "git add -p <file>", desc: "Interactively stage parts of a specific file" },
+                { cmd: "git add -u", desc: "Stage only modified and deleted files (not new ones)" },
+                { cmd: "git add -n <file>", desc: "Dry run — show what would be added without actually adding" },
+                { cmd: "git add --force <file>", desc: "Force add an ignored file" },
+                { cmd: "git add -i", desc: "Open interactive staging mode" }
+            ]
+        },
+        {
+            name: "git commit",
+            category: "basic",
+            description: "Record changes to the repository with a message.",
+            usages: [
+                { cmd: 'git commit -m "message"', desc: "Commit staged changes with a message" },
+                { cmd: 'git commit -am "message"', desc: "Stage all tracked files and commit in one step" },
+                { cmd: "git commit --amend", desc: "Modify the most recent commit (opens editor)" },
+                { cmd: 'git commit --amend -m "new message"', desc: "Change the last commit message" },
+                { cmd: "git commit --amend --no-edit", desc: "Amend last commit without changing the message" },
+                { cmd: "git commit --allow-empty -m \"msg\"", desc: "Create an empty commit (useful for CI triggers)" },
+                { cmd: "git commit -v", desc: "Show diff in the commit message editor" },
+                { cmd: "git commit --dry-run", desc: "Show what would be committed without committing" },
+                { cmd: "git commit --signoff", desc: "Add a Signed-off-by line to the commit" },
+                { cmd: "git commit -S", desc: "GPG sign the commit" },
+                { cmd: 'git commit --date="2024-01-01" -m "msg"', desc: "Commit with a custom date" }
+            ]
+        },
+        {
+            name: "git status",
+            category: "basic",
+            description: "Show the working tree status.",
+            usages: [
+                { cmd: "git status", desc: "Show full status of working directory and staging area" },
+                { cmd: "git status -s", desc: "Short format status output" },
+                { cmd: "git status --short", desc: "Same as -s — compact output" },
+                { cmd: "git status -b", desc: "Show branch info in short format" },
+                { cmd: "git status --ignored", desc: "Show ignored files as well" },
+                { cmd: "git status -uno", desc: "Don't show untracked files" },
+                { cmd: "git status --porcelain", desc: "Machine-readable output (for scripts)" }
+            ]
+        },
+        {
+            name: "git diff",
+            category: "basic",
+            description: "Show changes between commits, working tree, and staging area.",
+            usages: [
+                { cmd: "git diff", desc: "Show unstaged changes in working directory" },
+                { cmd: "git diff --staged", desc: "Show changes staged for the next commit" },
+                { cmd: "git diff --cached", desc: "Same as --staged" },
+                { cmd: "git diff HEAD", desc: "Show all changes since last commit (staged + unstaged)" },
+                { cmd: "git diff <branch1> <branch2>", desc: "Compare two branches" },
+                { cmd: "git diff <commit1> <commit2>", desc: "Compare two commits" },
+                { cmd: "git diff <file>", desc: "Show changes for a specific file" },
+                { cmd: "git diff --stat", desc: "Show summary of changes (files changed, insertions, deletions)" },
+                { cmd: "git diff --name-only", desc: "Show only names of changed files" },
+                { cmd: "git diff --name-status", desc: "Show file names with their status (M, A, D)" },
+                { cmd: "git diff --color-words", desc: "Show word-level diff with colors" },
+                { cmd: "git diff --word-diff", desc: "Show inline word differences" }
+            ]
+        },
+        {
+            name: "git rm",
+            category: "basic",
+            description: "Remove files from working tree and staging area.",
+            usages: [
+                { cmd: "git rm <file>", desc: "Remove file from working directory and stage the removal" },
+                { cmd: "git rm --cached <file>", desc: "Remove file from staging area but keep it in working directory" },
+                { cmd: "git rm -r <directory>", desc: "Recursively remove a directory" },
+                { cmd: "git rm -f <file>", desc: "Force removal of a modified file" },
+                { cmd: "git rm --cached -r .", desc: "Untrack all files (useful after updating .gitignore)" },
+                { cmd: "git rm *.log", desc: "Remove all .log files" }
+            ]
+        },
+        {
+            name: "git mv",
+            category: "basic",
+            description: "Move or rename a file, directory, or symlink.",
+            usages: [
+                { cmd: "git mv <old-name> <new-name>", desc: "Rename a file" },
+                { cmd: "git mv <file> <directory>/", desc: "Move a file to a different directory" },
+                { cmd: "git mv -f <old> <new>", desc: "Force rename even if target exists" }
+            ]
+        },
+        // ===== BRANCHING =====
+        {
+            name: "git branch",
+            category: "branch",
+            description: "List, create, or delete branches.",
+            usages: [
+                { cmd: "git branch", desc: "List all local branches" },
+                { cmd: "git branch -a", desc: "List all branches (local + remote)" },
+                { cmd: "git branch -r", desc: "List remote branches only" },
+                { cmd: "git branch <name>", desc: "Create a new branch" },
+                { cmd: "git branch -d <name>", desc: "Delete a merged branch" },
+                { cmd: "git branch -D <name>", desc: "Force delete a branch (even if not merged)" },
+                { cmd: "git branch -m <old> <new>", desc: "Rename a branch" },
+                { cmd: "git branch -m <new-name>", desc: "Rename current branch" },
+                { cmd: "git branch -v", desc: "List branches with last commit info" },
+                { cmd: "git branch -vv", desc: "List branches with tracking info" },
+                { cmd: "git branch --merged", desc: "List branches merged into current branch" },
+                { cmd: "git branch --no-merged", desc: "List branches not yet merged" },
+                { cmd: "git branch --contains <commit>", desc: "List branches containing a specific commit" },
+                { cmd: "git branch -u origin/<branch>", desc: "Set upstream tracking branch" },
+                { cmd: "git branch --set-upstream-to=origin/<branch>", desc: "Set tracking branch (verbose)" }
+            ]
+        },
+        {
+            name: "git checkout",
+            category: "branch",
+            description: "Switch branches or restore working tree files.",
+            usages: [
+                { cmd: "git checkout <branch>", desc: "Switch to an existing branch" },
+                { cmd: "git checkout -b <branch>", desc: "Create and switch to a new branch" },
+                { cmd: "git checkout -b <branch> origin/<branch>", desc: "Create local branch from remote branch" },
+                { cmd: "git checkout -- <file>", desc: "Discard changes in a file (restore from last commit)" },
+                { cmd: "git checkout .", desc: "Discard all changes in working directory" },
+                { cmd: "git checkout <commit>", desc: "Detach HEAD to a specific commit" },
+                { cmd: "git checkout <commit> -- <file>", desc: "Restore a file from a specific commit" },
+                { cmd: "git checkout -", desc: "Switch to the previously checked out branch" },
+                { cmd: "git checkout --orphan <branch>", desc: "Create a branch with no commit history" },
+                { cmd: "git checkout --track origin/<branch>", desc: "Create tracking branch from remote" }
+            ]
+        },
+        {
+            name: "git switch",
+            category: "branch",
+            description: "Switch branches (modern alternative to checkout for branches).",
+            usages: [
+                { cmd: "git switch <branch>", desc: "Switch to an existing branch" },
+                { cmd: "git switch -c <branch>", desc: "Create and switch to a new branch" },
+                { cmd: "git switch -c <branch> origin/<branch>", desc: "Create branch from remote and switch" },
+                { cmd: "git switch -", desc: "Switch to previous branch" },
+                { cmd: "git switch --detach <commit>", desc: "Switch to a commit in detached HEAD state" },
+                { cmd: "git switch --discard-changes <branch>", desc: "Switch branch and discard local changes" }
+            ]
+        },
+        {
+            name: "git merge",
+            category: "branch",
+            description: "Join two or more development histories together.",
+            usages: [
+                { cmd: "git merge <branch>", desc: "Merge specified branch into current branch" },
+                { cmd: "git merge --no-ff <branch>", desc: "Merge with a merge commit (no fast-forward)" },
+                { cmd: "git merge --ff-only <branch>", desc: "Only merge if fast-forward is possible" },
+                { cmd: "git merge --squash <branch>", desc: "Squash all commits into one before merging" },
+                { cmd: "git merge --abort", desc: "Abort a merge in progress (during conflicts)" },
+                { cmd: "git merge --continue", desc: "Continue merge after resolving conflicts" },
+                { cmd: 'git merge -m "message" <branch>', desc: "Merge with a custom merge commit message" },
+                { cmd: "git merge --no-commit <branch>", desc: "Merge but don't auto-commit" },
+                { cmd: "git merge --strategy=ours <branch>", desc: "Merge but keep our version for conflicts" }
+            ]
+        },
+        {
+            name: "git rebase",
+            category: "branch",
+            description: "Reapply commits on top of another base tip.",
+            usages: [
+                { cmd: "git rebase <branch>", desc: "Rebase current branch onto specified branch" },
+                { cmd: "git rebase -i HEAD~<n>", desc: "Interactive rebase — edit last n commits" },
+                { cmd: "git rebase -i <commit>", desc: "Interactive rebase from a specific commit" },
+                { cmd: "git rebase --onto <new> <old> <branch>", desc: "Rebase a range of commits onto a new base" },
+                { cmd: "git rebase --abort", desc: "Abort a rebase in progress" },
+                { cmd: "git rebase --continue", desc: "Continue rebase after resolving conflicts" },
+                { cmd: "git rebase --skip", desc: "Skip the current commit during rebase" },
+                { cmd: "git rebase main", desc: "Rebase current branch onto main" },
+                { cmd: "git rebase -i --root", desc: "Interactive rebase all commits from the beginning" },
+                { cmd: "git rebase --autosquash -i HEAD~5", desc: "Auto-arrange fixup/squash commits" }
+            ]
+        },
+        // ===== REMOTE =====
+        {
+            name: "git remote",
+            category: "remote",
+            description: "Manage set of tracked repositories (remotes).",
+            usages: [
+                { cmd: "git remote", desc: "List remote names" },
+                { cmd: "git remote -v", desc: "List remotes with their URLs (fetch & push)" },
+                { cmd: "git remote add <name> <url>", desc: "Add a new remote" },
+                { cmd: "git remote add origin <url>", desc: "Add the default 'origin' remote" },
+                { cmd: "git remote remove <name>", desc: "Remove a remote" },
+                { cmd: "git remote rename <old> <new>", desc: "Rename a remote" },
+                { cmd: "git remote set-url origin <new-url>", desc: "Change URL of existing remote" },
+                { cmd: "git remote show origin", desc: "Show detailed info about a remote" },
+                { cmd: "git remote prune origin", desc: "Remove stale remote-tracking branches" },
+                { cmd: "git remote get-url origin", desc: "Get the URL of a remote" }
+            ]
+        },
+        {
+            name: "git push",
+            category: "remote",
+            description: "Upload local commits to a remote repository.",
+            usages: [
+                { cmd: "git push", desc: "Push current branch to its upstream" },
+                { cmd: "git push origin <branch>", desc: "Push a branch to origin" },
+                { cmd: "git push -u origin <branch>", desc: "Push and set upstream tracking" },
+                { cmd: "git push --set-upstream origin <branch>", desc: "Same as -u — set upstream" },
+                { cmd: "git push origin --delete <branch>", desc: "Delete a remote branch" },
+                { cmd: "git push -d origin <branch>", desc: "Short form of deleting remote branch" },
+                { cmd: "git push --all", desc: "Push all branches to remote" },
+                { cmd: "git push --tags", desc: "Push all tags to remote" },
+                { cmd: "git push --force", desc: "Force push (overwrite remote history) ⚠️" },
+                { cmd: "git push --force-with-lease", desc: "Safer force push — fails if remote has new commits" },
+                { cmd: "git push origin <tag-name>", desc: "Push a specific tag" },
+                { cmd: "git push origin HEAD", desc: "Push current branch (whatever it's named)" }
+            ]
+        },
+        {
+            name: "git pull",
+            category: "remote",
+            description: "Fetch from remote and integrate with local branch.",
+            usages: [
+                { cmd: "git pull", desc: "Pull changes from upstream (fetch + merge)" },
+                { cmd: "git pull origin <branch>", desc: "Pull a specific branch from origin" },
+                { cmd: "git pull --rebase", desc: "Pull with rebase instead of merge" },
+                { cmd: "git pull --rebase origin main", desc: "Rebase current branch onto remote main" },
+                { cmd: "git pull --ff-only", desc: "Only pull if fast-forward is possible" },
+                { cmd: "git pull --no-commit", desc: "Pull but don't auto-commit the merge" },
+                { cmd: "git pull --all", desc: "Fetch all remotes and merge" },
+                { cmd: "git pull --autostash", desc: "Automatically stash and unstash changes during pull" }
+            ]
+        },
+        {
+            name: "git fetch",
+            category: "remote",
+            description: "Download objects and refs from another repository without merging.",
+            usages: [
+                { cmd: "git fetch", desc: "Fetch from default remote (origin)" },
+                { cmd: "git fetch origin", desc: "Fetch all branches from origin" },
+                { cmd: "git fetch origin <branch>", desc: "Fetch a specific branch" },
+                { cmd: "git fetch --all", desc: "Fetch from all remotes" },
+                { cmd: "git fetch --prune", desc: "Fetch and remove stale remote-tracking branches" },
+                { cmd: "git fetch --tags", desc: "Fetch all tags from remote" },
+                { cmd: "git fetch --depth 1", desc: "Shallow fetch — only latest commit" },
+                { cmd: "git fetch origin pull/<id>/head:<branch>", desc: "Fetch a GitHub pull request locally" }
+            ]
+        },
+        // ===== HISTORY =====
+        {
+            name: "git log",
+            category: "history",
+            description: "Show commit logs and history.",
+            usages: [
+                { cmd: "git log", desc: "Show full commit history" },
+                { cmd: "git log --oneline", desc: "Compact one-line format" },
+                { cmd: "git log --oneline --graph", desc: "Show branch graph in terminal" },
+                { cmd: "git log --oneline --graph --all", desc: "Graph of all branches" },
+                { cmd: "git log --oneline -n 10", desc: "Show last 10 commits" },
+                { cmd: "git log -p", desc: "Show commits with diffs (patches)" },
+                { cmd: "git log --stat", desc: "Show file change statistics per commit" },
+                { cmd: "git log --author=\"name\"", desc: "Filter commits by author" },
+                { cmd: "git log --since=\"2024-01-01\"", desc: "Commits since a specific date" },
+                { cmd: "git log --until=\"2024-12-31\"", desc: "Commits until a specific date" },
+                { cmd: "git log --grep=\"keyword\"", desc: "Search commit messages for a keyword" },
+                { cmd: "git log -- <file>", desc: "Show commit history for a specific file" },
+                { cmd: "git log --follow <file>", desc: "Follow file history across renames" },
+                { cmd: 'git log --pretty=format:"%h %s %an"', desc: "Custom format output" },
+                { cmd: "git log --all --decorate", desc: "Show all branches with decorations" },
+                { cmd: "git log branch1..branch2", desc: "Commits in branch2 that aren't in branch1" },
+                { cmd: "git log --merges", desc: "Show only merge commits" },
+                { cmd: "git log --no-merges", desc: "Exclude merge commits" }
+            ]
+        },
+        {
+            name: "git show",
+            category: "history",
+            description: "Show information about Git objects (commits, tags, etc.).",
+            usages: [
+                { cmd: "git show", desc: "Show the latest commit details and diff" },
+                { cmd: "git show <commit>", desc: "Show details of a specific commit" },
+                { cmd: "git show <commit>:<file>", desc: "Show a file's content at a specific commit" },
+                { cmd: "git show --stat", desc: "Show commit with file change stats" },
+                { cmd: "git show <tag>", desc: "Show tag information and commit it points to" },
+                { cmd: "git show HEAD~2", desc: "Show the commit 2 steps before HEAD" },
+                { cmd: "git show --name-only <commit>", desc: "Show only file names in a commit" }
+            ]
+        },
+        {
+            name: "git blame",
+            category: "history",
+            description: "Show who last modified each line of a file.",
+            usages: [
+                { cmd: "git blame <file>", desc: "Show line-by-line annotations of a file" },
+                { cmd: "git blame -L 10,20 <file>", desc: "Blame only lines 10 through 20" },
+                { cmd: "git blame -w <file>", desc: "Ignore whitespace changes" },
+                { cmd: "git blame -e <file>", desc: "Show author email instead of name" },
+                { cmd: "git blame --since=2weeks <file>", desc: "Only show changes from last 2 weeks" },
+                { cmd: "git blame -C <file>", desc: "Detect lines moved from other files" }
+            ]
+        },
+        {
+            name: "git shortlog",
+            category: "history",
+            description: "Summarize git log output by author.",
+            usages: [
+                { cmd: "git shortlog", desc: "Group commits by author" },
+                { cmd: "git shortlog -s", desc: "Show only commit count per author" },
+                { cmd: "git shortlog -s -n", desc: "Show commit count sorted by number" },
+                { cmd: "git shortlog -sne", desc: "Show count, sorted, with email" }
+            ]
+        },
+        {
+            name: "git reflog",
+            category: "history",
+            description: "Show reference logs — history of HEAD movements.",
+            usages: [
+                { cmd: "git reflog", desc: "Show the reflog (all HEAD changes)" },
+                { cmd: "git reflog show <branch>", desc: "Show reflog for a specific branch" },
+                { cmd: "git reflog expire --expire=now --all", desc: "Expire all reflog entries" },
+                { cmd: "git reflog delete HEAD@{2}", desc: "Delete a specific reflog entry" }
+            ]
+        },
+        // ===== UNDO =====
+        {
+            name: "git reset",
+            category: "undo",
+            description: "Reset current HEAD to a specified state.",
+            usages: [
+                { cmd: "git reset <file>", desc: "Unstage a file (keep changes in working directory)" },
+                { cmd: "git reset", desc: "Unstage all files" },
+                { cmd: "git reset --soft HEAD~1", desc: "Undo last commit, keep changes staged" },
+                { cmd: "git reset --mixed HEAD~1", desc: "Undo last commit, unstage changes (default)" },
+                { cmd: "git reset --hard HEAD~1", desc: "Undo last commit and discard all changes ⚠️" },
+                { cmd: "git reset --hard HEAD", desc: "Discard all uncommitted changes ⚠️" },
+                { cmd: "git reset --hard origin/main", desc: "Reset to match remote main exactly ⚠️" },
+                { cmd: "git reset --hard <commit>", desc: "Reset to a specific commit (destructive) ⚠️" },
+                { cmd: "git reset HEAD~3", desc: "Undo last 3 commits (keep changes)" },
+                { cmd: "git reset --soft HEAD^", desc: "Same as HEAD~1 — undo last commit, keep staged" }
+            ]
+        },
+        {
+            name: "git revert",
+            category: "undo",
+            description: "Create a new commit that undoes a previous commit (safe undo).",
+            usages: [
+                { cmd: "git revert <commit>", desc: "Create a new commit that undoes the specified commit" },
+                { cmd: "git revert HEAD", desc: "Revert the most recent commit" },
+                { cmd: "git revert --no-commit <commit>", desc: "Revert but don't auto-commit" },
+                { cmd: "git revert -n <commit>", desc: "Same as --no-commit" },
+                { cmd: "git revert HEAD~3..HEAD", desc: "Revert the last 3 commits" },
+                { cmd: "git revert --abort", desc: "Abort a revert in progress" },
+                { cmd: "git revert --continue", desc: "Continue revert after resolving conflicts" },
+                { cmd: "git revert -m 1 <merge-commit>", desc: "Revert a merge commit (keep parent 1)" }
+            ]
+        },
+        {
+            name: "git restore",
+            category: "undo",
+            description: "Restore working tree files (modern alternative to checkout for files).",
+            usages: [
+                { cmd: "git restore <file>", desc: "Discard changes in working directory for a file" },
+                { cmd: "git restore .", desc: "Discard all changes in working directory" },
+                { cmd: "git restore --staged <file>", desc: "Unstage a file (keep changes in working dir)" },
+                { cmd: "git restore --staged .", desc: "Unstage all files" },
+                { cmd: "git restore --source=HEAD~2 <file>", desc: "Restore file from 2 commits ago" },
+                { cmd: "git restore --source=<commit> <file>", desc: "Restore file from a specific commit" },
+                { cmd: "git restore --staged --worktree <file>", desc: "Unstage AND discard changes" }
+            ]
+        },
+        {
+            name: "git clean",
+            category: "undo",
+            description: "Remove untracked files from the working tree.",
+            usages: [
+                { cmd: "git clean -n", desc: "Dry run — show what would be removed" },
+                { cmd: "git clean -f", desc: "Force remove untracked files" },
+                { cmd: "git clean -fd", desc: "Remove untracked files and directories" },
+                { cmd: "git clean -fX", desc: "Remove only ignored files" },
+                { cmd: "git clean -fx", desc: "Remove all untracked files (including ignored)" },
+                { cmd: "git clean -i", desc: "Interactive clean mode" }
+            ]
+        },
+        // ===== STASH =====
+        {
+            name: "git stash",
+            category: "stash",
+            description: "Temporarily save uncommitted changes for later use.",
+            usages: [
+                { cmd: "git stash", desc: "Stash current changes (tracked files)" },
+                { cmd: 'git stash save "message"', desc: "Stash with a descriptive message" },
+                { cmd: "git stash push -m \"message\"", desc: "Modern way to stash with a message" },
+                { cmd: "git stash -u", desc: "Stash including untracked files" },
+                { cmd: "git stash --include-untracked", desc: "Same as -u" },
+                { cmd: "git stash -a", desc: "Stash everything including ignored files" },
+                { cmd: "git stash list", desc: "List all stashed changes" },
+                { cmd: "git stash pop", desc: "Apply most recent stash and remove it from list" },
+                { cmd: "git stash apply", desc: "Apply most recent stash but keep it in list" },
+                { cmd: "git stash apply stash@{2}", desc: "Apply a specific stash by index" },
+                { cmd: "git stash drop", desc: "Remove most recent stash" },
+                { cmd: "git stash drop stash@{1}", desc: "Remove a specific stash" },
+                { cmd: "git stash clear", desc: "Remove all stashes ⚠️" },
+                { cmd: "git stash show", desc: "Show summary of stashed changes" },
+                { cmd: "git stash show -p", desc: "Show full diff of stashed changes" },
+                { cmd: "git stash branch <branch>", desc: "Create a new branch from a stash" },
+                { cmd: "git stash push <file>", desc: "Stash a specific file only" }
+            ]
+        },
+        // ===== TAGS =====
+        {
+            name: "git tag",
+            category: "tag",
+            description: "Create, list, delete, or verify tags.",
+            usages: [
+                { cmd: "git tag", desc: "List all tags" },
+                { cmd: "git tag -l \"v1.*\"", desc: "List tags matching a pattern" },
+                { cmd: "git tag <name>", desc: "Create a lightweight tag" },
+                { cmd: "git tag -a <name> -m \"message\"", desc: "Create an annotated tag with message" },
+                { cmd: "git tag -a v1.0 -m \"Version 1.0\"", desc: "Create annotated tag for version 1.0" },
+                { cmd: "git tag -a <name> <commit>", desc: "Tag a specific commit" },
+                { cmd: "git tag -d <name>", desc: "Delete a local tag" },
+                { cmd: "git push origin <tag-name>", desc: "Push a tag to remote" },
+                { cmd: "git push origin --tags", desc: "Push all tags to remote" },
+                { cmd: "git push origin --delete <tag>", desc: "Delete a remote tag" },
+                { cmd: "git tag -v <name>", desc: "Verify a GPG-signed tag" },
+                { cmd: "git show <tag>", desc: "Show tag details" },
+                { cmd: "git describe --tags", desc: "Describe current commit relative to tags" }
+            ]
+        },
+        // ===== CONFIG =====
+        {
+            name: "git config",
+            category: "config",
+            description: "Get and set Git configuration variables.",
+            usages: [
+                { cmd: "git config --global user.name \"Your Name\"", desc: "Set your name globally" },
+                { cmd: "git config --global user.email \"you@email.com\"", desc: "Set your email globally" },
+                { cmd: "git config --list", desc: "List all configuration settings" },
+                { cmd: "git config --global --list", desc: "List global config settings" },
+                { cmd: "git config user.name", desc: "Show current user.name value" },
+                { cmd: "git config --global core.editor \"code --wait\"", desc: "Set VS Code as default editor" },
+                { cmd: "git config --global core.editor \"vim\"", desc: "Set Vim as default editor" },
+                { cmd: "git config --global init.defaultBranch main", desc: "Set 'main' as default branch name" },
+                { cmd: "git config --global alias.st status", desc: "Create alias: git st = git status" },
+                { cmd: "git config --global alias.co checkout", desc: "Create alias: git co = git checkout" },
+                { cmd: "git config --global alias.br branch", desc: "Create alias: git br = git branch" },
+                { cmd: "git config --global alias.ci commit", desc: "Create alias: git ci = git commit" },
+                { cmd: "git config --global alias.lg \"log --oneline --graph --all\"", desc: "Create a pretty log alias" },
+                { cmd: "git config --global credential.helper cache", desc: "Cache credentials temporarily" },
+                { cmd: "git config --global credential.helper store", desc: "Store credentials permanently (plaintext)" },
+                { cmd: "git config --global pull.rebase true", desc: "Set rebase as default pull strategy" },
+                { cmd: "git config --global merge.conflictstyle diff3", desc: "Use diff3 conflict style" },
+                { cmd: "git config --global core.autocrlf true", desc: "Auto convert line endings (Windows)" },
+                { cmd: "git config --global core.autocrlf input", desc: "Convert CRLF to LF on commit (Mac/Linux)" },
+                { cmd: "git config --unset <key>", desc: "Remove a config setting" }
+            ]
+        },
+        {
+            name: ".gitignore",
+            category: "config",
+            description: "Specify files and patterns to be ignored by Git.",
+            usages: [
+                { cmd: "node_modules/", desc: "Ignore node_modules directory" },
+                { cmd: "*.log", desc: "Ignore all .log files" },
+                { cmd: ".env", desc: "Ignore .env file" },
+                { cmd: "dist/", desc: "Ignore build/dist folder" },
+                { cmd: "*.pyc", desc: "Ignore Python compiled files" },
+                { cmd: "build/", desc: "Ignore build directory" },
+                { cmd: "__pycache__/", desc: "Ignore Python cache" },
+                { cmd: ".DS_Store", desc: "Ignore macOS metadata file" },
+                { cmd: "Thumbs.db", desc: "Ignore Windows thumbnail cache" },
+                { cmd: "!important.log", desc: "Exception — don't ignore this file (negate pattern)" },
+                { cmd: "*.env*", desc: "Ignore all env-related files" },
+                { cmd: "**/*.bak", desc: "Ignore .bak files in any subdirectory" },
+                { cmd: "git check-ignore -v <file>", desc: "Check which .gitignore rule ignores a file" },
+                { cmd: "git rm --cached <file>", desc: "Stop tracking a file that's already been committed" }
+            ]
+        },
+        // ===== ADVANCED =====
+        {
+            name: "git cherry-pick",
+            category: "advanced",
+            description: "Apply specific commits from one branch to another.",
+            usages: [
+                { cmd: "git cherry-pick <commit>", desc: "Apply a specific commit to current branch" },
+                { cmd: "git cherry-pick <commit1> <commit2>", desc: "Cherry-pick multiple commits" },
+                { cmd: "git cherry-pick <start>..<end>", desc: "Cherry-pick a range of commits" },
+                { cmd: "git cherry-pick --no-commit <commit>", desc: "Apply changes without committing" },
+                { cmd: "git cherry-pick -n <commit>", desc: "Same as --no-commit" },
+                { cmd: "git cherry-pick --abort", desc: "Abort cherry-pick in progress" },
+                { cmd: "git cherry-pick --continue", desc: "Continue after resolving conflicts" },
+                { cmd: "git cherry-pick -x <commit>", desc: "Append source commit info to message" }
+            ]
+        },
+        {
+            name: "git bisect",
+            category: "advanced",
+            description: "Use binary search to find the commit that introduced a bug.",
+            usages: [
+                { cmd: "git bisect start", desc: "Start the bisect process" },
+                { cmd: "git bisect bad", desc: "Mark current commit as bad (has the bug)" },
+                { cmd: "git bisect good <commit>", desc: "Mark a known good commit" },
+                { cmd: "git bisect good", desc: "Mark current commit as good" },
+                { cmd: "git bisect reset", desc: "End bisect and return to original branch" },
+                { cmd: "git bisect log", desc: "Show bisect log" },
+                { cmd: "git bisect run <script>", desc: "Automatically bisect using a test script" },
+                { cmd: "git bisect skip", desc: "Skip current commit (can't test it)" }
+            ]
+        },
+        {
+            name: "git submodule",
+            category: "advanced",
+            description: "Manage repositories within repositories.",
+            usages: [
+                { cmd: "git submodule add <url>", desc: "Add a new submodule" },
+                { cmd: "git submodule add <url> <path>", desc: "Add submodule at a specific path" },
+                { cmd: "git submodule init", desc: "Initialize submodules" },
+                { cmd: "git submodule update", desc: "Fetch and checkout submodule commits" },
+                { cmd: "git submodule update --init", desc: "Init and update in one step" },
+                { cmd: "git submodule update --init --recursive", desc: "Init and update all nested submodules" },
+                { cmd: "git submodule status", desc: "Show status of submodules" },
+                { cmd: "git submodule foreach git pull", desc: "Pull latest changes in all submodules" },
+                { cmd: "git submodule deinit <path>", desc: "Unregister a submodule" }
+            ]
+        },
+        {
+            name: "git worktree",
+            category: "advanced",
+            description: "Manage multiple working trees attached to the same repository.",
+            usages: [
+                { cmd: "git worktree add <path> <branch>", desc: "Create a new worktree for a branch" },
+                { cmd: "git worktree add ../hotfix hotfix", desc: "Create worktree in a sibling directory" },
+                { cmd: "git worktree list", desc: "List all linked worktrees" },
+                { cmd: "git worktree remove <path>", desc: "Remove a worktree" },
+                { cmd: "git worktree prune", desc: "Clean up stale worktree info" }
+            ]
+        },
+        {
+            name: "git archive",
+            category: "advanced",
+            description: "Create an archive of files from a named tree.",
+            usages: [
+                { cmd: "git archive --format=zip HEAD > project.zip", desc: "Create a ZIP archive of current HEAD" },
+                { cmd: "git archive --format=tar HEAD > project.tar", desc: "Create a TAR archive" },
+                { cmd: "git archive --format=zip --output=v1.0.zip v1.0", desc: "Archive a specific tag" },
+                { cmd: "git archive HEAD --prefix=project/ > project.tar", desc: "Archive with a prefix directory" }
+            ]
+        },
+        {
+            name: "git grep",
+            category: "advanced",
+            description: "Search for patterns in tracked files.",
+            usages: [
+                { cmd: "git grep \"search term\"", desc: "Search for a string in tracked files" },
+                { cmd: "git grep -n \"term\"", desc: "Search with line numbers" },
+                { cmd: "git grep -c \"term\"", desc: "Count matches per file" },
+                { cmd: "git grep \"term\" <commit>", desc: "Search in a specific commit" },
+                { cmd: "git grep -i \"term\"", desc: "Case-insensitive search" },
+                { cmd: "git grep --heading \"term\"", desc: "Group results by file" }
+            ]
+        },
+        // ===== NEWLY ADDED MISSING COMMANDS =====
+        {
+            name: "git help",
+            category: "setup",
+            description: "Display help information about Git commands.",
+            usages: [
+                { cmd: "git help", desc: "Show main help page" },
+                { cmd: "git help <command>", desc: "Show help for a specific command" },
+                { cmd: "git help -a", desc: "List all available commands" },
+                { cmd: "git help -g", desc: "Show concept guides" },
+                { cmd: "git help --web <command>", desc: "Open help in web browser" }
+            ]
+        },
+        {
+            name: "git version",
+            category: "setup",
+            description: "Display Git version information.",
+            usages: [
+                { cmd: "git version", desc: "Show installed Git version" },
+                { cmd: "git --version", desc: "Same as git version" }
+            ]
+        },
+        {
+            name: "git init-db",
+            category: "setup",
+            description: "Initialize a Git repository (deprecated alias for git init).",
+            usages: [
+                { cmd: "git init-db", desc: "Legacy alias for git init (deprecated)" }
+            ]
+        },
+        // ===== PLUMBING / LOW-LEVEL COMMANDS =====
+        {
+            name: "git hash-object",
+            category: "plumbing",
+            description: "Compute object ID and optionally create a blob from a file.",
+            usages: [
+                { cmd: "git hash-object <file>", desc: "Compute SHA-1 of a file" },
+                { cmd: "git hash-object -w <file>", desc: "Compute and write object to database" },
+                { cmd: "git hash-object --stdin", desc: "Hash from standard input" },
+                { cmd: "git hash-object -t blob <file>", desc: "Specify object type" }
+            ]
+        },
+        {
+            name: "git cat-file",
+            category: "plumbing",
+            description: "Display content, type, or size of Git objects.",
+            usages: [
+                { cmd: "git cat-file -t <object>", desc: "Show object type" },
+                { cmd: "git cat-file -s <object>", desc: "Show object size" },
+                { cmd: "git cat-file -p <object>", desc: "Pretty-print object content" },
+                { cmd: "git cat-file blob <hash>", desc: "Display blob content" }
+            ]
+        },
+        {
+            name: "git update-index",
+            category: "plumbing",
+            description: "Update the staging area (index) with file information.",
+            usages: [
+                { cmd: "git update-index --add <file>", desc: "Add file to index" },
+                { cmd: "git update-index --remove <file>", desc: "Remove file from index" },
+                { cmd: "git update-index --refresh", desc: "Refresh index with current file status" },
+                { cmd: "git update-index --assume-unchanged <file>", desc: "Assume file hasn't changed" },
+                { cmd: "git update-index --no-assume-unchanged <file>", desc: "Unset assume-unchanged flag" }
+            ]
+        },
+        {
+            name: "git write-tree",
+            category: "plumbing",
+            description: "Create a tree object from the current staging area.",
+            usages: [
+                { cmd: "git write-tree", desc: "Write the current index to a tree object" },
+                { cmd: "git write-tree --prefix=<prefix>", desc: "Write tree from subdirectory" }
+            ]
+        },
+        {
+            name: "git read-tree",
+            category: "plumbing",
+            description: "Read tree information into the staging area.",
+            usages: [
+                { cmd: "git read-tree <tree>", desc: "Read tree into current index" },
+                { cmd: "git read-tree -m <tree1> <tree2>", desc: "Merge trees" },
+                { cmd: "git read-tree --reset <tree>", desc: "Reset index to tree" }
+            ]
+        },
+        {
+            name: "git commit-tree",
+            category: "plumbing",
+            description: "Create a commit object from a tree.",
+            usages: [
+                { cmd: "git commit-tree <tree> -m \"message\"", desc: "Create a commit from tree" },
+                { cmd: "git commit-tree <tree> -p <parent>", desc: "Create commit with parent" },
+                { cmd: "git commit-tree -p HEAD -m \"msg\"", desc: "Create commit from HEAD" }
+            ]
+        },
+        {
+            name: "git rev-parse",
+            category: "plumbing",
+            description: "Parse revision (commit) identifiers.",
+            usages: [
+                { cmd: "git rev-parse HEAD", desc: "Get SHA-1 of current HEAD" },
+                { cmd: "git rev-parse --abbrev-ref HEAD", desc: "Get current branch name" },
+                { cmd: "git rev-parse --show-toplevel", desc: "Show top-level of repository" },
+                { cmd: "git rev-parse --git-dir", desc: "Show .git directory location" }
+            ]
+        },
+        {
+            name: "git for-each-ref",
+            category: "plumbing",
+            description: "Iterate over references (branches, tags, etc.).",
+            usages: [
+                { cmd: "git for-each-ref", desc: "List all references" },
+                { cmd: "git for-each-ref --format='%(refname)'", desc: "Custom format output" },
+                { cmd: "git for-each-ref --sort=-committerdate", desc: "Sort by date" }
+            ]
+        },
+        {
+            name: "git ls-files",
+            category: "plumbing",
+            description: "Show information about files in the index and working tree.",
+            usages: [
+                { cmd: "git ls-files", desc: "List all tracked files" },
+                { cmd: "git ls-files --stage", desc: "Show staged files with mode and hash" },
+                { cmd: "git ls-files --others", desc: "List untracked files" },
+                { cmd: "git ls-files --ignored", desc: "List ignored files" }
+            ]
+        },
+        {
+            name: "git ls-tree",
+            category: "plumbing",
+            description: "List the contents of a tree object.",
+            usages: [
+                { cmd: "git ls-tree HEAD", desc: "List files at HEAD" },
+                { cmd: "git ls-tree -r HEAD", desc: "Recursive listing" },
+                { cmd: "git ls-tree --name-only HEAD", desc: "Show only filenames" }
+            ]
+        },
+        // ===== MAINTENANCE =====
+        {
+            name: "git fsck",
+            category: "maintenance",
+            description: "Verify the integrity of Git repository objects.",
+            usages: [
+                { cmd: "git fsck", desc: "Check repository integrity" },
+                { cmd: "git fsck --full", desc: "Full check of all objects" },
+                { cmd: "git fsck --unreachable", desc: "Show unreachable objects" },
+                { cmd: "git fsck --no-dangling", desc: "Don't report dangling objects" }
+            ]
+        },
+        {
+            name: "git gc",
+            category: "maintenance",
+            description: "Clean up and optimize the repository.",
+            usages: [
+                { cmd: "git gc", desc: "Run garbage collection" },
+                { cmd: "git gc --aggressive", desc: "More aggressive optimization" },
+                { cmd: "git gc --auto", desc: "Run GC only if needed" },
+                { cmd: "git gc --prune=now", desc: "Prune unreachable objects now" }
+            ]
+        },
+        {
+            name: "git repack",
+            category: "maintenance",
+            description: "Pack loose objects in the repository.",
+            usages: [
+                { cmd: "git repack", desc: "Pack loose objects" },
+                { cmd: "git repack -a", desc: "Pack all objects" },
+                { cmd: "git repack -d", desc: "Remove redundant packs" }
+            ]
+        },
+        {
+            name: "git prune",
+            category: "maintenance",
+            description: "Prune unreachable objects from the object database.",
+            usages: [
+                { cmd: "git prune", desc: "Prune unreachable objects" },
+                { cmd: "git prune --dry-run", desc: "Show what would be pruned" },
+                { cmd: "git prune --expire=now", desc: "Prune immediately" }
+            ]
+        },
+        {
+            name: "git pack-objects",
+            category: "plumbing",
+            description: "Create a packed archive of objects.",
+            usages: [
+                { cmd: "git pack-objects <packfile> < <list>", desc: "Create pack from object list" },
+                { cmd: "git pack-objects --all <packfile>", desc: "Pack all objects" }
+            ]
+        },
+        {
+            name: "git unpack-objects",
+            category: "plumbing",
+            description: "Unpack objects from a packfile.",
+            usages: [
+                { cmd: "git unpack-objects < <packfile>", desc: "Unpack packfile objects" }
+            ]
+        },
+        // ===== PATCH / EMAIL =====
+        {
+            name: "git format-patch",
+            category: "patch",
+            description: "Generate patch files for email submission.",
+            usages: [
+                { cmd: "git format-patch -1", desc: "Create patch for last commit" },
+                { cmd: "git format-patch -3", desc: "Create patches for last 3 commits" },
+                { cmd: "git format-patch HEAD~3..HEAD", desc: "Patch range" },
+                { cmd: "git format-patch -o patches/", desc: "Output to directory" },
+                { cmd: "git format-patch --stdout", desc: "Output all patches to stdout" }
+            ]
+        },
+        {
+            name: "git send-email",
+            category: "patch",
+            description: "Send patches via email.",
+            usages: [
+                { cmd: "git send-email *.patch", desc: "Send all patch files" },
+                { cmd: "git send-email --to=maintainer@example.com *.patch", desc: "Send to specific recipient" },
+                { cmd: "git send-email --cc=team@example.com *.patch", desc: "Add CC recipients" }
+            ]
+        },
+        {
+            name: "git am",
+            category: "patch",
+            description: "Apply patches from an email mailbox.",
+            usages: [
+                { cmd: "git am < patch.txt", desc: "Apply patch from file" },
+                { cmd: "git am *.patch", desc: "Apply multiple patches" },
+                { cmd: "git am --abort", desc: "Abort patch application" },
+                { cmd: "git am --continue", desc: "Continue after resolving conflicts" }
+            ]
+        },
+        {
+            name: "git imap-send",
+            category: "patch",
+            description: "Send patches via IMAP to a server.",
+            usages: [
+                { cmd: "git imap-send", desc: "Send patches via IMAP" }
+            ]
+        },
+        // ===== NICHE / SPECIALIZED =====
+        {
+            name: "git rerere",
+            category: "advanced",
+            description: "Reuse recorded resolution of conflicts.",
+            usages: [
+                { cmd: "git rerere", desc: "Record conflict resolutions" },
+                { cmd: "git rerere clear", desc: "Clear recorded resolutions" },
+                { cmd: "git rerere diff", desc: "Show recorded resolutions" },
+                { cmd: "git rerere status", desc: "Show status of recorded resolutions" }
+            ]
+        },
+        {
+            name: "git notes",
+            category: "advanced",
+            description: "Add or read notes on commits.",
+            usages: [
+                { cmd: "git notes add -m \"note\" <commit>", desc: "Add note to commit" },
+                { cmd: "git notes show <commit>", desc: "Show note for commit" },
+                { cmd: "git notes edit <commit>", desc: "Edit note" },
+                { cmd: "git notes list", desc: "List all notes" }
+            ]
+        },
+        {
+            name: "git replace",
+            category: "advanced",
+            description: "Replace objects (commits, tags, etc.) with others.",
+            usages: [
+                { cmd: "git replace <object> <replacement>", desc: "Replace object with another" },
+                { cmd: "git replace -d <object>", desc: "Delete replacement" },
+                { cmd: "git replace -l", desc: "List replacements" }
+            ]
+        },
+        {
+            name: "git bundle",
+            category: "advanced",
+            description: "Package objects into a bundle file for transfer.",
+            usages: [
+                { cmd: "git bundle create <file> HEAD", desc: "Create bundle of HEAD" },
+                { cmd: "git bundle create <file> <branch>", desc: "Bundle a specific branch" },
+                { cmd: "git bundle verify <file>", desc: "Verify bundle" },
+                { cmd: "git bundle unbundle <file>", desc: "Unbundle into repository" }
+            ]
+        },
+        {
+            name: "git filter-branch",
+            category: "advanced",
+            description: "Rewrite commit history (deprecated, use git-filter-repo).",
+            usages: [
+                { cmd: "git filter-branch --tree-filter 'rm -f *.tmp' HEAD", desc: "Remove files from history" },
+                { cmd: "git filter-branch --env-filter 'export GIT_AUTHOR_NAME=\"New Name\"'", desc: "Change author" },
+                { cmd: "git filter-branch --subdirectory-filter <dir>", desc: "Extract subdirectory" },
+                { cmd: "git filter-branch -f", desc: "Force rewrite even if backup exists" }
+            ]
+        },
+        {
+            name: "git filter-repo",
+            category: "advanced",
+            description: "Modern history rewriting tool (not built-in, recommended).",
+            usages: [
+                { cmd: "git filter-repo --path <path>", desc: "Keep only specific path" },
+                { cmd: "git filter-repo --invert-paths --path <path>", desc: "Remove specific path" },
+                { cmd: "git filter-repo --email-callback 'return email'", desc: "Rewrite email addresses" }
+            ]
+        },
+        {
+            name: "git instaweb",
+            category: "advanced",
+            description: "Launch a web server to browse the repository.",
+            usages: [
+                { cmd: "git instaweb", desc: "Start web interface" },
+                { cmd: "git instaweb --httpd=webrick", desc: "Specify web server" },
+                { cmd: "git instaweb --stop", desc: "Stop web server" },
+                { cmd: "git instaweb --port=8080", desc: "Specify port" }
+            ]
+        },
+        {
+            name: "git daemon",
+            category: "server",
+            description: "Serve Git repositories over the network.",
+            usages: [
+                { cmd: "git daemon --reuseaddr --base-path=. --export-all", desc: "Start Git daemon" },
+                { cmd: "git daemon --verbose", desc: "Verbose output" },
+                { cmd: "git daemon --port=9418", desc: "Specify port" }
+            ]
+        },
+        {
+            name: "git http-backend",
+            category: "server",
+            description: "HTTP server backend for Git repositories.",
+            usages: [
+                { cmd: "git http-backend", desc: "CGI script for HTTP server" }
+            ]
+        },
+        {
+            name: "git shell",
+            category: "server",
+            description: "Restricted shell for Git-only access.",
+            usages: [
+                { cmd: "git shell", desc: "Start restricted Git shell" }
+            ]
+        },
+        // ===== CREDENTIALS =====
+        {
+            name: "git credential",
+            category: "config",
+            description: "Retrieve and store user credentials.",
+            usages: [
+                { cmd: "git credential fill", desc: "Fill credential from helpers" },
+                { cmd: "git credential approve", desc: "Approve credential" },
+                { cmd: "git credential reject", desc: "Reject credential" }
+            ]
+        },
+        {
+            name: "git credential-cache",
+            category: "config",
+            description: "Cache credentials in memory.",
+            usages: [
+                { cmd: "git config --global credential.helper cache", desc: "Set up credential caching" },
+                { cmd: "git config --global credential.helper 'cache --timeout=3600'", desc: "Cache for 1 hour" }
+            ]
+        },
+        {
+            name: "git credential-store",
+            category: "config",
+            description: "Store credentials in plaintext file.",
+            usages: [
+                { cmd: "git config --global credential.helper store", desc: "Store credentials permanently" }
+            ]
+        },
+        // ===== VERIFICATION =====
+        {
+            name: "git verify-commit",
+            category: "advanced",
+            description: "Verify GPG signatures on commits.",
+            usages: [
+                { cmd: "git verify-commit <commit>", desc: "Verify commit signature" }
+            ]
+        },
+        {
+            name: "git verify-tag",
+            category: "advanced",
+            description: "Verify GPG signatures on tags.",
+            usages: [
+                { cmd: "git verify-tag <tag>", desc: "Verify tag signature" }
+            ]
+        },
+        // ===== GUI =====
+        {
+            name: "git gui",
+            category: "gui",
+            description: "Graphical user interface for Git.",
+            usages: [
+                { cmd: "git gui", desc: "Launch Git GUI" },
+                { cmd: "git gui blame", desc: "Launch blame view" },
+                { cmd: "git gui citool", desc: "Commit tool" },
+                { cmd: "git gui browser", desc: "Repository browser" }
+            ]
+        },
+        {
+            name: "git citool",
+            category: "gui",
+            description: "Graphical commit tool.",
+            usages: [
+                { cmd: "git citool", desc: "Launch commit GUI" }
+            ]
+        },
+        {
+            name: "gitk",
+            category: "gui",
+            description: "Graphical repository history browser.",
+            usages: [
+                { cmd: "gitk", desc: "Launch gitk history viewer" },
+                { cmd: "gitk --all", desc: "Show all branches" },
+                { cmd: "gitk <file>", desc: "History for specific file" }
+            ]
+        },
+        // ===== ADDITIONAL UTILITIES =====
+        {
+            name: "git check-attr",
+            category: "utilities",
+            description: "Check Git attributes for files.",
+            usages: [
+                { cmd: "git check-attr <attr> <file>", desc: "Check attribute value" },
+                { cmd: "git check-attr --all <file>", desc: "Show all attributes" }
+            ]
+        },
+        {
+            name: "git check-ignore",
+            category: "utilities",
+            description: "Check if files are ignored by .gitignore.",
+            usages: [
+                { cmd: "git check-ignore <file>", desc: "Check if file is ignored" },
+                { cmd: "git check-ignore -v <file>", desc: "Verbose output with rule info" }
+            ]
+        },
+        {
+            name: "git check-mailmap",
+            category: "utilities",
+            description: "Map author/committer names via mailmap.",
+            usages: [
+                { cmd: "git check-mailmap <email>", desc: "Map email to canonical name" }
+            ]
+        },
+        {
+            name: "git check-ref-format",
+            category: "utilities",
+            description: "Validate reference names.",
+            usages: [
+                { cmd: "git check-ref-format <ref>", desc: "Validate reference format" }
+            ]
+        },
+        {
+            name: "git count-objects",
+            category: "utilities",
+            description: "Count number of unpacked objects.",
+            usages: [
+                { cmd: "git count-objects", desc: "Count objects and disk usage" },
+                { cmd: "git count-objects -v", desc: "Verbose object count" }
+            ]
+        },
+        {
+            name: "git describe",
+            category: "utilities",
+            description: "Describe a commit using the most recent tag.",
+            usages: [
+                { cmd: "git describe", desc: "Describe current commit" },
+                { cmd: "git describe --tags", desc: "Use lightweight tags" },
+                { cmd: "git describe --abbrev=0", desc: "Show only tag name" }
+            ]
+        },
+        {
+            name: "git diff-index",
+            category: "plumbing",
+            description: "Compare the index with a tree.",
+            usages: [
+                { cmd: "git diff-index HEAD", desc: "Compare index with HEAD" }
+            ]
+        },
+        {
+            name: "git diff-files",
+            category: "plumbing",
+            description: "Compare files in working tree with index.",
+            usages: [
+                { cmd: "git diff-files", desc: "Compare working tree with index" }
+            ]
+        },
+        {
+            name: "git diff-tree",
+            category: "plumbing",
+            description: "Compare two tree objects.",
+            usages: [
+                { cmd: "git diff-tree <tree1> <tree2>", desc: "Compare two trees" },
+                { cmd: "git diff-tree --stdin", desc: "Read trees from stdin" }
+            ]
+        },
+        {
+            name: "git fast-export",
+            category: "plumbing",
+            description: "Export repository in fast-import format.",
+            usages: [
+                { cmd: "git fast-export --all", desc: "Export all branches" },
+                { cmd: "git fast-export master", desc: "Export specific branch" }
+            ]
+        },
+        {
+            name: "git fast-import",
+            category: "plumbing",
+            description: "Import data in fast-import format.",
+            usages: [
+                { cmd: "git fast-import", desc: "Import from stdin" },
+                { cmd: "git fast-import --quiet", desc: "Quiet import" }
+            ]
+        },
+        {
+            name: "git name-rev",
+            category: "plumbing",
+            description: "Find symbolic names for commits.",
+            usages: [
+                { cmd: "git name-rev <commit>", desc: "Find name for commit" },
+                { cmd: "git name-rev --tags", desc: "Use tags for naming" }
+            ]
+        },
+        {
+            name: "git interpret-trailers",
+            category: "advanced",
+            description: "Parse and add trailers (like Signed-off-by) to commit messages.",
+            usages: [
+                { cmd: "git interpret-trailers <file>", desc: "Add trailers to message" },
+                { cmd: "git interpret-trailers --trailer 'Signed-off-by: User <email>'", desc: "Add specific trailer" }
+            ]
+        },
+        {
+            name: "git mailinfo",
+            category: "patch",
+            description: "Extract patch from email.",
+            usages: [
+                { cmd: "git mailinfo <msg> <patch>", desc: "Extract message and patch" }
+            ]
+        },
+        {
+            name: "git mailsplit",
+            category: "patch",
+            description: "Split mailbox into individual emails.",
+            usages: [
+                { cmd: "git mailsplit -o <dir> <mailbox>", desc: "Split mailbox" }
+            ]
+        },
+        {
+            name: "git merge-base",
+            category: "plumbing",
+            description: "Find common ancestor (merge base) of commits.",
+            usages: [
+                { cmd: "git merge-base <commit1> <commit2>", desc: "Find merge base" },
+                { cmd: "git merge-base --all", desc: "Show all merge bases" }
+            ]
+        },
+        {
+            name: "git merge-index",
+            category: "plumbing",
+            description: "Run a merge for files in the index.",
+            usages: [
+                { cmd: "git merge-index <program> <file>", desc: "Run merge program" }
+            ]
+        },
+        {
+            name: "git merge-tree",
+            category: "plumbing",
+            description: "Show merge result without performing merge.",
+            usages: [
+                { cmd: "git merge-tree <base> <branch1> <branch2>", desc: "Show merge results" },
+                { cmd: "git merge-tree -z", desc: "Null-terminated output" }
+            ]
+        },
+        {
+            name: "git mktag",
+            category: "plumbing",
+            description: "Create a tag object.",
+            usages: [
+                { cmd: "git mktag", desc: "Create tag from stdin" }
+            ]
+        },
+        {
+            name: "git mktree",
+            category: "plumbing",
+            description: "Create a tree object from input.",
+            usages: [
+                { cmd: "git mktree", desc: "Create tree from stdin" },
+                { cmd: "git mktree -z", desc: "Null-terminated input" }
+            ]
+        },
+        {
+            name: "git multi-pack-index",
+            category: "maintenance",
+            description: "Manage multi-pack index for packfiles.",
+            usages: [
+                { cmd: "git multi-pack-index write", desc: "Write multi-pack index" },
+                { cmd: "git multi-pack-index verify", desc: "Verify multi-pack index" }
+            ]
+        },
+        {
+            name: "git pack-refs",
+            category: "maintenance",
+            description: "Pack references (branches, tags) into a single file.",
+            usages: [
+                { cmd: "git pack-refs", desc: "Pack references" },
+                { cmd: "git pack-refs --all", desc: "Pack all references" }
+            ]
+        },
+        {
+            name: "git patch-id",
+            category: "utilities",
+            description: "Compute a patch ID for a patch.",
+            usages: [
+                { cmd: "git patch-id", desc: "Compute patch ID from stdin" }
+            ]
+        },
+        {
+            name: "git prune-packed",
+            category: "maintenance",
+            description: "Remove redundant packfiles.",
+            usages: [
+                { cmd: "git prune-packed", desc: "Remove redundant packs" },
+                { cmd: "git prune-packed -n", desc: "Dry run" }
+            ]
+        },
+        {
+            name: "git range-diff",
+            category: "advanced",
+            description: "Compare two commit ranges (e.g., patch series versions).",
+            usages: [
+                { cmd: "git range-diff <old> <new>", desc: "Compare two ranges" },
+                { cmd: "git range-diff HEAD~3..HEAD HEAD~3..HEAD", desc: "Compare same range" }
+            ]
+        },
+        {
+            name: "git request-pull",
+            category: "remote",
+            description: "Generate a pull request message.",
+            usages: [
+                { cmd: "git request-pull <start> <url>", desc: "Generate pull request message" },
+                { cmd: "git request-pull <start> <url> <end>", desc: "Specify end commit" }
+            ]
+        },
+        {
+            name: "git send-pack",
+            category: "plumbing",
+            description: "Push to a remote repository (low-level).",
+            usages: [
+                { cmd: "git send-pack <remote> <ref>", desc: "Send pack to remote" }
+            ]
+        },
+        {
+            name: "git show-branch",
+            category: "history",
+            description: "Show branches and their commit relationships.",
+            usages: [
+                { cmd: "git show-branch", desc: "Show branch relationships" },
+                { cmd: "git show-branch --all", desc: "Show all branches" },
+                { cmd: "git show-branch -g", desc: "Show reflog" }
+            ]
+        },
+        {
+            name: "git show-index",
+            category: "plumbing",
+            description: "Show contents of a pack index.",
+            usages: [
+                { cmd: "git show-index < <idx-file>", desc: "Show pack index" }
+            ]
+        },
+        {
+            name: "git show-ref",
+            category: "plumbing",
+            description: "Show references in repository.",
+            usages: [
+                { cmd: "git show-ref", desc: "List all refs" },
+                { cmd: "git show-ref --heads", desc: "Show only branches" },
+                { cmd: "git show-ref --tags", desc: "Show only tags" }
+            ]
+        },
+        {
+            name: "git stripspace",
+            category: "utilities",
+            description: "Clean whitespace and comments from text.",
+            usages: [
+                { cmd: "git stripspace", desc: "Clean input text" },
+                { cmd: "git stripspace -c", desc: "Strip comments" }
+            ]
+        },
+        {
+            name: "git symref",
+            category: "plumbing",
+            description: "Read and modify symbolic refs.",
+            usages: [
+                { cmd: "git symref <ref>", desc: "Read symbolic ref" }
+            ]
+        },
+        {
+            name: "git unpack-file",
+            category: "plumbing",
+            description: "Extract a file from a blob to a temporary file.",
+            usages: [
+                { cmd: "git unpack-file <blob>", desc: "Unpack blob to temporary file" }
+            ]
+        },
+        {
+            name: "git update-ref",
+            category: "plumbing",
+            description: "Update the object name stored in a ref.",
+            usages: [
+                { cmd: "git update-ref <ref> <new>", desc: "Update ref to new value" },
+                { cmd: "git update-ref -d <ref>", desc: "Delete ref" }
+            ]
+        },
+        {
+            name: "git upload-archive",
+            category: "server",
+            description: "Send archive to remote (server-side).",
+            usages: [
+                { cmd: "git upload-archive", desc: "Server-side archive upload" }
+            ]
+        },
+        {
+            name: "git upload-pack",
+            category: "server",
+            description: "Send objects to client (server-side).",
+            usages: [
+                { cmd: "git upload-pack", desc: "Server-side upload" }
+            ]
+        },
+        {
+            name: "git var",
+            category: "utilities",
+            description: "Show Git internal variables.",
+            usages: [
+                { cmd: "git var -l", desc: "List variables" },
+                { cmd: "git var GIT_AUTHOR_IDENT", desc: "Show author ident" }
+            ]
+        },
+        {
+            name: "git whatchanged",
+            category: "history",
+            description: "Show commit history with changes (legacy).",
+            usages: [
+                { cmd: "git whatchanged", desc: "Show commit history (legacy)" },
+                { cmd: "git whatchanged -p", desc: "Show with patches" }
+            ]
+        },
+        // ===== ADDITIONAL GITHUB =====
+        {
+            name: "GitHub: Codespaces",
+            category: "github",
+            description: "Cloud development environments from GitHub.",
+            usages: [
+                { cmd: "# Create Codespace from repo", desc: "Click 'Code' → 'Codespaces' → 'Create codespace'" },
+                { cmd: "gh codespace list", desc: "List all codespaces (GitHub CLI)" },
+                { cmd: "gh codespace create", desc: "Create a new codespace" },
+                { cmd: "gh codespace ssh", desc: "SSH into a codespace" }
+            ]
+        },
+        {
+            name: "GitHub: Dependabot",
+            category: "github",
+            description: "Automated dependency updates on GitHub.",
+            usages: [
+                { cmd: "# Create .github/dependabot.yml", desc: "Configure Dependabot" },
+                { cmd: "version: 2", desc: "Dependabot configuration version" },
+                { cmd: "updates:\n  - package-ecosystem: npm\n    directory: /\n    schedule:\n      interval: weekly", desc: "Example Dependabot config" }
+            ]
+        },
+        {
+            name: "GitHub: Environments",
+            category: "github",
+            description: "GitHub deployment environments.",
+            usages: [
+                { cmd: "# Settings → Environments", desc: "Manage deployment environments" },
+                { cmd: "environment: production", desc: "Specify environment in Actions" }
+            ]
+        },
+        {
+            name: "GitHub: Secrets",
+            category: "github",
+            description: "Manage secrets in GitHub.",
+            usages: [
+                { cmd: "# Settings → Secrets → Actions", desc: "Manage repository secrets" },
+                { cmd: "gh secret set <NAME>", desc: "Set secret via CLI" },
+                { cmd: "gh secret list", desc: "List secrets" }
+            ]
+        },
+        {
+            name: "GitHub: Variables",
+            category: "github",
+            description: "Manage variables in GitHub.",
+            usages: [
+                { cmd: "# Settings → Variables → Actions", desc: "Manage repository variables" },
+                { cmd: "gh variable set <NAME>", desc: "Set variable via CLI" },
+                { cmd: "gh variable list", desc: "List variables" }
+            ]
+        },
+        {
+            name: "GitHub: Workflow Status",
+            category: "github",
+            description: "Check GitHub Actions workflow status.",
+            usages: [
+                { cmd: "gh run list", desc: "List recent workflow runs" },
+                { cmd: "gh run view <run-id>", desc: "View run details" },
+                { cmd: "gh run watch <run-id>", desc: "Watch run progress" },
+                { cmd: "gh run rerun <run-id>", desc: "Rerun a workflow" }
+            ]
+        },
+        {
+            name: "GitHub: Gists",
+            category: "github",
+            description: "Create and manage GitHub Gists.",
+            usages: [
+                { cmd: "gh gist create <file>", desc: "Create a public gist" },
+                { cmd: "gh gist create --public <file>", desc: "Create public gist" },
+                { cmd: "gh gist create --private <file>", desc: "Create private gist" },
+                { cmd: "gh gist list", desc: "List your gists" },
+                { cmd: "gh gist edit <id>", desc: "Edit a gist" }
+            ]
+        },
+        {
+            name: "GitHub: Repository Management",
+            category: "github",
+            description: "Advanced repo management with gh CLI.",
+            usages: [
+                { cmd: "gh repo create <name> --description \"desc\"", desc: "Create repo with description" },
+                { cmd: "gh repo clone <owner/repo>", desc: "Clone a repo" },
+                { cmd: "gh repo fork <owner/repo> --clone", desc: "Fork and clone" },
+                { cmd: "gh repo archive <owner/repo>", desc: "Archive a repository" },
+                { cmd: "gh repo unarchive <owner/repo>", desc: "Unarchive a repository" },
+                { cmd: "gh repo delete <owner/repo>", desc: "Delete a repository" }
+            ]
+        },
+        {
+            name: "GitHub: Pull Request Advanced",
+            category: "github",
+            description: "Advanced PR management with gh CLI.",
+            usages: [
+                { cmd: "gh pr create --assignee @me", desc: "Create PR with assignee" },
+                { cmd: "gh pr create --reviewer <user>", desc: "Create PR with reviewers" },
+                { cmd: "gh pr create --label <label>", desc: "Create PR with labels" },
+                { cmd: "gh pr create --base <branch> --head <branch>", desc: "Create PR from branch" },
+                { cmd: "gh pr status", desc: "Show PR status" },
+                { cmd: "gh pr checks <number>", desc: "Show PR checks" },
+                { cmd: "gh pr diff <number>", desc: "Show PR diff" },
+                { cmd: "gh pr ready <number>", desc: "Mark PR as ready for review" },
+                { cmd: "gh pr reopen <number>", desc: "Reopen a closed PR" },
+                { cmd: "gh pr edit <number> --title \"new title\"", desc: "Edit PR title" }
+            ]
+        },
+        {
+            name: "GitHub: Issues Advanced",
+            category: "github",
+            description: "Advanced issue management with gh CLI.",
+            usages: [
+                { cmd: "gh issue create --assignee @me", desc: "Create issue with assignee" },
+                { cmd: "gh issue create --label <label>", desc: "Create issue with labels" },
+                { cmd: "gh issue create --milestone <name>", desc: "Create issue with milestone" },
+                { cmd: "gh issue status", desc: "Show issue status" },
+                { cmd: "gh issue reopen <number>", desc: "Reopen a closed issue" },
+                { cmd: "gh issue edit <number> --title \"new title\"", desc: "Edit issue title" },
+                { cmd: "gh issue comment <number> --body \"comment\"", desc: "Add comment to issue" }
+            ]
+        },
+        {
+            name: "GitHub: Releases",
+            category: "github",
+            description: "Create and manage releases with gh CLI.",
+            usages: [
+                { cmd: "gh release create <tag> --title \"title\"", desc: "Create release with title" },
+                { cmd: "gh release create <tag> --notes \"notes\"", desc: "Create release with notes" },
+                { cmd: "gh release create <tag> --prerelease", desc: "Create prerelease" },
+                { cmd: "gh release create <tag> --draft", desc: "Create draft release" },
+                { cmd: "gh release create <tag> <file>", desc: "Create release with asset" },
+                { cmd: "gh release list", desc: "List releases" },
+                { cmd: "gh release view <tag>", desc: "View release details" },
+                { cmd: "gh release delete <tag>", desc: "Delete release" },
+                { cmd: "gh release download <tag>", desc: "Download release assets" },
+                { cmd: "gh release upload <tag> <file>", desc: "Upload asset to release" }
+            ]
+        },
+        {
+            name: "GitHub: Labels",
+            category: "github",
+            description: "Manage repository labels with gh CLI.",
+            usages: [
+                { cmd: "gh label list", desc: "List labels" },
+                { cmd: "gh label create <name> -c <color>", desc: "Create label" },
+                { cmd: "gh label delete <name>", desc: "Delete label" },
+                { cmd: "gh label edit <name> --new-name <newname>", desc: "Rename label" }
+            ]
+        },
+        {
+            name: "GitHub: Milestones",
+            category: "github",
+            description: "Manage milestones with gh CLI.",
+            usages: [
+                { cmd: "gh milestone list", desc: "List milestones" },
+                { cmd: "gh milestone create <name> --due-date <date>", desc: "Create milestone" },
+                { cmd: "gh milestone close <number>", desc: "Close milestone" },
+                { cmd: "gh milestone delete <number>", desc: "Delete milestone" }
+            ]
+        },
+        {
+            name: "GitHub: Project Boards",
+            category: "github",
+            description: "Manage GitHub Projects (beta) with CLI.",
+            usages: [
+                { cmd: "gh project list", desc: "List projects" },
+                { cmd: "gh project create <name> --owner <owner>", desc: "Create project" },
+                { cmd: "gh project view <number>", desc: "View project" },
+                { cmd: "gh project item-add <number> --url <issue-url>", desc: "Add item to project" }
+            ]
+        },
+        {
+            name: "GitHub: Actions Advanced",
+            category: "github",
+            description: "Advanced GitHub Actions with gh CLI.",
+            usages: [
+                { cmd: "gh workflow list", desc: "List workflows" },
+                { cmd: "gh workflow view <workflow>", desc: "View workflow details" },
+                { cmd: "gh workflow enable <workflow>", desc: "Enable workflow" },
+                { cmd: "gh workflow disable <workflow>", desc: "Disable workflow" },
+                { cmd: "gh run cancel <run-id>", desc: "Cancel a workflow run" },
+                { cmd: "gh run delete <run-id>", desc: "Delete a workflow run" },
+                { cmd: "gh run download <run-id>", desc: "Download workflow artifacts" },
+                { cmd: "gh run rerun <run-id> --failed", desc: "Rerun only failed jobs" }
+            ]
+        },
+        {
+            name: "GitHub: Configuration",
+            category: "github",
+            description: "GitHub CLI configuration and settings.",
+            usages: [
+                { cmd: "gh config set editor vim", desc: "Set default editor" },
+                { cmd: "gh config set prompt disabled", desc: "Disable interactive prompts" },
+                { cmd: "gh config get editor", desc: "Get config value" },
+                { cmd: "gh auth refresh", desc: "Refresh authentication" },
+                { cmd: "gh auth logout", desc: "Log out" }
+            ]
+        },
+        {
+            name: "GitHub: Security",
+            category: "github",
+            description: "GitHub security features and commands.",
+            usages: [
+                { cmd: "gh security-advisory list", desc: "List security advisories" },
+                { cmd: "gh security-advisory view <id>", desc: "View security advisory" },
+                { cmd: "# CodeQL scanning", desc: "Enable CodeQL in .github/workflows" },
+                { cmd: "uses: github/codeql-action/analyze@v2", desc: "CodeQL analysis action" }
+            ]
+        },
+        {
+            name: "GitHub: Star/Watch",
+            category: "github",
+            description: "Star and watch repositories.",
+            usages: [
+                { cmd: "gh repo star <owner/repo>", desc: "Star a repository" },
+                { cmd: "gh repo unstar <owner/repo>", desc: "Unstar a repository" },
+                { cmd: "gh repo view <owner/repo> --json stargazers", desc: "View stargazers" }
+            ]
+        }
+    ];
 
         // ===== DOM ELEMENTS =====
         const commandsGrid = document.getElementById('commandsGrid');
