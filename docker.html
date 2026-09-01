@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dev Workspace Hub</title>
+    <link rel="shortcut icon" href="OIP.webp" type="image/x-icon">
+    <style>
+        /* ----- CSS variables (light & dark) ----- */
+        :root {
+            /* light defaults */
+            --bg: #f4f8fb;
+            --card: #ffffff;
+            --text: #122033;
+            --muted: #64748b;
+            --primary: #0db7ed;
+            --primary-dark: #0796c4;
+            --secondary: #123047;
+            --border: #dbe7ef;
+            --code-bg: #0f172a;
+            --code-text: #d7f7ff;
+            --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+            --radius: 18px;
+            --badge-bg: #e8f7fd;
+            --badge-text: var(--primary-dark);
+            --copy-bg: #eef6fa;
+            --copy-hover: var(--primary);
+            --copy-text: var(--secondary);
+            --option-bg: #f6fafc;
+            --option-border: #e1edf4;
+            --hero-bg: linear-gradient(135deg, #0f2d44, #0b5c7d 55%, #0db7ed);
+            --hero-text: white;
+            --hero-sub: rgba(255, 255, 255, 0.84);
+            --search-bg: white;
+            --search-text: var(--text);
+            --clear-bg: var(--secondary);
+            --clear-hover: #0b2235;
+            --clear-text: white;
+            --cat-btn-bg: #e7f4fa;
+            --cat-btn-border: #c9e6f2;
+            --cat-btn-hover: #d9f0f9;
+            --cat-btn-active: var(--primary);
+            --cat-btn-active-text: white;
+            --card-border: var(--border);
+            --card-hover-border: rgba(13, 183, 237, 0.48);
+            --scroll-bg: var(--primary);
+            --scroll-shadow: rgba(13, 183, 237, 0.35);
+        }
+
+        /* dark theme overrides */
+        [data-theme="dark"] {
+            --bg: #0b1420;
+            --card: #1a2634;
+            --text: #e6f1fc;
+            --muted: #95aec9;
+            --primary: #2bc9f7;
+            --primary-dark: #5bd6ff;
+            --secondary: #c1d9f0;
+            --border: #2b3e54;
+            --code-bg: #0b111e;
+            --code-text: #c8ecff;
+            --shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+            --badge-bg: #1d3347;
+            --badge-text: #7fd4ff;
+            --copy-bg: #253545;
+            --copy-hover: #2bc9f7;
+            --copy-text: #d4e7fc;
+            --option-bg: #1b2a3a;
+            --option-border: #2e445c;
+            --hero-bg: linear-gradient(135deg, #0d1f2e, #0b3852 55%, #1f8bb0);
+            --hero-text: #f0faff;
+            --hero-sub: #c5e2f5;
+            --search-bg: #1a2634;
+            --search-text: #e6f1fc;
+            --clear-bg: #2b3e54;
+            --clear-hover: #3e5877;
+            --clear-text: white;
+            --cat-btn-bg: #1f3143;
+            --cat-btn-border: #334b64;
+            --cat-btn-hover: #2b4057;
+            --cat-btn-active: #2bc9f7;
+            --cat-btn-active-text: #0b1420;
+            --card-border: #2b3e54;
+            --card-hover-border: #2bc9f7;
+            --scroll-bg: #2bc9f7;
+            --scroll-shadow: rgba(43, 201, 247, 0.35);
+        }
+
+        /* ----- reset & base ----- */
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+                "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(13, 183, 237, 0.16), transparent 34%),
+                var(--bg);
+            color: var(--text);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        /* ----- hero ----- */
+        .hero {
+            padding: 42px 20px 32px;
+            background: var(--hero-bg);
+            color: var(--hero-text);
+            transition: background 0.2s;
+        }
+
+        .hero-content {
+            max-width: 1150px;
+            margin: 0 auto 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            width: 66px;
+            height: 66px;
+            display: grid;
+            place-items: center;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.16);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+            font-size: 34px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2rem, 5vw, 4rem);
+            line-height: 1;
+            letter-spacing: -0.05em;
+        }
+
+        .hero p {
+            margin: 10px 0 0;
+            color: var(--hero-sub);
+            font-size: 1.02rem;
+        }
+
+        /* ----- search & toolbar ----- */
+        .search-box {
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 0;
+            border-radius: 999px;
+            outline: none;
+            font-size: 1rem;
+            color: var(--search-text);
+            background: var(--search-bg);
+            box-shadow: var(--shadow);
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 28px 20px 70px;
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar h2 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .toolbar p {
+            margin: 6px 0 0;
+            color: var(--muted);
+        }
+
+        .clear-btn {
+            border: 0;
+            cursor: pointer;
+            font: inherit;
+            padding: 10px 15px;
+            border-radius: 999px;
+            background: var(--clear-bg);
+            color: var(--clear-text);
+            transition: background 0.2s;
+        }
+
+        .clear-btn:hover {
+            background: var(--clear-hover);
+        }
+
+        /* ----- category buttons ----- */
+        .category-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 4px 0 22px;
+            margin-bottom: 6px;
+        }
+
+        .category-btn {
+            white-space: nowrap;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font: inherit;
+            border: 1px solid var(--cat-btn-border);
+            background: var(--cat-btn-bg);
+            color: var(--secondary);
+            transition: 0.2s ease;
+            cursor: pointer;
+        }
+
+        .category-btn:hover {
+            transform: translateY(-1px);
+            background: var(--cat-btn-hover);
+        }
+
+        .category-btn.active {
+            background: var(--cat-btn-active);
+            color: var(--cat-btn-active-text);
+            border-color: var(--cat-btn-active);
+            box-shadow: 0 10px 20px rgba(13, 183, 237, 0.22);
+        }
+
+        /* ----- command grid ----- */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 0 auto;
+        }
+
+        .command-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: 0.2s ease;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .command-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--card-hover-border);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            display: inline-flex;
+            width: fit-content;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            font-size: 0.76rem;
+            font-weight: 700;
+        }
+
+        .command-card h3 {
+            margin: 9px 0 0;
+            font-size: 1.08rem;
+            letter-spacing: -0.02em;
+        }
+
+        .copy-btn {
+            flex: 0 0 auto;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: var(--copy-bg);
+            color: var(--copy-text);
+            font: inherit;
+            border: 0;
+            cursor: pointer;
+            font-size: 0.86rem;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .copy-btn:hover {
+            background: var(--copy-hover);
+            color: white;
+        }
+
+        .description {
+            margin: 0 0 14px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .code-block {
+            position: relative;
+            margin: 10px 0;
+            padding: 12px 14px;
+            border-radius: 13px;
+            background: var(--code-bg);
+            overflow-x: auto;
+            transition: background 0.2s;
+        }
+
+        .code-block small {
+            display: block;
+            margin-bottom: 6px;
+            color: #7dd3fc;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .code-block code {
+            color: var(--code-text);
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+            font-size: 0.9rem;
+            white-space: pre;
+        }
+
+        .options {
+            margin-top: 14px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .options summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .option-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .option-item {
+            padding: 11px;
+            border-radius: 12px;
+            background: var(--option-bg);
+            border: 1px solid var(--option-border);
+            transition: background 0.2s, border 0.2s;
+        }
+
+        .option-name {
+            display: inline-block;
+            margin-bottom: 5px;
+            color: var(--primary-dark);
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-weight: 700;
+        }
+
+        .option-item p {
+            margin: 0 0 7px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .option-example {
+            display: block;
+            padding: 8px 9px;
+            border-radius: 9px;
+            background: var(--code-bg);
+            color: var(--code-text);
+            overflow-x: auto;
+            font-size: 0.82rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state h3 {
+            margin: 0 0 8px;
+            color: var(--text);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .scroll-top {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 999px;
+            background: var(--scroll-bg);
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 14px 30px var(--scroll-shadow);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(8px);
+            transition: 0.2s ease;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        /* dark-toggle button */
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+            font: inherit;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+            margin-left: auto;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        /* responsive */
+        @media (max-width: 1024px) {
+            .commands-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 820px) {
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .hero-content {
+                align-items: flex-start;
+            }
+            .theme-toggle {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="hero">
+        <div class="hero-content">
+            <div class="logo">🐳</div>
+            <div>
+                <h1>Docker Cheatsheet</h1>
+                <p>Fast searchable Docker command reference for daily development.</p>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <span id="themeIcon">🌙</span> <span id="themeLabel">Dark</span>
+            </button>
+        </div>
+
+        <div class="search-box">
+            <input type="search" id="searchInput" placeholder="Search command, syntax, example, description..."
+                autocomplete="off" />
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="toolbar">
+            <div>
+                <h2>Sections</h2>
+                <p id="resultCount">Loading commands...</p>
+            </div>
+            <button id="clearSearchBtn" class="clear-btn">Clear Search</button>
+        </section>
+
+        <nav id="categoryButtons" class="category-buttons"></nav>
+
+        <section id="commandsGrid" class="commands-grid"></section>
+
+        <div id="emptyState" class="empty-state hidden">
+            <h3>No commands found</h3>
+            <p>Try a different keyword or select another section.</p>
+        </div>
+    </main>
+
+    <button id="scrollTopBtn" class="scroll-top" title="Back to top">↑</button>
+
+    <script>
+        // ========== DOCKER COMMANDS DATA (unchanged) ==========
+        const docker_commands = [
+            { "category": "Docker Information", "command": "docker --version", "syntax": "docker --version", "example": "docker --version", "description": "Displays the installed Docker version.", "options": [] },
+            { "category": "Docker Information", "command": "docker version", "syntax": "docker version [OPTIONS]", "example": "docker version --format '{{.Server.Version}}'", "description": "Displays detailed client and server version information.", "options": [{ "option": "--format", "description": "Format the output using a Go template", "example": "docker version --format '{{.Client.Version}}'" }, { "option": "-f, --format", "description": "Alias for --format", "example": "docker version -f '{{.Server.Platform.Name}}'" }] },
+            { "category": "Docker Information", "command": "docker info", "syntax": "docker info [OPTIONS]", "example": "docker info --format '{{.ServerVersion}}'", "description": "Displays detailed information about the Docker system.", "options": [{ "option": "--format", "description": "Format the output using a Go template", "example": "docker info --format '{{.ContainersRunning}}'" }, { "option": "-f, --format", "description": "Alias for --format", "example": "docker info -f '{{.NCPU}}'" }] },
+            { "category": "Docker Information", "command": "docker help", "syntax": "docker <command> --help", "example": "docker run --help", "description": "Displays help and available options for a Docker command.", "options": [] },
+            { "category": "Images", "command": "docker image ls", "syntax": "docker image ls [OPTIONS] [REPOSITORY[:TAG]]", "example": "docker image ls --filter 'dangling=true'", "description": "Lists Docker images available locally.", "options": [{ "option": "-a, --all", "description": "Show all images (default hides intermediate layers)", "example": "docker image ls -a" }, { "option": "--digests", "description": "Show digests", "example": "docker image ls --digests" }, { "option": "-f, --filter", "description": "Filter output based on conditions", "example": "docker image ls --filter 'before=nginx'" }, { "option": "--format", "description": "Format output using Go template", "example": "docker image ls --format 'table {{.Repository}}\t{{.Size}}'" }, { "option": "-q, --quiet", "description": "Only show image IDs", "example": "docker image ls -q" }] },
+            { "category": "Images", "command": "docker images", "syntax": "docker images [OPTIONS] [REPOSITORY[:TAG]]", "example": "docker images -a", "description": "Legacy shortcut for listing local Docker images.", "options": [{ "option": "-a, --all", "description": "Show all images", "example": "docker images -a" }, { "option": "--digests", "description": "Show digests", "example": "docker images --digests" }, { "option": "-f, --filter", "description": "Filter output", "example": "docker images -f 'dangling=true'" }, { "option": "--format", "description": "Format output", "example": "docker images --format '{{.Repository}}:{{.Tag}}'" }, { "option": "-q, --quiet", "description": "Only show IDs", "example": "docker images -q" }] },
+            { "category": "Images", "command": "docker pull", "syntax": "docker pull [OPTIONS] NAME[:TAG|@DIGEST]", "example": "docker pull --platform linux/arm64 postgres:16", "description": "Downloads an image from a container registry.", "options": [{ "option": "-a, --all-tags", "description": "Download all tagged images", "example": "docker pull --all-tags nginx" }, { "option": "--disable-content-trust", "description": "Skip image verification", "example": "docker pull --disable-content-trust myregistry/myapp" }, { "option": "--platform", "description": "Specify platform (experimental)", "example": "docker pull --platform linux/amd64 python:3.10" }, { "option": "-q, --quiet", "description": "Suppress verbose output", "example": "docker pull -q postgres" }] },
+            { "category": "Images", "command": "docker search", "syntax": "docker search [OPTIONS] TERM", "example": "docker search --limit 10 postgres", "description": "Searches Docker Hub for images.", "options": [{ "option": "-f, --filter", "description": "Filter output (is-official, is-automated, stars)", "example": "docker search --filter 'is-official=true' postgres" }, { "option": "--format", "description": "Format output", "example": "docker search --format 'table {{.Name}}\t{{.Stars}}' nginx" }, { "option": "--limit", "description": "Max number of results (default 25)", "example": "docker search --limit 5 alpine" }, { "option": "--no-trunc", "description": "Don't truncate output", "example": "docker search --no-trunc python" }] },
+            { "category": "Images", "command": "docker rmi", "syntax": "docker rmi [OPTIONS] IMAGE [IMAGE...]", "example": "docker rmi nginx alpine", "description": "Removes one or more Docker images.", "options": [{ "option": "-f, --force", "description": "Force removal of the image", "example": "docker rmi -f my-app:latest" }, { "option": "--no-prune", "description": "Don't remove untagged parents", "example": "docker rmi --no-prune nginx" }] },
+            { "category": "Images", "command": "docker rmi force", "syntax": "docker rmi -f IMAGE", "example": "docker rmi -f my-app:latest", "description": "Forcefully removes a Docker image.", "options": [] },
+            { "category": "Images", "command": "docker image prune", "syntax": "docker image prune [OPTIONS]", "example": "docker image prune -a --filter 'until=24h'", "description": "Removes unused Docker images.", "options": [{ "option": "-a, --all", "description": "Remove all unused images, not just dangling", "example": "docker image prune -a" }, { "option": "--filter", "description": "Filter based on conditions (until, label)", "example": "docker image prune --filter 'until=24h'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker image prune -f" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker image prune --verbose" }] },
+            { "category": "Images", "command": "docker tag", "syntax": "docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]", "example": "docker tag my-app:latest myregistry/my-app:v1.0", "description": "Creates another tag for an existing Docker image.", "options": [] },
+            { "category": "Images", "command": "docker save", "syntax": "docker save [OPTIONS] IMAGE [IMAGE...]", "example": "docker save -o my-app.tar my-app:latest", "description": "Saves a Docker image as a tar archive.", "options": [{ "option": "-o, --output", "description": "Write to a file instead of STDOUT", "example": "docker save -o backup.tar nginx" }] },
+            { "category": "Images", "command": "docker load", "syntax": "docker load [OPTIONS]", "example": "docker load -i my-app.tar", "description": "Loads a Docker image from a tar archive.", "options": [{ "option": "-i, --input", "description": "Read from tar archive file instead of STDIN", "example": "docker load -i backup.tar" }, { "option": "-q, --quiet", "description": "Suppress the load progress output", "example": "docker load -q -i image.tar" }] },
+            { "category": "Images", "command": "docker image history", "syntax": "docker image history [OPTIONS] IMAGE", "example": "docker image history --no-trunc my-app", "description": "Shows the layer history of an image with creation commands and sizes.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker image history --format 'table {{.Size}}\t{{.CreatedBy}}' nginx" }, { "option": "--no-trunc", "description": "Don't truncate output", "example": "docker image history --no-trunc alpine" }, { "option": "-H, --human", "description": "Print sizes and dates in human-readable format", "example": "docker image history -H nginx" }, { "option": "-q, --quiet", "description": "Only show image IDs", "example": "docker image history -q alpine" }] },
+            { "category": "Images", "command": "docker image inspect", "syntax": "docker image inspect [OPTIONS] IMAGE [IMAGE...]", "example": "docker image inspect --format '{{.Config.Env}}' postgres:16", "description": "Displays detailed metadata about an image (environment, entrypoint, exposed ports, etc.).", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker image inspect -f '{{.RepoTags}}' nginx" }, { "option": "-f, --format", "description": "Alias for --format", "example": "docker image inspect -f '{{.Config.WorkingDir}}' alpine" }] },
+            { "category": "Images", "command": "docker image import", "syntax": "docker image import [OPTIONS] FILE|URL|- [REPOSITORY[:TAG]]", "example": "docker image import -c 'CMD [\"bash\"]' my-rootfs.tar.gz my-custom:latest", "description": "Creates an image from a tarball (alternative to Dockerfile).", "options": [{ "option": "-c, --change", "description": "Apply Dockerfile instruction to the image", "example": "docker import -c 'ENV DEBUG=true' alpine.tar.gz alpine:debug" }, { "option": "-m, --message", "description": "Set commit message for the image", "example": "docker import -m 'Initial import' rootfs.tar.gz custom:latest" }, { "option": "--platform", "description": "Specify platform if not detected", "example": "docker import --platform linux/amd64 rootfs.tar.gz custom:latest" }] },
+            { "category": "Images", "command": "docker image export", "syntax": "docker image export [OPTIONS] CONTAINER", "example": "docker image export -o container.tar my-container", "description": "Exports a container's filesystem as a tar archive (not image layers).", "options": [{ "option": "-o, --output", "description": "Write to a file instead of STDOUT", "example": "docker export -o backup.tar my-container" }] },
+            { "category": "Images", "command": "docker manifest", "syntax": "docker manifest COMMAND [OPTIONS]", "example": "docker manifest inspect --verbose nginx:latest", "description": "Manages image manifests and multi-architecture support.", "options": [{ "option": "--insecure", "description": "Allow insecure registry connections", "example": "docker manifest inspect --insecure myregistry/myapp" }, { "option": "--verbose", "description": "Show verbose output", "example": "docker manifest inspect --verbose nginx" }] },
+            { "category": "Images", "command": "docker manifest inspect", "syntax": "docker manifest inspect [OPTIONS] IMAGE", "example": "docker manifest inspect --verbose python:3.10", "description": "Displays the manifest for a multi-architecture image.", "options": [{ "option": "--insecure", "description": "Allow insecure registry", "example": "docker manifest inspect --insecure localhost:5000/myapp" }, { "option": "--verbose", "description": "Show verbose output", "example": "docker manifest inspect --verbose alpine" }] },
+            { "category": "Build", "command": "docker build", "syntax": "docker build [OPTIONS] PATH | URL | -", "example": "docker build --target builder -t my-app-builder .", "description": "Builds a Docker image from a Dockerfile.", "options": [{ "option": "--build-arg", "description": "Set build-time variables", "example": "docker build --build-arg VERSION=1.0 -t my-app ." }, { "option": "--cache-from", "description": "Use a specific image as cache source", "example": "docker build --cache-from my-app:latest -t my-app:v2 ." }, { "option": "-f, --file", "description": "Name of the Dockerfile (default: PATH/Dockerfile)", "example": "docker build -f Dockerfile.prod -t my-app ." }, { "option": "--no-cache", "description": "Do not use cache when building the image", "example": "docker build --no-cache -t my-app ." }, { "option": "--pull", "description": "Always attempt to pull a newer version of the base image", "example": "docker build --pull -t my-app ." }, { "option": "-q, --quiet", "description": "Suppress the build output and print image ID on success", "example": "docker build -q -t my-app ." }, { "option": "--tag, -t", "description": "Name and optionally a tag in the 'name:tag' format", "example": "docker build -t my-app:1.0 ." }, { "option": "--target", "description": "Build up to a specific stage in a multi-stage build", "example": "docker build --target development -t my-app:dev ." }, { "option": "--squash", "description": "Squash all layers into one (experimental)", "example": "docker build --squash -t my-app ." }, { "option": "--platform", "description": "Build for a specific platform", "example": "docker build --platform linux/arm64 -t my-app-arm ." }, { "option": "--secret", "description": "Pass secrets securely during build (BuildKit)", "example": "docker build --secret id=mysecret,src=./secret.txt -t my-app ." }, { "option": "--ssh", "description": "Forward SSH agent for pulling private repos during build", "example": "docker build --ssh default -t my-app ." }] },
+            { "category": "Build", "command": "docker build specific Dockerfile", "syntax": "docker build -f DOCKERFILE -t NAME PATH", "example": "docker build -f Dockerfile.prod -t my-app .", "description": "Builds an image using a specific Dockerfile.", "options": [] },
+            { "category": "Build", "command": "docker build no cache", "syntax": "docker build --no-cache -t NAME PATH", "example": "docker build --no-cache -t my-app .", "description": "Builds an image without using cached layers.", "options": [] },
+            { "category": "Build", "command": "docker build argument", "syntax": "docker build --build-arg KEY=VALUE -t NAME PATH", "example": "docker build --build-arg ENV=production -t my-app .", "description": "Passes build-time variables to the Dockerfile.", "options": [] },
+            { "category": "Build", "command": "docker build with cache-from", "syntax": "docker build --cache-from IMAGE -t NAME PATH", "example": "docker build --cache-from my-app:latest -t my-app:v2 .", "description": "Uses a specific image as build cache source (CI/CD optimization).", "options": [] },
+            { "category": "Build", "command": "docker build with target stage", "syntax": "docker build --target STAGE -t NAME PATH", "example": "docker build --target builder -t my-app-builder .", "description": "Builds up to a specific stage in a multi-stage Dockerfile.", "options": [] },
+            { "category": "Build", "command": "docker build with squash", "syntax": "docker build --squash -t NAME PATH", "example": "docker build --squash -t my-app .", "description": "Squashes all layers into one (reduces image size, experimental).", "options": [] },
+            { "category": "Build", "command": "docker build with platforms", "syntax": "docker build --platform PLATFORM -t NAME PATH", "example": "docker build --platform linux/arm64 -t my-app-arm .", "description": "Builds for a specific architecture (linux/amd64, linux/arm64).", "options": [] },
+            { "category": "Build", "command": "docker build with secrets", "syntax": "docker build --secret id=ID,src=PATH -t NAME PATH", "example": "docker build --secret id=mysecret,src=./secret.txt -t my-app .", "description": "Passes secrets securely during build (BuildKit).", "options": [] },
+            { "category": "Build", "command": "docker build with ssh", "syntax": "docker build --ssh default -t NAME PATH", "example": "docker build --ssh default -t my-app .", "description": "Forwards SSH agent for pulling private repos during build.", "options": [] },
+            { "category": "Build", "command": "docker builder", "syntax": "docker builder COMMAND [OPTIONS]", "example": "docker builder prune -f", "description": "Manages Docker BuildKit builds and cache.", "options": [{ "option": "--builder", "description": "Specify the builder instance to use", "example": "docker builder --builder my-builder build -t my-app ." }] },
+            { "category": "Build", "command": "docker builder prune", "syntax": "docker builder prune [OPTIONS]", "example": "docker builder prune -a -f", "description": "Removes build cache (often the largest space consumer).", "options": [{ "option": "-a, --all", "description": "Remove all build cache, not just dangling", "example": "docker builder prune -a" }, { "option": "--filter", "description": "Filter based on conditions", "example": "docker builder prune --filter 'until=24h'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker builder prune -f" }, { "option": "--keep-storage", "description": "Amount of disk space to keep for cache", "example": "docker builder prune --keep-storage 10GB" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker builder prune --verbose" }] },
+            { "category": "Containers", "command": "docker run", "syntax": "docker run [OPTIONS] IMAGE [COMMAND] [ARG...]", "example": "docker run --memory 512m --cpus 0.5 -p 8000:8000 my-django-app", "description": "Creates and starts a new container from an image.", "options": [{ "option": "-d, --detach", "description": "Run container in background", "example": "docker run -d nginx" }, { "option": "--name", "description": "Assign a name to the container", "example": "docker run --name web nginx" }, { "option": "-p, --publish", "description": "Publish container ports to host", "example": "docker run -p 8080:80 nginx" }, { "option": "-P, --publish-all", "description": "Publish all exposed ports to random ports", "example": "docker run -P nginx" }, { "option": "-v, --volume", "description": "Bind mount a volume", "example": "docker run -v /host/data:/container/data nginx" }, { "option": "--mount", "description": "Attach filesystem mount", "example": "docker run --mount type=bind,source=/host,dst=/container nginx" }, { "option": "-e, --env", "description": "Set environment variables", "example": "docker run -e DEBUG=true nginx" }, { "option": "--env-file", "description": "Read environment variables from file", "example": "docker run --env-file .env nginx" }, { "option": "--restart", "description": "Restart policy to apply", "example": "docker run --restart unless-stopped nginx" }, { "option": "--memory", "description": "Memory limit in bytes", "example": "docker run --memory 512m nginx" }, { "option": "--memory-swap", "description": "Swap limit equal to memory plus swap", "example": "docker run --memory 512m --memory-swap 1g nginx" }, { "option": "--cpus", "description": "Number of CPUs (float)", "example": "docker run --cpus 0.5 nginx" }, { "option": "--user", "description": "Username or UID (format: <name|uid>[:<group|gid>])", "example": "docker run --user 1000:1000 nginx" }, { "option": "--cap-add", "description": "Add Linux capabilities", "example": "docker run --cap-add NET_ADMIN nginx" }, { "option": "--cap-drop", "description": "Drop Linux capabilities", "example": "docker run --cap-drop ALL nginx" }, { "option": "--read-only", "description": "Mount container root filesystem as read-only", "example": "docker run --read-only nginx" }, { "option": "--security-opt", "description": "Security options", "example": "docker run --security-opt seccomp=profile.json nginx" }, { "option": "--init", "description": "Use an init process inside container", "example": "docker run --init nginx" }, { "option": "--health-cmd", "description": "Command to run to check health", "example": "docker run --health-cmd 'curl -f http://localhost/ || exit 1' nginx" }, { "option": "--health-interval", "description": "Time between health checks", "example": "docker run --health-interval=30s nginx" }, { "option": "--health-timeout", "description": "Time to wait for health check", "example": "docker run --health-timeout=5s nginx" }, { "option": "--health-retries", "description": "Number of failures before considered unhealthy", "example": "docker run --health-retries=3 nginx" }, { "option": "--sysctl", "description": "Set kernel parameters", "example": "docker run --sysctl net.ipv4.tcp_keepalive_time=60 nginx" }, { "option": "--tmpfs", "description": "Mount tmpfs directory", "example": "docker run --tmpfs /tmp nginx" }, { "option": "--network", "description": "Connect to a network", "example": "docker run --network backend-net nginx" }, { "option": "--workdir, -w", "description": "Working directory inside container", "example": "docker run -w /app nginx" }, { "option": "-it, --interactive --tty", "description": "Keep STDIN open and allocate pseudo-TTY", "example": "docker run -it ubuntu bash" }, { "option": "--rm", "description": "Automatically remove container when it exits", "example": "docker run --rm ubuntu echo 'done'" }, { "option": "--entrypoint", "description": "Override default entrypoint", "example": "docker run --entrypoint /bin/bash nginx" }, { "option": "--log-driver", "description": "Logging driver for container", "example": "docker run --log-driver json-file nginx" }, { "option": "--log-opt", "description": "Log driver options", "example": "docker run --log-opt max-size=10m nginx" }] },
+            { "category": "Containers", "command": "docker run detached", "syntax": "docker run -d IMAGE", "example": "docker run -d nginx", "description": "Runs a container in the background.", "options": [] },
+            { "category": "Containers", "command": "docker run with name", "syntax": "docker run --name NAME IMAGE", "example": "docker run -d --name django-app my-django-app", "description": "Creates a container with a custom name.", "options": [] },
+            { "category": "Containers", "command": "docker run with restart policy", "syntax": "docker run --restart POLICY IMAGE", "example": "docker run --restart unless-stopped my-app", "description": "Sets restart policy (no, always, unless-stopped, on-failure[:max-retries]).", "options": [] },
+            { "category": "Containers", "command": "docker run with resource limits", "syntax": "docker run --memory LIMIT --cpus LIMIT IMAGE", "example": "docker run --memory 512m --cpus 0.5 --memory-swap 1g my-app", "description": "Sets CPU, memory, and swap limits for containers.", "options": [] },
+            { "category": "Containers", "command": "docker run with user", "syntax": "docker run --user UID[:GID] IMAGE", "example": "docker run --user 1000:1000 my-app", "description": "Runs container with specific user/group ID.", "options": [] },
+            { "category": "Containers", "command": "docker run with capabilities", "syntax": "docker run --cap-add CAPABILITY --cap-drop CAPABILITY IMAGE", "example": "docker run --cap-add NET_ADMIN --cap-drop ALL my-app", "description": "Adds or drops Linux capabilities for security.", "options": [] },
+            { "category": "Containers", "command": "docker run with read-only rootfs", "syntax": "docker run --read-only -v /tmp:/tmp IMAGE", "example": "docker run --read-only -v /tmp:/tmp my-app", "description": "Makes container root filesystem read-only for security.", "options": [] },
+            { "category": "Containers", "command": "docker run with security options", "syntax": "docker run --security-opt SECURITY_OPT IMAGE", "example": "docker run --security-opt seccomp=seccomp-profile.json my-app", "description": "Sets security options (seccomp, apparmor, no-new-privileges).", "options": [] },
+            { "category": "Containers", "command": "docker run with healthcheck", "syntax": "docker run --health-cmd CMD --health-interval TIME IMAGE", "example": "docker run --health-cmd 'curl -f http://localhost/ || exit 1' --health-interval=30s my-app", "description": "Configures container health checks.", "options": [] },
+            { "category": "Containers", "command": "docker run with sysctl", "syntax": "docker run --sysctl KEY=VALUE IMAGE", "example": "docker run --sysctl net.ipv4.tcp_keepalive_time=60 my-app", "description": "Sets kernel parameters inside container (works in privileged mode).", "options": [] },
+            { "category": "Containers", "command": "docker run with init", "syntax": "docker run --init IMAGE", "example": "docker run --init my-app", "description": "Runs with an init process to handle zombie processes.", "options": [] },
+            { "category": "Containers", "command": "docker ps", "syntax": "docker ps [OPTIONS]", "example": "docker ps -a --filter 'status=exited'", "description": "Lists currently running containers.", "options": [{ "option": "-a, --all", "description": "Show all containers (default shows just running)", "example": "docker ps -a" }, { "option": "-f, --filter", "description": "Filter output based on conditions", "example": "docker ps --filter 'name=web'" }, { "option": "--format", "description": "Format output using Go template", "example": "docker ps --format 'table {{.Names}}\t{{.Status}}'" }, { "option": "-n, --last", "description": "Show last n created containers", "example": "docker ps -n 5" }, { "option": "-q, --quiet", "description": "Only display container IDs", "example": "docker ps -q" }, { "option": "-s, --size", "description": "Display total file sizes", "example": "docker ps -s" }] },
+            { "category": "Containers", "command": "docker ps all", "syntax": "docker ps -a", "example": "docker ps -a", "description": "Lists all containers, including stopped ones.", "options": [] },
+            { "category": "Containers", "command": "docker start", "syntax": "docker start [OPTIONS] CONTAINER [CONTAINER...]", "example": "docker start -ai django-app", "description": "Starts a stopped container.", "options": [{ "option": "-a, --attach", "description": "Attach STDOUT/STDERR and forward signals", "example": "docker start -a my-app" }, { "option": "-i, --interactive", "description": "Attach container's STDIN", "example": "docker start -i my-app" }, { "option": "--checkpoint", "description": "Restore from this checkpoint (experimental)", "example": "docker start --checkpoint checkpoint1 my-app" }] },
+            { "category": "Containers", "command": "docker start attach", "syntax": "docker start -ai CONTAINER", "example": "docker start -ai django-app", "description": "Starts a container and attaches the terminal to it.", "options": [] },
+            { "category": "Containers", "command": "docker stop", "syntax": "docker stop [OPTIONS] CONTAINER [CONTAINER...]", "example": "docker stop --time 30 django-app", "description": "Gracefully stops a running container.", "options": [{ "option": "-t, --time", "description": "Seconds to wait before killing the container (default 10)", "example": "docker stop -t 30 my-app" }] },
+            { "category": "Containers", "command": "docker restart", "syntax": "docker restart [OPTIONS] CONTAINER [CONTAINER...]", "example": "docker restart --time 10 django-app", "description": "Stops and starts a container again.", "options": [{ "option": "-t, --time", "description": "Seconds to wait before killing the container (default 10)", "example": "docker restart -t 5 my-app" }] },
+            { "category": "Containers", "command": "docker kill", "syntax": "docker kill [OPTIONS] CONTAINER [CONTAINER...]", "example": "docker kill -s SIGTERM django-app", "description": "Immediately stops a running container.", "options": [{ "option": "-s, --signal", "description": "Signal to send to the container", "example": "docker kill -s SIGINT my-app" }] },
+            { "category": "Containers", "command": "docker rm", "syntax": "docker rm [OPTIONS] CONTAINER [CONTAINER...]", "example": "docker rm -v django-app", "description": "Removes one or more stopped containers.", "options": [{ "option": "-f, --force", "description": "Force the removal of a running container", "example": "docker rm -f my-app" }, { "option": "-l, --link", "description": "Remove the specified link", "example": "docker rm -l web-link" }, { "option": "-v, --volumes", "description": "Remove anonymous volumes associated with container", "example": "docker rm -v my-app" }] },
+            { "category": "Containers", "command": "docker rm force", "syntax": "docker rm -f CONTAINER", "example": "docker rm -f django-app", "description": "Forcefully removes a running or stopped container.", "options": [] },
+            { "category": "Containers", "command": "docker container prune", "syntax": "docker container prune [OPTIONS]", "example": "docker container prune --filter 'until=24h'", "description": "Removes all stopped containers.", "options": [{ "option": "--filter", "description": "Filter based on conditions", "example": "docker container prune --filter 'label=stage=dev'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker container prune -f" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker container prune --verbose" }] },
+            { "category": "Containers", "command": "docker pause", "syntax": "docker pause CONTAINER [CONTAINER...]", "example": "docker pause django-app", "description": "Freezes all processes in a container using cgroups freezer.", "options": [] },
+            { "category": "Containers", "command": "docker unpause", "syntax": "docker unpause CONTAINER [CONTAINER...]", "example": "docker unpause django-app", "description": "Unfreezes a paused container.", "options": [] },
+            { "category": "Containers", "command": "docker wait", "syntax": "docker wait CONTAINER [CONTAINER...]", "example": "docker wait my-app && echo 'Container stopped'", "description": "Blocks until a container stops, then prints its exit code (useful in scripts).", "options": [] },
+            { "category": "Containers", "command": "docker rename", "syntax": "docker rename OLD_NAME NEW_NAME", "example": "docker rename old-app new-app", "description": "Renames an existing container.", "options": [] },
+            { "category": "Containers", "command": "docker container update", "syntax": "docker container update [OPTIONS] CONTAINER", "example": "docker container update --memory 1g --cpus 0.5 my-app", "description": "Updates resource limits of a running container without restart.", "options": [{ "option": "--memory", "description": "Memory limit in bytes", "example": "docker update --memory 2g my-app" }, { "option": "--memory-swap", "description": "Swap limit (memory + swap)", "example": "docker update --memory 1g --memory-swap 2g my-app" }, { "option": "--cpus", "description": "Number of CPUs (float)", "example": "docker update --cpus 1.5 my-app" }, { "option": "--restart", "description": "Restart policy", "example": "docker update --restart unless-stopped my-app" }] },
+            { "category": "Containers", "command": "docker attach", "syntax": "docker attach [OPTIONS] CONTAINER", "example": "docker attach --sig-proxy=false django-app", "description": "Attaches to a running container's STDIN/STDOUT/STDERR.", "options": [{ "option": "--detach-keys", "description": "Override default key sequence for detach", "example": "docker attach --detach-keys='ctrl-z' my-app" }, { "option": "--no-stdin", "description": "Do not attach STDIN", "example": "docker attach --no-stdin my-app" }, { "option": "--sig-proxy", "description": "Proxy all received signals to the process (default true)", "example": "docker attach --sig-proxy=false my-app" }] },
+            { "category": "Containers", "command": "docker diff", "syntax": "docker diff CONTAINER", "example": "docker diff django-app", "description": "Shows changes to filesystem since container start (A=added, C=changed, D=deleted).", "options": [] },
+            { "category": "Containers", "command": "docker port", "syntax": "docker port CONTAINER [PRIVATE_PORT[/PROTO]]", "example": "docker port django-app 8000", "description": "Lists port mappings for a container.", "options": [] },
+            { "category": "Containers", "command": "docker container inspect", "syntax": "docker container inspect [OPTIONS] CONTAINER [CONTAINER...]", "example": "docker container inspect --format '{{.State.Status}}' django-app", "description": "Detailed view of container configuration and state.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker container inspect -f '{{.NetworkSettings.IPAddress}}' my-app" }, { "option": "-f, --format", "description": "Alias for --format", "example": "docker container inspect -f '{{.Name}}' my-app" }] },
+            { "category": "Containers", "command": "docker container ls", "syntax": "docker container ls [OPTIONS]", "example": "docker container ls -a --filter 'status=exited'", "description": "Lists containers (modern version, alternative to docker ps).", "options": [{ "option": "-a, --all", "description": "Show all containers", "example": "docker container ls -a" }, { "option": "-f, --filter", "description": "Filter output", "example": "docker container ls --filter 'status=running'" }, { "option": "--format", "description": "Format output", "example": "docker container ls --format 'table {{.Names}}\t{{.Image}}'" }, { "option": "-q, --quiet", "description": "Only show IDs", "example": "docker container ls -q" }, { "option": "-s, --size", "description": "Show file sizes", "example": "docker container ls -s" }] },
+            { "category": "Configuration", "command": "docker run port", "syntax": "docker run -p HOST_PORT:CONTAINER_PORT IMAGE", "example": "docker run -p 8000:8000 my-django-app", "description": "Maps a host port to a container port.", "options": [] },
+            { "category": "Configuration", "command": "docker run environment variable", "syntax": "docker run -e KEY=VALUE IMAGE", "example": "docker run -e DEBUG=True my-django-app", "description": "Passes an environment variable to a container.", "options": [] },
+            { "category": "Configuration", "command": "docker run env file", "syntax": "docker run --env-file FILE IMAGE", "example": "docker run --env-file .env my-django-app", "description": "Loads environment variables from a file.", "options": [] },
+            { "category": "Debugging", "command": "docker logs", "syntax": "docker logs [OPTIONS] CONTAINER", "example": "docker logs --since 2h --tail 50 django-app", "description": "Displays logs produced by a container.", "options": [{ "option": "-f, --follow", "description": "Follow log output", "example": "docker logs -f my-app" }, { "option": "--since", "description": "Show logs since timestamp (e.g. 2013-01-02T13:23:37Z) or relative (e.g. 42m)", "example": "docker logs --since 2h my-app" }, { "option": "--until", "description": "Show logs before timestamp", "example": "docker logs --until 1h my-app" }, { "option": "-t, --timestamps", "description": "Show timestamps", "example": "docker logs -t my-app" }, { "option": "--tail", "description": "Number of lines to show from end", "example": "docker logs --tail 100 my-app" }, { "option": "--details", "description": "Show extra details", "example": "docker logs --details my-app" }] },
+            { "category": "Debugging", "command": "docker logs follow", "syntax": "docker logs -f CONTAINER", "example": "docker logs -f django-app", "description": "Continuously streams container logs.", "options": [] },
+            { "category": "Debugging", "command": "docker logs tail", "syntax": "docker logs --tail NUMBER CONTAINER", "example": "docker logs --tail 100 django-app", "description": "Displays only the latest specified number of log lines.", "options": [] },
+            { "category": "Debugging", "command": "docker exec", "syntax": "docker exec [OPTIONS] CONTAINER COMMAND [ARG...]", "example": "docker exec -it django-app python manage.py shell", "description": "Runs a command inside a running container.", "options": [{ "option": "-d, --detach", "description": "Detached mode: run command in background", "example": "docker exec -d my-app touch /tmp/health" }, { "option": "-i, --interactive", "description": "Keep STDIN open", "example": "docker exec -i my-app bash" }, { "option": "-t, --tty", "description": "Allocate a pseudo-TTY", "example": "docker exec -it my-app bash" }, { "option": "-e, --env", "description": "Set environment variables", "example": "docker exec -e DEBUG=true my-app python app.py" }, { "option": "-w, --workdir", "description": "Working directory inside the container", "example": "docker exec -w /app my-app ls" }, { "option": "--user, -u", "description": "Username or UID", "example": "docker exec -u root my-app whoami" }] },
+            { "category": "Debugging", "command": "docker exec bash", "syntax": "docker exec -it CONTAINER bash", "example": "docker exec -it django-app bash", "description": "Opens an interactive Bash shell inside a container.", "options": [] },
+            { "category": "Debugging", "command": "docker exec sh", "syntax": "docker exec -it CONTAINER sh", "example": "docker exec -it django-app sh", "description": "Opens an interactive shell when Bash is unavailable.", "options": [] },
+            { "category": "Debugging", "command": "docker inspect", "syntax": "docker inspect [OPTIONS] OBJECT [OBJECT...]", "example": "docker inspect --format '{{.State.Health.Status}}' django-app", "description": "Displays detailed low-level information about a Docker object.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker inspect -f '{{.NetworkSettings.IPAddress}}' my-app" }, { "option": "--size", "description": "Display total file sizes if container", "example": "docker inspect --size my-app" }, { "option": "-f, --format", "description": "Alias for --format", "example": "docker inspect -f '{{.State.StartedAt}}' my-app" }] },
+            { "category": "Debugging", "command": "docker stats", "syntax": "docker stats [OPTIONS] [CONTAINER...]", "example": "docker stats --no-stream --format '{{.Name}}: {{.CPUPerc}}'", "description": "Displays live CPU, memory, network, and other resource usage.", "options": [{ "option": "-a, --all", "description": "Show all containers (default shows just running)", "example": "docker stats -a" }, { "option": "--format", "description": "Format output using Go template", "example": "docker stats --format 'table {{.Name}}\t{{.CPUPerc}}'" }, { "option": "--no-stream", "description": "Disable streaming stats and only pull one result", "example": "docker stats --no-stream" }, { "option": "--no-trunc", "description": "Do not truncate output", "example": "docker stats --no-trunc" }] },
+            { "category": "Debugging", "command": "docker top", "syntax": "docker top CONTAINER [ps OPTIONS]", "example": "docker top django-app -o pid,comm", "description": "Displays processes running inside a container.", "options": [{ "option": "-o, --opt", "description": "PS options to use", "example": "docker top my-app -o pid,args,user" }] },
+            { "category": "Debugging", "command": "docker events", "syntax": "docker events [OPTIONS]", "example": "docker events --filter 'type=container' --filter 'event=die'", "description": "Streams real-time events from Docker daemon.", "options": [{ "option": "-f, --filter", "description": "Filter output based on conditions", "example": "docker events --filter 'type=container'" }, { "option": "--format", "description": "Format output using Go template", "example": "docker events --format '{{.Type}} {{.Action}}'" }, { "option": "--since", "description": "Show events since timestamp", "example": "docker events --since '2023-01-01'" }, { "option": "--until", "description": "Show events until timestamp", "example": "docker events --until '2023-12-31'" }] },
+            { "category": "Volumes", "command": "docker volume create", "syntax": "docker volume create [OPTIONS] NAME", "example": "docker volume create --driver local --label environment=production postgres_data", "description": "Creates a named Docker volume.", "options": [{ "option": "--driver, -d", "description": "Specify volume driver name (default local)", "example": "docker volume create --driver local my-vol" }, { "option": "--label", "description": "Set metadata for volume", "example": "docker volume create --label team=backend data" }, { "option": "--opt, -o", "description": "Set driver specific options", "example": "docker volume create --opt type=nfs --opt o=addr=192.168.1.1 --opt device=:/path nfs-vol" }, { "option": "--name", "description": "Specify volume name", "example": "docker volume create --name my-volume" }] },
+            { "category": "Volumes", "command": "docker volume ls", "syntax": "docker volume ls [OPTIONS]", "example": "docker volume ls --filter 'label=environment=production'", "description": "Lists Docker volumes.", "options": [{ "option": "-f, --filter", "description": "Filter output based on conditions", "example": "docker volume ls --filter 'dangling=true'" }, { "option": "--format", "description": "Format output using Go template", "example": "docker volume ls --format 'table {{.Name}}\t{{.Driver}}'" }, { "option": "-q, --quiet", "description": "Only show volume names", "example": "docker volume ls -q" }] },
+            { "category": "Volumes", "command": "docker volume inspect", "syntax": "docker volume inspect [OPTIONS] VOLUME [VOLUME...]", "example": "docker volume inspect --format '{{.Mountpoint}}' postgres_data", "description": "Displays detailed information about a volume.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker volume inspect -f '{{.Driver}}' my-vol" }] },
+            { "category": "Volumes", "command": "docker volume rm", "syntax": "docker volume rm [OPTIONS] VOLUME [VOLUME...]", "example": "docker volume rm postgres_data", "description": "Removes a Docker volume.", "options": [{ "option": "-f, --force", "description": "Force the removal of the volume", "example": "docker volume rm -f my-vol" }] },
+            { "category": "Volumes", "command": "docker volume prune", "syntax": "docker volume prune [OPTIONS]", "example": "docker volume prune --filter 'label!=keep'", "description": "Removes unused Docker volumes.", "options": [{ "option": "--filter", "description": "Filter based on conditions", "example": "docker volume prune --filter 'until=24h'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker volume prune -f" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker volume prune --verbose" }] },
+            { "category": "Volumes", "command": "docker run named volume", "syntax": "docker run -v VOLUME:CONTAINER_PATH IMAGE", "example": "docker run -v postgres_data:/var/lib/postgresql/data postgres:16", "description": "Mounts a named volume into a container.", "options": [] },
+            { "category": "Volumes", "command": "docker run bind mount", "syntax": "docker run -v HOST_PATH:CONTAINER_PATH IMAGE", "example": "docker run -v $(pwd):/app my-django-app", "description": "Mounts a host directory inside a container.", "options": [] },
+            { "category": "Volumes", "command": "docker run with tmpfs", "syntax": "docker run --tmpfs CONTAINER_PATH IMAGE", "example": "docker run --tmpfs /tmp --tmpfs /run -v /var/lib/myapp my-app", "description": "Mounts a tmpfs for sensitive data (stored in RAM).", "options": [] },
+            { "category": "File Management", "command": "docker cp to container", "syntax": "docker cp [OPTIONS] HOST_PATH CONTAINER:CONTAINER_PATH", "example": "docker cp file.txt django-app:/app/", "description": "Copies files from the host machine into a container.", "options": [{ "option": "-a, --archive", "description": "Preserve file attributes (UID, GID, timestamps)", "example": "docker cp -a ./data my-app:/app/" }] },
+            { "category": "File Management", "command": "docker cp from container", "syntax": "docker cp [OPTIONS] CONTAINER:CONTAINER_PATH HOST_PATH", "example": "docker cp django-app:/app/logs/app.log .", "description": "Copies files from a container to the host machine.", "options": [{ "option": "-a, --archive", "description": "Preserve file attributes", "example": "docker cp -a my-app:/app/logs ./backup/" }] },
+            { "category": "Networks", "command": "docker network ls", "syntax": "docker network ls [OPTIONS]", "example": "docker network ls --filter 'driver=bridge'", "description": "Lists available Docker networks.", "options": [{ "option": "-f, --filter", "description": "Filter output based on conditions", "example": "docker network ls --filter 'name=backend'" }, { "option": "--format", "description": "Format output using Go template", "example": "docker network ls --format 'table {{.Name}}\t{{.Driver}}'" }, { "option": "--no-trunc", "description": "Don't truncate output", "example": "docker network ls --no-trunc" }, { "option": "-q, --quiet", "description": "Only show network IDs", "example": "docker network ls -q" }] },
+            { "category": "Networks", "command": "docker network create", "syntax": "docker network create [OPTIONS] NAME", "example": "docker network create --driver bridge --subnet 172.20.0.0/16 backend-network", "description": "Creates a custom Docker network.", "options": [{ "option": "--driver, -d", "description": "Driver to manage the network (default bridge)", "example": "docker network create --driver overlay overlay-net" }, { "option": "--subnet", "description": "Subnet in CIDR format", "example": "docker network create --subnet 172.20.0.0/16 my-net" }, { "option": "--gateway", "description": "IPv4 or IPv6 gateway", "example": "docker network create --gateway 172.20.0.1 my-net" }, { "option": "--ip-range", "description": "Range of IP addresses for containers", "example": "docker network create --ip-range 172.20.0.0/24 my-net" }, { "option": "--label", "description": "Set metadata on network", "example": "docker network create --label environment=prod my-net" }, { "option": "--opt, -o", "description": "Set driver specific options", "example": "docker network create -o com.docker.network.bridge.name=br0 bridge-net" }, { "option": "--ipam-driver", "description": "IP Address Management driver", "example": "docker network create --ipam-driver default my-net" }, { "option": "--ipam-opt", "description": "Set IPAM driver options", "example": "docker network create --ipam-opt 'com.docker.network.bridge.name=br0' bridge-net" }, { "option": "--attachable", "description": "Enable manual container attachment", "example": "docker network create --attachable overlay-net" }, { "option": "--internal", "description": "Restrict external access to network", "example": "docker network create --internal internal-net" }, { "option": "--scope", "description": "Network scope (swarm, local, global)", "example": "docker network create --scope swarm swarm-net" }] },
+            { "category": "Networks", "command": "docker network inspect", "syntax": "docker network inspect [OPTIONS] NETWORK [NETWORK...]", "example": "docker network inspect --format '{{.IPAM.Config}}' backend-network", "description": "Displays details about a Docker network.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker network inspect -f '{{.Driver}}' my-net" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker network inspect --verbose my-net" }] },
+            { "category": "Networks", "command": "docker network connect", "syntax": "docker network connect [OPTIONS] NETWORK CONTAINER", "example": "docker network connect --ip 172.20.0.10 backend-network django-app", "description": "Connects an existing container to a network.", "options": [{ "option": "--alias", "description": "Add network-scoped alias for the container", "example": "docker network connect --alias web my-net my-app" }, { "option": "--ip", "description": "Specify IP address", "example": "docker network connect --ip 172.20.0.10 my-net my-app" }, { "option": "--ip6", "description": "Specify IPv6 address", "example": "docker network connect --ip6 2001:db8::10 my-net my-app" }, { "option": "--link", "description": "Add link to another container", "example": "docker network connect --link db my-net my-app" }] },
+            { "category": "Networks", "command": "docker network disconnect", "syntax": "docker network disconnect [OPTIONS] NETWORK CONTAINER", "example": "docker network disconnect backend-net django-app", "description": "Disconnects a container from a network.", "options": [{ "option": "-f, --force", "description": "Force the disconnection", "example": "docker network disconnect -f my-net my-app" }] },
+            { "category": "Networks", "command": "docker network rm", "syntax": "docker network rm [OPTIONS] NETWORK [NETWORK...]", "example": "docker network rm backend-network", "description": "Removes a Docker network.", "options": [{ "option": "-f, --force", "description": "Force removal", "example": "docker network rm -f my-net" }] },
+            { "category": "Networks", "command": "docker network prune", "syntax": "docker network prune [OPTIONS]", "example": "docker network prune --filter 'name=temp-*'", "description": "Removes unused Docker networks.", "options": [{ "option": "--filter", "description": "Filter based on conditions", "example": "docker network prune --filter 'until=24h'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker network prune -f" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker network prune --verbose" }] },
+            { "category": "Docker Compose", "command": "docker compose up", "syntax": "docker compose up [OPTIONS] [SERVICE...]", "example": "docker compose up -d --build --scale worker=3", "description": "Creates and starts services defined in a Compose file.", "options": [{ "option": "-d, --detach", "description": "Run containers in background", "example": "docker compose up -d" }, { "option": "--build", "description": "Build images before starting", "example": "docker compose up --build" }, { "option": "--force-recreate", "description": "Recreate containers even if unchanged", "example": "docker compose up --force-recreate" }, { "option": "--no-build", "description": "Don't build images, even if missing", "example": "docker compose up --no-build" }, { "option": "--no-deps", "description": "Don't start dependent services", "example": "docker compose up --no-deps django" }, { "option": "--scale", "description": "Scale the service to this number", "example": "docker compose up --scale web=3" }, { "option": "--timeout, -t", "description": "Timeout for stop operations (seconds)", "example": "docker compose up -t 30" }, { "option": "--abort-on-container-exit", "description": "Stop all containers if any exits", "example": "docker compose up --abort-on-container-exit" }, { "option": "--exit-code-from", "description": "Return exit code from specified service", "example": "docker compose up --exit-code-from django" }, { "option": "--remove-orphans", "description": "Remove containers for services not in compose file", "example": "docker compose up --remove-orphans" }] },
+            { "category": "Docker Compose", "command": "docker compose up detached", "syntax": "docker compose up -d", "example": "docker compose up -d", "description": "Starts Compose services in the background.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose up build", "syntax": "docker compose up --build", "example": "docker compose up -d --build", "description": "Builds images before starting services.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose down", "syntax": "docker compose down [OPTIONS]", "example": "docker compose down --volumes --remove-orphans", "description": "Stops and removes Compose containers and networks.", "options": [{ "option": "--rmi", "description": "Remove images used by services", "example": "docker compose down --rmi all" }, { "option": "-v, --volumes", "description": "Remove named volumes declared in services", "example": "docker compose down -v" }, { "option": "--remove-orphans", "description": "Remove containers for services not defined", "example": "docker compose down --remove-orphans" }, { "option": "--timeout, -t", "description": "Timeout for stop operations (seconds)", "example": "docker compose down -t 30" }] },
+            { "category": "Docker Compose", "command": "docker compose down volumes", "syntax": "docker compose down -v", "example": "docker compose down -v", "description": "Stops services and also removes associated named volumes. This may delete database data.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose ps", "syntax": "docker compose ps [OPTIONS] [SERVICE...]", "example": "docker compose ps -a", "description": "Lists the status of Compose services.", "options": [{ "option": "-a, --all", "description": "Show all containers (including stopped)", "example": "docker compose ps -a" }, { "option": "--format", "description": "Format output using Go template", "example": "docker compose ps --format 'table {{.Service}}\t{{.Status}}'" }, { "option": "-q, --quiet", "description": "Only display container IDs", "example": "docker compose ps -q" }] },
+            { "category": "Docker Compose", "command": "docker compose logs", "syntax": "docker compose logs [OPTIONS] [SERVICE...]", "example": "docker compose logs --tail 100 --follow django", "description": "Displays logs from Compose services.", "options": [{ "option": "-f, --follow", "description": "Follow log output", "example": "docker compose logs -f django" }, { "option": "--no-color", "description": "Produce monochrome output", "example": "docker compose logs --no-color" }, { "option": "--timestamps, -t", "description": "Show timestamps", "example": "docker compose logs -t" }, { "option": "--tail", "description": "Number of lines to show from end", "example": "docker compose logs --tail 50" }, { "option": "--since", "description": "Show logs since timestamp", "example": "docker compose logs --since '2023-01-01'" }, { "option": "--until", "description": "Show logs before timestamp", "example": "docker compose logs --until '2023-12-31'" }] },
+            { "category": "Docker Compose", "command": "docker compose logs follow", "syntax": "docker compose logs -f [SERVICE]", "example": "docker compose logs -f celery", "description": "Continuously streams logs from a Compose service.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose exec", "syntax": "docker compose exec [OPTIONS] SERVICE COMMAND [ARG...]", "example": "docker compose exec --env DEBUG=true django python manage.py migrate", "description": "Runs a command inside a running Compose service.", "options": [{ "option": "-d, --detach", "description": "Detached mode: run command in background", "example": "docker compose exec -d django touch /tmp/health" }, { "option": "-e, --env", "description": "Set environment variables", "example": "docker compose exec -e DEBUG=true django python app.py" }, { "option": "-i, --interactive", "description": "Keep STDIN open", "example": "docker compose exec -i django bash" }, { "option": "-t, --tty", "description": "Allocate a pseudo-TTY", "example": "docker compose exec -it django bash" }, { "option": "-u, --user", "description": "Username or UID to run as", "example": "docker compose exec -u root django whoami" }, { "option": "-w, --workdir", "description": "Working directory inside container", "example": "docker compose exec -w /app django ls" }, { "option": "--index", "description": "Index of container if service has multiple replicas", "example": "docker compose exec --index=1 django python manage.py shell" }] },
+            { "category": "Docker Compose", "command": "docker compose restart", "syntax": "docker compose restart [OPTIONS] [SERVICE...]", "example": "docker compose restart --timeout 30 django", "description": "Restarts one or more Compose services.", "options": [{ "option": "--timeout, -t", "description": "Timeout for stop operations (seconds)", "example": "docker compose restart -t 30 django" }] },
+            { "category": "Docker Compose", "command": "docker compose stop", "syntax": "docker compose stop [OPTIONS] [SERVICE...]", "example": "docker compose stop --timeout 30 celery", "description": "Stops one or more Compose services without removing them.", "options": [{ "option": "--timeout, -t", "description": "Timeout for stop operations (seconds)", "example": "docker compose stop -t 30 django" }] },
+            { "category": "Docker Compose", "command": "docker compose build", "syntax": "docker compose build [OPTIONS] [SERVICE...]", "example": "docker compose build --no-cache --push django", "description": "Builds images for Compose services.", "options": [{ "option": "--build-arg", "description": "Set build-time variables", "example": "docker compose build --build-arg VERSION=1.0 django" }, { "option": "--no-cache", "description": "Don't use cache when building", "example": "docker compose build --no-cache django" }, { "option": "--pull", "description": "Always attempt to pull newer images", "example": "docker compose build --pull django" }, { "option": "--push", "description": "Push built images to registry", "example": "docker compose build --push django" }] },
+            { "category": "Docker Compose", "command": "docker compose build no cache", "syntax": "docker compose build --no-cache [SERVICE]", "example": "docker compose build --no-cache django", "description": "Builds Compose images without using cached layers.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose run", "syntax": "docker compose run [OPTIONS] SERVICE [COMMAND] [ARG...]", "example": "docker compose run --rm --service-ports django python manage.py createsuperuser", "description": "Runs a one-off command in a new container (for migrations, setup, cron jobs).", "options": [{ "option": "-d, --detach", "description": "Run in background", "example": "docker compose run -d django python app.py" }, { "option": "--rm", "description": "Remove container after run", "example": "docker compose run --rm django python manage.py migrate" }, { "option": "--service-ports", "description": "Run with service ports exposed", "example": "docker compose run --service-ports django" }, { "option": "--use-aliases", "description": "Use network aliases defined in service", "example": "docker compose run --use-aliases django" }, { "option": "--name", "description": "Assign a name to the container", "example": "docker compose run --name migration-runner django migrate" }, { "option": "-e, --env", "description": "Set environment variables", "example": "docker compose run -e DEBUG=true django" }, { "option": "-u, --user", "description": "Run as specific user", "example": "docker compose run -u root django whoami" }, { "option": "-w, --workdir", "description": "Working directory", "example": "docker compose run -w /app django ls" }, { "option": "--no-deps", "description": "Don't start dependent services", "example": "docker compose run --no-deps django" }] },
+            { "category": "Docker Compose", "command": "docker compose config", "syntax": "docker compose config [OPTIONS]", "example": "docker compose config --services --format yaml", "description": "Validates and displays the composed configuration.", "options": [{ "option": "--format", "description": "Format output (yaml, json)", "example": "docker compose config --format json" }, { "option": "--hash", "description": "Print service config hash", "example": "docker compose config --hash django" }, { "option": "--images", "description": "Print image names used", "example": "docker compose config --images" }, { "option": "--quiet, -q", "description": "Only validate, don't print output", "example": "docker compose config -q" }, { "option": "--services", "description": "Print service names only", "example": "docker compose config --services" }, { "option": "--volumes", "description": "Print volume names", "example": "docker compose config --volumes" }, { "option": "--resolve-image-digests", "description": "Pin images to digests", "example": "docker compose config --resolve-image-digests" }] },
+            { "category": "Docker Compose", "command": "docker compose pull", "syntax": "docker compose pull [OPTIONS] [SERVICE...]", "example": "docker compose pull --policy=always django postgres", "description": "Pulls latest images without starting services.", "options": [{ "option": "--policy", "description": "Pull policy (missing, always, never)", "example": "docker compose pull --policy=always django" }, { "option": "--ignore-pull-failures", "description": "Ignore pull failures", "example": "docker compose pull --ignore-pull-failures" }, { "option": "--include-deps", "description": "Also pull dependencies", "example": "docker compose pull --include-deps django" }, { "option": "-q, --quiet", "description": "Suppress output", "example": "docker compose pull -q" }] },
+            { "category": "Docker Compose", "command": "docker compose push", "syntax": "docker compose push [OPTIONS] [SERVICE...]", "example": "docker compose push --ignore-push-failures django", "description": "Pushes built images to registry.", "options": [{ "option": "--ignore-push-failures", "description": "Continue even if push fails", "example": "docker compose push --ignore-push-failures django" }, { "option": "--include-deps", "description": "Also push dependencies", "example": "docker compose push --include-deps django" }] },
+            { "category": "Docker Compose", "command": "docker compose events", "syntax": "docker compose events [OPTIONS]", "example": "docker compose events --json", "description": "Streams events from Compose services.", "options": [{ "option": "--json", "description": "Output as JSON", "example": "docker compose events --json" }, { "option": "--format", "description": "Format output", "example": "docker compose events --format '{{.Service}} {{.Action}}'" }, { "option": "--since", "description": "Show events since timestamp", "example": "docker compose events --since '2023-01-01'" }, { "option": "--until", "description": "Show events until timestamp", "example": "docker compose events --until '2023-12-31'" }] },
+            { "category": "Docker Compose", "command": "docker compose images", "syntax": "docker compose images [OPTIONS] [SERVICE...]", "example": "docker compose images --quiet", "description": "Lists all images used by Compose services with details.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker compose images --format 'table {{.Service}}\t{{.Image}}'" }, { "option": "-q, --quiet", "description": "Only show image IDs", "example": "docker compose images -q" }] },
+            { "category": "Docker Compose", "command": "docker compose top", "syntax": "docker compose top [SERVICE...]", "example": "docker compose top django", "description": "Displays running processes inside Compose services.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose pause", "syntax": "docker compose pause [SERVICE...]", "example": "docker compose pause celery", "description": "Pauses Compose services.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose unpause", "syntax": "docker compose unpause [SERVICE...]", "example": "docker compose unpause celery", "description": "Unpauses Compose services.", "options": [] },
+            { "category": "Docker Compose", "command": "docker compose kill", "syntax": "docker compose kill [OPTIONS] [SERVICE...]", "example": "docker compose kill -s SIGINT django", "description": "Sends a signal to Compose service containers.", "options": [{ "option": "-s, --signal", "description": "Signal to send (default SIGKILL)", "example": "docker compose kill -s SIGTERM django" }] },
+            { "category": "Docker Compose", "command": "docker compose cp", "syntax": "docker compose cp [OPTIONS] SOURCE SERVICE:DEST", "example": "docker compose cp ./config.json django:/app/config.json", "description": "Copies files between host and Compose services.", "options": [{ "option": "-a, --archive", "description": "Preserve file attributes", "example": "docker compose cp -a ./data django:/app/data" }, { "option": "--index", "description": "Index of container if service has multiple replicas", "example": "docker compose cp --index=1 file django:/app/file" }] },
+            { "category": "Docker Compose", "command": "docker compose convert", "syntax": "docker compose convert [OPTIONS]", "example": "docker compose convert --format yaml", "description": "Converts compose file to different format (new name for config).", "options": [{ "option": "--format", "description": "Output format (yaml, json)", "example": "docker compose convert --format json" }, { "option": "--hash", "description": "Print service config hash", "example": "docker compose convert --hash django" }, { "option": "--images", "description": "Print image names", "example": "docker compose convert --images" }, { "option": "--services", "description": "Print service names", "example": "docker compose convert --services" }, { "option": "--volumes", "description": "Print volume names", "example": "docker compose convert --volumes" }] },
+            { "category": "Docker Compose", "command": "docker compose create", "syntax": "docker compose create [OPTIONS] [SERVICE...]", "example": "docker compose create --force-recreate django", "description": "Creates containers without starting them.", "options": [{ "option": "--force-recreate", "description": "Recreate containers even if unchanged", "example": "docker compose create --force-recreate django" }, { "option": "--no-build", "description": "Don't build images, even if missing", "example": "docker compose create --no-build django" }, { "option": "--build", "description": "Build images before creating", "example": "docker compose create --build django" }, { "option": "--remove-orphans", "description": "Remove containers for services not defined", "example": "docker compose create --remove-orphans" }, { "option": "--scale", "description": "Scale the service to this number", "example": "docker compose create --scale web=3" }] },
+            { "category": "Docker Compose", "command": "docker compose start", "syntax": "docker compose start [SERVICE...]", "example": "docker compose start django", "description": "Starts existing containers (different from up).", "options": [] },
+            { "category": "Registry", "command": "docker login", "syntax": "docker login [OPTIONS] [SERVER]", "example": "docker login -u username -p password registry.digitalocean.com", "description": "Authenticates with a container registry.", "options": [{ "option": "-u, --username", "description": "Username for registry", "example": "docker login -u myuser" }, { "option": "-p, --password", "description": "Password for registry (insecure)", "example": "docker login -p mypass" }, { "option": "--password-stdin", "description": "Read password from STDIN", "example": "echo 'mypass' | docker login --password-stdin" }] },
+            { "category": "Registry", "command": "docker push", "syntax": "docker push [OPTIONS] NAME[:TAG]", "example": "docker push --disable-content-trust username/my-app:v1", "description": "Uploads an image to a container registry.", "options": [{ "option": "--disable-content-trust", "description": "Skip image signing", "example": "docker push --disable-content-trust my-app" }, { "option": "--platform", "description": "Push a specific platform manifest", "example": "docker push --platform linux/arm64 my-app" }] },
+            { "category": "Registry", "command": "docker logout", "syntax": "docker logout [SERVER]", "example": "docker logout https://myregistry.azurecr.io", "description": "Logs out from a container registry.", "options": [] },
+            { "category": "Registry", "command": "docker trust", "syntax": "docker trust COMMAND [OPTIONS]", "example": "docker trust inspect --pretty nginx", "description": "Manages Docker Content Trust and image signing.", "options": [{ "option": "--pretty", "description": "Pretty print output", "example": "docker trust inspect --pretty my-app" }] },
+            { "category": "Registry", "command": "docker trust sign", "syntax": "docker trust sign IMAGE[:TAG]", "example": "docker trust sign --local my-app:latest", "description": "Signs an image with Docker Content Trust.", "options": [{ "option": "--local", "description": "Sign locally without pushing", "example": "docker trust sign --local my-app:latest" }] },
+            { "category": "Registry", "command": "docker trust revoke", "syntax": "docker trust revoke [OPTIONS] IMAGE[:TAG]", "example": "docker trust revoke --yes my-app:latest", "description": "Revokes trust signature for an image.", "options": [{ "option": "--yes", "description": "Answer yes to confirmation prompt", "example": "docker trust revoke --yes my-app:latest" }] },
+            { "category": "Cleanup", "command": "docker system prune", "syntax": "docker system prune [OPTIONS]", "example": "docker system prune --volumes", "description": "Removes unused containers, networks, dangling images, and build cache.", "options": [{ "option": "-a, --all", "description": "Remove all unused images not just dangling", "example": "docker system prune -a" }, { "option": "--filter", "description": "Filter based on conditions", "example": "docker system prune --filter 'until=24h'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker system prune -f" }, { "option": "--volumes", "description": "Prune volumes as well", "example": "docker system prune --volumes" }, { "option": "--verbose", "description": "Show detailed output", "example": "docker system prune --verbose" }] },
+            { "category": "Cleanup", "command": "docker system prune all", "syntax": "docker system prune -a", "example": "docker system prune -a", "description": "Removes all unused images in addition to other unused Docker resources.", "options": [] },
+            { "category": "Cleanup", "command": "docker system prune volumes", "syntax": "docker system prune -a --volumes", "example": "docker system prune -a --volumes", "description": "Aggressively removes unused Docker resources, including unused volumes.", "options": [] },
+            { "category": "Cleanup", "command": "docker system df", "syntax": "docker system df [OPTIONS]", "example": "docker system df -v", "description": "Shows detailed disk usage breakdown (verbose includes each object).", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker system df --format 'table {{.Type}}\t{{.Total}}'" }, { "option": "-v, --verbose", "description": "Show detailed information", "example": "docker system df -v" }] },
+            { "category": "Cleanup", "command": "docker builder prune", "syntax": "docker builder prune [OPTIONS]", "example": "docker builder prune -f", "description": "Removes build cache (often the largest space consumer).", "options": [{ "option": "-a, --all", "description": "Remove all build cache", "example": "docker builder prune -a" }, { "option": "--filter", "description": "Filter based on conditions", "example": "docker builder prune --filter 'until=24h'" }, { "option": "-f, --force", "description": "Do not prompt for confirmation", "example": "docker builder prune -f" }, { "option": "--keep-storage", "description": "Amount of disk space to keep", "example": "docker builder prune --keep-storage 10GB" }] },
+            { "category": "System", "command": "docker system info", "syntax": "docker system info [OPTIONS]", "example": "docker system info --format '{{.ServerVersion}}'", "description": "Displays system-wide information (same as docker info).", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker system info --format '{{.ContainersRunning}}'" }] },
+            { "category": "System", "command": "docker system events", "syntax": "docker system events [OPTIONS]", "example": "docker system events --filter 'type=image'", "description": "Streams system-wide Docker events.", "options": [{ "option": "-f, --filter", "description": "Filter output based on conditions", "example": "docker system events --filter 'type=container'" }, { "option": "--format", "description": "Format output", "example": "docker system events --format '{{.Type}} {{.Action}}'" }, { "option": "--since", "description": "Show events since timestamp", "example": "docker system events --since '2023-01-01'" }, { "option": "--until", "description": "Show events until timestamp", "example": "docker system events --until '2023-12-31'" }] },
+            { "category": "Advanced", "command": "docker checkpoint", "syntax": "docker checkpoint COMMAND [OPTIONS]", "example": "docker checkpoint create my-app checkpoint1", "description": "Creates/saves container state (experimental).", "options": [] },
+            { "category": "Advanced", "command": "docker checkpoint create", "syntax": "docker checkpoint create [OPTIONS] CONTAINER CHECKPOINT_NAME", "example": "docker checkpoint create --leave-running my-app checkpoint1", "description": "Creates a checkpoint of a container.", "options": [{ "option": "--leave-running", "description": "Leave container running after checkpoint", "example": "docker checkpoint create --leave-running my-app cp1" }] },
+            { "category": "Advanced", "command": "docker checkpoint ls", "syntax": "docker checkpoint ls CONTAINER", "example": "docker checkpoint ls my-app", "description": "Lists checkpoints for a container.", "options": [] },
+            { "category": "Advanced", "command": "docker checkpoint rm", "syntax": "docker checkpoint rm CONTAINER CHECKPOINT_NAME", "example": "docker checkpoint rm my-app checkpoint1", "description": "Removes a container checkpoint.", "options": [] },
+            { "category": "Advanced", "command": "docker plugin", "syntax": "docker plugin COMMAND [OPTIONS]", "example": "docker plugin ls --verbose", "description": "Manages Docker plugins (networking, volume, authorization).", "options": [] },
+            { "category": "Advanced", "command": "docker plugin install", "syntax": "docker plugin install [OPTIONS] PLUGIN", "example": "docker plugin install --alias sshfs vieux/sshfs", "description": "Installs a Docker plugin.", "options": [{ "option": "--alias", "description": "Alias for the plugin", "example": "docker plugin install --alias my-sshfs vieux/sshfs" }, { "option": "--disable", "description": "Disable plugin after install", "example": "docker plugin install --disable my-plugin" }, { "option": "--grant-all-permissions", "description": "Grant all required permissions", "example": "docker plugin install --grant-all-permissions my-plugin" }] },
+            { "category": "Advanced", "command": "docker plugin enable", "syntax": "docker plugin enable [OPTIONS] PLUGIN", "example": "docker plugin enable --timeout 30 my-plugin", "description": "Enables a plugin.", "options": [{ "option": "--timeout", "description": "Timeout for enable operation", "example": "docker plugin enable --timeout 30 my-plugin" }] },
+            { "category": "Advanced", "command": "docker plugin disable", "syntax": "docker plugin disable [OPTIONS] PLUGIN", "example": "docker plugin disable --force my-plugin", "description": "Disables a plugin.", "options": [{ "option": "-f, --force", "description": "Force disable", "example": "docker plugin disable -f my-plugin" }] },
+            { "category": "Advanced", "command": "docker plugin push", "syntax": "docker plugin push [OPTIONS] PLUGIN", "example": "docker plugin push --disable-content-trust my-plugin", "description": "Pushes a plugin to a registry.", "options": [{ "option": "--disable-content-trust", "description": "Skip image signing", "example": "docker plugin push --disable-content-trust my-plugin" }] },
+            { "category": "Advanced", "command": "docker context", "syntax": "docker context COMMAND [OPTIONS]", "example": "docker context create --docker 'host=ssh://user@remote' remote-docker", "description": "Manages Docker contexts for multi-environment.", "options": [] },
+            { "category": "Advanced", "command": "docker context create", "syntax": "docker context create [OPTIONS] CONTEXT", "example": "docker context create --docker 'host=ssh://user@host' remote", "description": "Creates a new Docker context.", "options": [{ "option": "--docker", "description": "Docker endpoint configuration", "example": "docker context create --docker host=tcp://192.168.1.100:2376 remote" }, { "option": "--description", "description": "Description of the context", "example": "docker context create --description 'Production cluster' prod" }, { "option": "--from", "description": "Copy from existing context", "example": "docker context create --from default copy" }, { "option": "--kubernetes", "description": "Kubernetes endpoint", "example": "docker context create --kubernetes config-file=kubeconfig prod" }] },
+            { "category": "Advanced", "command": "docker context use", "syntax": "docker context use CONTEXT", "example": "docker context use remote-docker", "description": "Switches between Docker contexts.", "options": [] },
+            { "category": "Advanced", "command": "docker context ls", "syntax": "docker context ls [OPTIONS]", "example": "docker context ls", "description": "Lists Docker contexts.", "options": [{ "option": "--format", "description": "Format output", "example": "docker context ls --format 'table {{.Name}}\t{{.DockerEndpoint}}'" }, { "option": "-q, --quiet", "description": "Only show names", "example": "docker context ls -q" }] },
+            { "category": "Advanced", "command": "docker context inspect", "syntax": "docker context inspect [OPTIONS] CONTEXT [CONTEXT...]", "example": "docker context inspect --format '{{.Metadata.Description}}' prod", "description": "Displays details of a Docker context.", "options": [{ "option": "--format", "description": "Format output using Go template", "example": "docker context inspect -f '{{.Name}}' prod" }] },
+            { "category": "Advanced", "command": "docker context rm", "syntax": "docker context rm [OPTIONS] CONTEXT [CONTEXT...]", "example": "docker context rm -f remote", "description": "Removes one or more Docker contexts.", "options": [{ "option": "-f, --force", "description": "Force removal", "example": "docker context rm -f my-context" }] },
+            { "category": "Advanced", "command": "docker swarm", "syntax": "docker swarm COMMAND [OPTIONS]", "example": "docker swarm init --advertise-addr 192.168.1.1", "description": "Initializes/joins/manages Docker Swarm cluster.", "options": [] },
+            { "category": "Advanced", "command": "docker swarm init", "syntax": "docker swarm init [OPTIONS]", "example": "docker swarm init --advertise-addr eth0 --listen-addr eth0:2377", "description": "Initializes a swarm cluster.", "options": [{ "option": "--advertise-addr", "description": "Advertised address for node discovery", "example": "docker swarm init --advertise-addr 192.168.1.1" }, { "option": "--listen-addr", "description": "Listen address (default 0.0.0.0:2377)", "example": "docker swarm init --listen-addr eth0:2377" }, { "option": "--force-new-cluster", "description": "Force creating a new cluster", "example": "docker swarm init --force-new-cluster" }, { "option": "--data-path-addr", "description": "Address for data path", "example": "docker swarm init --data-path-addr 192.168.1.1" }] },
+            { "category": "Advanced", "command": "docker node", "syntax": "docker node COMMAND [OPTIONS]", "example": "docker node ls", "description": "Manages Swarm nodes.", "options": [] },
+            { "category": "Advanced", "command": "docker node ls", "syntax": "docker node ls [OPTIONS]", "example": "docker node ls --filter 'node.role=manager'", "description": "Lists nodes in the Swarm cluster.", "options": [{ "option": "-f, --filter", "description": "Filter based on conditions", "example": "docker node ls --filter 'node.role=worker'" }, { "option": "--format", "description": "Format output", "example": "docker node ls --format 'table {{.Hostname}}\t{{.Status}}'" }] },
+            { "category": "Advanced", "command": "docker service", "syntax": "docker service COMMAND [OPTIONS]", "example": "docker service create --replicas 3 --name web nginx", "description": "Manages Swarm services (deployments).", "options": [] },
+            { "category": "Advanced", "command": "docker service create", "syntax": "docker service create [OPTIONS] IMAGE [COMMAND]", "example": "docker service create --replicas 3 --publish 80:80 --name web nginx", "description": "Creates a service in Swarm cluster.", "options": [{ "option": "--replicas", "description": "Number of replicas", "example": "docker service create --replicas 5 nginx" }, { "option": "--publish", "description": "Publish ports", "example": "docker service create --publish 80:80 nginx" }, { "option": "--env", "description": "Environment variables", "example": "docker service create --env DEBUG=true nginx" }, { "option": "--name", "description": "Service name", "example": "docker service create --name web nginx" }] },
+            { "category": "Advanced", "command": "docker stack", "syntax": "docker stack COMMAND [OPTIONS]", "example": "docker stack deploy --compose-file docker-compose.yml my-stack", "description": "Deploys a stack to Swarm using Compose file.", "options": [] },
+            { "category": "Advanced", "command": "docker stack deploy", "syntax": "docker stack deploy [OPTIONS] NAME", "example": "docker stack deploy --compose-file prod-compose.yml prod", "description": "Deploys a new stack or updates an existing one.", "options": [{ "option": "--compose-file, -c", "description": "Compose file to use", "example": "docker stack deploy -c docker-compose.yml prod" }, { "option": "--prune", "description": "Prune services not in compose file", "example": "docker stack deploy --prune prod" }, { "option": "--resolve-image", "description": "Resolve image digests", "example": "docker stack deploy --resolve-image always prod" }, { "option": "--with-registry-auth", "description": "Send registry auth details", "example": "docker stack deploy --with-registry-auth prod" }] },
+            { "category": "Advanced", "command": "docker stack ps", "syntax": "docker stack ps [OPTIONS] NAME", "example": "docker stack ps --no-trunc prod", "description": "Lists tasks in the stack.", "options": [{ "option": "-f, --filter", "description": "Filter output", "example": "docker stack ps --filter 'desired-state=running' prod" }, { "option": "--format", "description": "Format output", "example": "docker stack ps --format 'table {{.Name}}\t{{.Error}}' prod" }, { "option": "--no-trunc", "description": "Don't truncate output", "example": "docker stack ps --no-trunc prod" }] },
+            { "category": "Advanced", "command": "docker stack rm", "syntax": "docker stack rm [OPTIONS] NAME", "example": "docker stack rm prod", "description": "Removes the stack from Swarm.", "options": [{ "option": "--keep", "description": "Keep services after removal", "example": "docker stack rm --keep prod" }] },
+            { "category": "Advanced", "command": "docker stack services", "syntax": "docker stack services [OPTIONS] NAME", "example": "docker stack services prod", "description": "Lists services in the stack.", "options": [{ "option": "-f, --filter", "description": "Filter output", "example": "docker stack services --filter 'label=type=web' prod" }, { "option": "--format", "description": "Format output", "example": "docker stack services --format 'table {{.Name}}\t{{.Replicas}}' prod" }] },
+            { "category": "Advanced", "command": "docker stack ls", "syntax": "docker stack ls [OPTIONS]", "example": "docker stack ls", "description": "Lists all stacks in Swarm.", "options": [{ "option": "--format", "description": "Format output", "example": "docker stack ls --format 'table {{.Name}}\t{{.Services}}'" }] }
+        ];
+
+        // ========== UI LOGIC ==========
+        const commandsGrid = document.getElementById("commandsGrid");
+        const categoryButtons = document.getElementById("categoryButtons");
+        const searchInput = document.getElementById("searchInput");
+        const resultCount = document.getElementById("resultCount");
+        const emptyState = document.getElementById("emptyState");
+        const clearSearchBtn = document.getElementById("clearSearchBtn");
+        const scrollTopBtn = document.getElementById("scrollTopBtn");
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const themeLabel = document.getElementById("themeLabel");
+
+        let activeCategory = "All";
+        let currentTheme = "light"; // 'light' or 'dark'
+
+        // ----- theme management -----
+        function applyTheme(theme) {
+            currentTheme = theme;
+            if (theme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+                themeIcon.textContent = "☀️";
+                themeLabel.textContent = "Light";
+            } else {
+                document.documentElement.removeAttribute("data-theme");
+                themeIcon.textContent = "🌙";
+                themeLabel.textContent = "Dark";
+            }
+            // persist preference
+            localStorage.setItem("docker-cheatsheet-theme", theme);
+        }
+
+        function toggleTheme() {
+            const next = currentTheme === "light" ? "dark" : "light";
+            applyTheme(next);
+        }
+
+        // load saved theme
+        const savedTheme = localStorage.getItem("docker-cheatsheet-theme");
+        if (savedTheme === "dark") {
+            applyTheme("dark");
+        } else {
+            applyTheme("light");
+        }
+
+        themeToggle.addEventListener("click", toggleTheme);
+
+        // ----- render functions (unchanged) -----
+        function getCategories() {
+            const categories = docker_commands.map((item) => item.category);
+            return ["All", ...new Set(categories)];
+        }
+
+        function escapeHTML(value) {
+            return String(value)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function getSearchText(commandItem) {
+            const optionsText = commandItem.options
+                .map((opt) => `${opt.option} ${opt.description} ${opt.example}`)
+                .join(" ");
+            return `
+    ${commandItem.category}
+    ${commandItem.command}
+    ${commandItem.syntax}
+    ${commandItem.example}
+    ${commandItem.description}
+    ${optionsText}
+  `.toLowerCase();
+        }
+
+        function filterCommands() {
+            const searchValue = searchInput.value.trim().toLowerCase();
+            return docker_commands.filter((item) => {
+                const matchesCategory =
+                    activeCategory === "All" || item.category === activeCategory;
+                const matchesSearch =
+                    !searchValue || getSearchText(item).includes(searchValue);
+                return matchesCategory && matchesSearch;
+            });
+        }
+
+        function renderCategoryButtons() {
+            const categories = getCategories();
+            categoryButtons.innerHTML = categories
+                .map((category) => {
+                    const isActive = category === activeCategory ? "active" : "";
+                    const count =
+                        category === "All"
+                            ? docker_commands.length
+                            : docker_commands.filter((item) => item.category === category).length;
+                    return `
+        <button class="category-btn ${isActive}" data-category="${escapeHTML(category)}">
+          ${escapeHTML(category)} (${count})
+        </button>
+      `;
+                })
+                .join("");
+        }
+
+        function renderCommands() {
+            const filteredCommands = filterCommands();
+            resultCount.textContent = `${filteredCommands.length} of ${docker_commands.length} commands shown`;
+            emptyState.classList.toggle("hidden", filteredCommands.length > 0);
+            commandsGrid.innerHTML = filteredCommands
+                .map((item) => {
+                    const optionsHTML = item.options.length ?
+                        `
+          <details class="options">
+            <summary>Options (${item.options.length})</summary>
+            <div class="option-list">
+              ${item.options.map(opt => `
+                    <div class="option-item">
+                      <span class="option-name">${escapeHTML(opt.option)}</span>
+                      <p>${escapeHTML(opt.description)}</p>
+                      <code class="option-example">${escapeHTML(opt.example)}</code>
+                    </div>
+                  `).join("")}
+            </div>
+          </details>
+        ` :
+                        "";
+                    return `
+        <article class="command-card">
+          <div class="card-top">
+            <div>
+              <span class="badge">${escapeHTML(item.category)}</span>
+              <h3>${escapeHTML(item.command)}</h3>
+            </div>
+            <button class="copy-btn" data-copy="${escapeHTML(item.example)}" title="Copy example command">Copy</button>
+          </div>
+          <p class="description">${escapeHTML(item.description)}</p>
+          <div class="code-block"><small>Syntax</small><code>${escapeHTML(item.syntax)}</code></div>
+          <div class="code-block"><small>Example</small><code>${escapeHTML(item.example)}</code></div>
+          ${optionsHTML}
+        </article>
+      `;
+                })
+                .join("");
+        }
+
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const oldText = button.textContent;
+                button.textContent = "Copied";
+                setTimeout(() => { button.textContent = oldText; }, 1100);
+            }).catch(() => { alert("Unable to copy command."); });
+        }
+
+        // ----- event listeners -----
+        categoryButtons.addEventListener("click", (event) => {
+            const button = event.target.closest(".category-btn");
+            if (!button) return;
+            activeCategory = button.dataset.category;
+            renderCategoryButtons();
+            renderCommands();
+        });
+
+        commandsGrid.addEventListener("click", (event) => {
+            const button = event.target.closest(".copy-btn");
+            if (!button) return;
+            copyToClipboard(button.dataset.copy, button);
+        });
+
+        searchInput.addEventListener("input", renderCommands);
+
+        clearSearchBtn.addEventListener("click", () => {
+            searchInput.value = "";
+            activeCategory = "All";
+            renderCategoryButtons();
+            renderCommands();
+            searchInput.focus();
+        });
+
+        window.addEventListener("scroll", () => {
+            scrollTopBtn.classList.toggle("show", window.scrollY > 500);
+        });
+
+        scrollTopBtn.addEventListener("click", () => {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        // ----- initial render -----
+        renderCategoryButtons();
+        renderCommands();
+    </script>
+</body>
+
+</html>
